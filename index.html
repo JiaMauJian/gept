@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英檢口說小教室</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky:#EAF6FF;
+  --ink:#1E3A5F;
+  --sun:#FFD24D;
+  --coral:#FF7A6B;
+  --mint:#43C79E;
+  --card:#FFFFFF;
+  --line:#CBE4F5;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{
+  font-family:'Nunito','Microsoft JhengHei','PingFang TC',sans-serif;
+  background:var(--sky);
+  background-image:radial-gradient(circle at 15% 20%, #D6EEFF 0 120px, transparent 121px),
+                   radial-gradient(circle at 85% 75%, #DFF6EE 0 150px, transparent 151px);
+  color:var(--ink);
+  min-height:100vh;
+  display:flex;justify-content:center;
+}
+.app{width:100%;max-width:520px;padding:20px 18px 40px;}
+h1,h2,.eng{font-family:'Fredoka','Microsoft JhengHei',sans-serif;}
+
+/* ---------- 首頁 ---------- */
+.home-head{text-align:center;margin:18px 0 6px;}
+.home-head .mascot{font-size:52px;display:block;animation:bob 2.4s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.home-head h1{font-size:30px;font-weight:700;letter-spacing:1px;}
+.home-head p{font-size:14px;color:#5A7A9A;margin-top:4px;}
+.star-row{display:flex;justify-content:center;gap:10px;align-items:center;margin:14px 0 18px;}
+.star-bank{
+  background:var(--card);border:2px solid var(--sun);
+  border-radius:999px;padding:6px 18px;font-weight:800;font-size:15px;
+}
+.btn-history{
+  background:var(--card);border:2px solid var(--line);border-radius:999px;
+  padding:6px 16px;font-weight:800;font-size:14px;cursor:pointer;color:#3E6488;font-family:inherit;
+}
+.modes{display:flex;flex-direction:column;gap:12px;}
+.mode-card{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:2px solid var(--line);
+  border-radius:20px;padding:14px 18px;cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+  text-align:left;width:100%;font-family:inherit;color:inherit;
+}
+.mode-card:hover{transform:translateY(-2px);box-shadow:0 6px 0 var(--line);}
+.mode-card:active{transform:translateY(1px);box-shadow:none;}
+.mode-card .icon{
+  width:50px;height:50px;border-radius:16px;flex:none;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  background:var(--sky);
+}
+.mode-card.exam{border-color:var(--sun);background:#FFFBEE;}
+.mode-card.exam .icon{background:var(--sun);}
+.mode-card b{font-size:17px;display:block;}
+.mode-card span{font-size:12.5px;color:#5A7A9A;line-height:1.5;}
+.tip{
+  margin-top:20px;font-size:12.5px;color:#5A7A9A;line-height:1.7;
+  background:#FFFFFFAA;border-radius:14px;padding:12px 14px;
+}
+
+/* ---------- 練習頁 ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.btn-back{
+  background:var(--card);border:2px solid var(--line);border-radius:12px;
+  padding:7px 14px;font-weight:800;font-size:14px;cursor:pointer;color:var(--ink);font-family:inherit;
+}
+.progress{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end;}
+.dot{width:11px;height:11px;border-radius:50%;background:#C9DFF0;}
+.dot.done{background:var(--mint);}
+.dot.now{background:var(--sun);outline:3px solid #FFE9A8;}
+
+.stage{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:22px 20px;text-align:center;}
+.stage .part-tag{
+  display:inline-block;font-size:12.5px;font-weight:800;letter-spacing:1px;
+  background:var(--sky);border-radius:999px;padding:4px 14px;margin-bottom:10px;color:#3E6488;
+}
+.stage .part-tag.exam-tag{background:var(--sun);color:var(--ink);}
+.prompt-zh{font-size:13.5px;color:#5A7A9A;margin-bottom:10px;line-height:1.6;}
+.eng{font-size:23px;font-weight:600;line-height:1.5;margin:6px 0 4px;min-height:36px;}
+.eng.small{font-size:18px;}
+.eng.passage{font-size:17px;text-align:left;line-height:1.8;}
+.eng .w{transition:color .2s;}
+.eng .hit{color:var(--mint);}
+.eng .miss{color:#B9C9D8;}
+.hidden-q{
+  font-size:15px;color:#8FA9C0;background:var(--sky);
+  border-radius:12px;padding:12px;margin:6px 0;font-weight:700;line-height:1.7;
+}
+.hidden-q.playing{color:#3E6488;background:#FFF6DC;}
+.hidden-q.yourturn{color:#1E7A5C;background:#D8F3E9;}
+
+.timer{
+  display:none;margin:10px auto 0;width:fit-content;
+  font-size:20px;font-weight:800;color:#C0392B;
+  background:#FFE9E5;border-radius:999px;padding:4px 18px;
+}
+.timer.show{display:block;}
+.timer.calm{color:#3E6488;background:var(--sky);}
+
+.controls{display:flex;justify-content:center;gap:26px;margin:18px 0 6px;align-items:flex-start;}
+.ctrl{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;font-weight:800;color:#3E6488;}
+.round-btn{
+  width:70px;height:70px;border-radius:50%;border:none;cursor:pointer;
+  font-size:29px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 5px 0 rgba(0,0,0,.12);transition:transform .1s;
+}
+.round-btn:active{transform:translateY(3px);box-shadow:none;}
+.btn-listen{background:var(--sun);}
+.btn-mic{background:var(--coral);width:86px;height:86px;font-size:36px;}
+.btn-mic.rec{animation:pulse 1s infinite;background:#FF5546;}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(255,85,70,.45),0 5px 0 rgba(0,0,0,.12);}
+  70%{box-shadow:0 0 0 22px rgba(255,85,70,0),0 5px 0 rgba(0,0,0,.12);}
+  100%{box-shadow:0 0 0 0 rgba(255,85,70,0),0 5px 0 rgba(0,0,0,.12);}
+}
+.round-btn:disabled{opacity:.45;cursor:default;}
+
+.heard{
+  min-height:44px;margin-top:10px;font-size:15px;color:#3E6488;
+  background:var(--sky);border-radius:14px;padding:10px 14px;line-height:1.6;
+}
+.heard b{color:var(--ink);}
+
+.feedback{margin-top:14px;min-height:40px;}
+.stars{font-size:34px;letter-spacing:4px;}
+.stars .off{opacity:.22;}
+.fb-msg{font-size:16px;font-weight:800;margin-top:4px;}
+.fb-sub{font-size:13px;color:#5A7A9A;margin-top:2px;}
+.playback-row{display:flex;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
+.btn-play{
+  background:#E4E0FF;color:#4B3FA8;border:none;border-radius:999px;
+  padding:8px 18px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;
+}
+.btn-play:disabled{opacity:.4;cursor:default;}
+.btn-play.demo{background:#FFF1C9;color:#8A6400;}
+
+/* ---------- 批改報告 ---------- */
+.report{
+  margin-top:14px;text-align:left;background:var(--sky);
+  border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.8;
+}
+.report .rep-title{font-weight:800;font-size:15px;margin-bottom:6px;}
+.rep-row{margin-top:6px;}
+.rep-label{font-size:12.5px;font-weight:800;color:#5A7A9A;display:block;margin-bottom:4px;}
+.chip{
+  display:inline-block;background:#FFE0DC;color:#C0392B;border:none;
+  border-radius:999px;padding:4px 12px;margin:2px 4px 2px 0;
+  font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;
+}
+.chip.gray{background:#E3EDF5;color:#5A7A9A;cursor:default;}
+.chip.mint{background:#D8F3E9;color:#1E7A5C;cursor:default;}
+.check-line{font-size:14px;font-weight:700;margin-top:4px;}
+.check-line.ok{color:#1E7A5C;}
+.check-line.no{color:#C0392B;}
+.sample-box{
+  margin-top:8px;background:#fff;border:2px dashed var(--line);
+  border-radius:12px;padding:8px 12px;font-size:14.5px;
+}
+.sample-box .btn-say{
+  background:var(--sun);border:none;border-radius:999px;padding:2px 10px;
+  font-size:13px;cursor:pointer;font-family:inherit;font-weight:800;margin-left:6px;
+}
+
+.next-row{display:flex;justify-content:center;gap:12px;margin-top:16px;flex-wrap:wrap;}
+.btn-main{
+  background:var(--mint);color:#fff;border:none;border-radius:16px;
+  padding:12px 30px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;
+  box-shadow:0 4px 0 #2FA07C;
+}
+.btn-main:active{transform:translateY(3px);box-shadow:none;}
+.btn-ghost{
+  background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:16px;
+  padding:11px 22px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;
+}
+
+/* ---------- 準備時間頁（朗讀） ---------- */
+.prep-list{
+  text-align:left;font-size:16px;line-height:1.9;margin-top:12px;
+  font-family:'Fredoka','Microsoft JhengHei',sans-serif;
+}
+.prep-list .no{display:inline-block;width:56px;font-weight:700;color:#3E6488;}
+.prep-list .pss{
+  display:block;background:var(--sky);border-radius:12px;padding:10px 14px;
+  margin-top:8px;font-size:15px;line-height:1.8;
+}
+
+/* ---------- 自我介紹 ---------- */
+.intro-sent{
+  font-size:19px;font-family:'Fredoka','Microsoft JhengHei',sans-serif;
+  background:var(--sky);border:2px solid #B8D9F0;border-radius:16px;
+  padding:16px 18px;line-height:2;margin:8px 0;
+}
+.intro-sent u{
+  text-decoration:none;border-bottom:2px solid var(--coral);
+  font-weight:700;color:#C0392B;padding:0 4px;letter-spacing:2px;
+}
+
+/* ---------- 批改總表 / 成績單 ---------- */
+.summary{
+  margin-top:20px;text-align:left;background:var(--card);
+  border:2px solid var(--line);border-radius:18px;padding:16px;
+}
+.summary h3{font-size:16px;margin-bottom:10px;text-align:center;}
+.sum-item{
+  border-bottom:1px dashed var(--line);padding:8px 0;font-size:13.5px;line-height:1.7;
+}
+.sum-item:last-child{border-bottom:none;}
+.sum-q{font-weight:800;}
+.sum-stars{float:right;font-size:13px;}
+.sum-said{color:#5A7A9A;}
+.sum-part-title{
+  font-weight:800;font-size:14px;background:var(--sky);
+  border-radius:8px;padding:4px 10px;margin:10px 0 4px;
+}
+.weak-box{margin-top:14px;background:#FFF6E0;border-radius:14px;padding:12px 14px;text-align:left;}
+.weak-box b{display:block;font-size:14px;margin-bottom:6px;}
+.part-score{
+  display:flex;justify-content:space-between;align-items:center;
+  background:var(--sky);border-radius:12px;padding:10px 14px;margin-top:8px;
+  font-size:14.5px;font-weight:800;
+}
+.part-score .ps-stars{color:#B8860B;}
+
+/* ---------- 結算頁 ---------- */
+.finish{text-align:center;padding-top:30px;}
+.finish .big{font-size:70px;animation:bob 2s ease-in-out infinite;}
+.finish h2{font-size:26px;margin:10px 0 6px;}
+.finish p{color:#5A7A9A;font-size:15px;margin-bottom:20px;}
+
+/* ---------- 進步紀錄 ---------- */
+.hist-stats{
+  display:flex;gap:10px;margin-bottom:14px;
+}
+.hist-stat{
+  flex:1;background:var(--card);border:2px solid var(--line);
+  border-radius:16px;padding:12px 8px;text-align:center;
+}
+.hist-stat b{font-size:22px;display:block;font-family:'Fredoka',sans-serif;}
+.hist-stat span{font-size:12px;color:#5A7A9A;}
+.hist-item{
+  background:var(--card);border:2px solid var(--line);border-radius:14px;
+  padding:10px 14px;margin-bottom:8px;font-size:13.5px;line-height:1.7;text-align:left;
+}
+.hist-item .hi-date{font-size:12px;color:#8FA9C0;}
+.hist-item .hi-title{font-weight:800;}
+.hist-item .hi-stars{float:right;font-weight:800;color:#B8860B;}
+.hist-item.exam-rec{border-color:var(--sun);background:#FFFBEE;}
+.hist-empty{
+  text-align:center;color:#8FA9C0;font-size:14px;padding:30px 0;line-height:1.8;
+}
+
+.warn{
+  margin-top:16px;font-size:13px;color:#A4552F;background:#FFF0E3;
+  border-radius:14px;padding:12px 14px;line-height:1.7;display:none;
+}
+@media (prefers-reduced-motion: reduce){
+  .home-head .mascot,.finish .big,.btn-mic.rec{animation:none;}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+
+<script>
+/* ================= 各部分的名稱與說明 ================= */
+var BANK = {
+  exam: {
+    name:"正式模擬考", tag:"正式模擬考", icon:"🏁",
+    desc:"自我介紹 → 複誦 → 朗讀 → 回答問題，一次考完不能重來"
+  },
+  intro: {
+    name:"自我介紹", tag:"考試開始 · 自我介紹", icon:"🪪",
+    desc:"考試一開始，請在 15 秒內唸出座位號碼和准考證號碼"
+  },
+  repeat: {
+    name:"第一部分 複誦", tag:"第一部分 · 複誦", icon:"👂",
+    desc:"題目會播兩次，聽完後請馬上複誦一次"
+  },
+  read: {
+    name:"第二部分 朗讀句子與短文", tag:"第二部分 · 朗讀句子與短文", icon:"📖",
+    desc:"看著句子，以正常速度清楚正確地朗讀一遍"
+  },
+  answer: {
+    name:"第三部分 回答問題", tag:"第三部分 · 回答問題", icon:"💬",
+    desc:"題目會播兩次，聽完請馬上回答，時間 15 秒"
+  }
+};
+
+/* =====================================================================
+   題庫：以「回」為單位（像模擬試題本的 第一回、第二回…）
+   ➤ 新增一回的方法：複製一整個 { name:"..." ... } 區塊，
+     貼在最後一回的 }, 後面，改題目內容即可，首頁會自動出現新的一回。
+   每一回固定包含：
+   - repeat：複誦 5 句
+   - read：朗讀 sentences 5 句 + passage 1 篇短文
+   - answer：回答問題 7 題（q=題目、sample=參考答案、keys=批改關鍵字）
+   ===================================================================== */
+var ROUNDS = [
+  { /* ---------------- 第一回（課本題目） ---------------- */
+    name:"第一回",
+    repeat:[
+      "You are my best friend.",
+      "Can I borrow your pen?",
+      "Do you want some bread for breakfast?",
+      "He doesn't play basketball.",
+      "What time do you get up every day?"
+    ],
+    read:{
+      sentences:[
+        "We often have a barbecue at the beach in summer.",
+        "He doesn't like spicy food at all.",
+        "Do you know how to bake a cake by yourself?",
+        "I saw a beautiful sunset while I was walking by the river.",
+        "Can you help me carry these heavy boxes?"
+      ],
+      passage:"I love pizza because it's so tasty and easy to eat. My favorite kind of pizza has cheese and mushrooms. I usually eat it with my family on weekends. We sometimes make our own pizza at home. It's fun to choose the toppings and cook together. Pizza always makes me feel happy."
+    },
+    answer:[
+      {q:"What do you usually do on weekends?", sample:"I usually play with my friends and watch TV on weekends.", keys:["i usually","i play","i watch","i go","i read","i relax","weekend","homework","hiking","sports"]},
+      {q:"Where do you like to go shopping?", sample:"I like to go shopping at the supermarket with my mom.", keys:["i like","shopping","supermarket","department store","mall","night market","market","online","store","shop"]},
+      {q:"What do you like to eat for breakfast?", sample:"I like to eat toast and drink milk for breakfast.", keys:["i like","i eat","i have","toast","bread","egg","milk","sandwich","rice","cereal","pancake","soup","juice"]},
+      {q:"Do you like to exercise?", sample:"Yes, I do. I like to play basketball after school.", keys:["yes","no","i like","i love","i play","basketball","run","jog","swim","walk","exercise","don't"]},
+      {q:"What do you usually do after work or school?", sample:"After school, I do my homework first and then watch TV.", keys:["after school","i do","homework","i watch","i play","i read","i go","i meet","games","tv"]},
+      {q:"How do you usually get to work or school?", sample:"I usually go to school by bus.", keys:["by bus","by car","by bike","by mrt","by subway","on foot","i walk","scooter","i take","i ride","i go"]},
+      {q:"What do you like to do when it rains?", sample:"When it rains, I like to read books at home.", keys:["when it rains","i like","i stay","i read","i watch","i listen","i play","at home","inside","movies","music"]}
+    ]
+  },
+  { /* ---------------- 第二回 ---------------- */
+    name:"第二回",
+    repeat:[
+      "I like to play basketball with my friends.",
+      "There are many books on the desk.",
+      "My mother is cooking dinner in the kitchen.",
+      "Do you want some juice or milk?",
+      "We will go to the zoo this weekend."
+    ],
+    read:{
+      sentences:[
+        "I usually have bread and milk for breakfast.",
+        "The bookstore is next to the post office.",
+        "Her birthday is on the tenth of May.",
+        "He can swim very fast in the pool.",
+        "Let's take the train to Taipei tomorrow."
+      ],
+      passage:"Last Sunday, I went to the night market with my parents. We ate fried chicken and drank papaya milk. There were many people and fun games. I had a great time with my family."
+    },
+    answer:[
+      {q:"How do you go to school every day?", sample:"I go to school by bus.", keys:["by bus","by car","by bike","by mrt","on foot","i walk","i go"]},
+      {q:"What color do you like best? Why?", sample:"I like blue best, because it is the color of the sky.", keys:["i like","because","red","blue","green","yellow","pink","purple","black","white","orange"]},
+      {q:"What did you do last night?", sample:"I did my homework and watched TV last night.", keys:["i did","i watched","i played","i read","i went","i ate","homework"]},
+      {q:"Would you like some tea or coffee?", sample:"I would like some tea, please.", keys:["i would like","i'd like","tea","coffee","yes","no thank"]},
+      {q:"Where do you live?", sample:"I live in Tainan with my family.", keys:["i live","in tai","in kao","in new","my home"]},
+      {q:"What time do you usually get up?", sample:"I usually get up at seven o'clock.", keys:["i get up","get up at","o'clock","seven","six","eight"]},
+      {q:"What is the weather like today?", sample:"It is sunny and hot today.", keys:["it is","it's","sunny","rainy","cloudy","hot","cold","warm","windy"]}
+    ]
+  }
+  /* ➤ 要新增「第三回」，把上面第二回整個 { ... } 複製，
+     在上一回的 } 後面加逗號再貼上，改 name 和題目內容即可。 */
+];
+var GAP_MS = 1500;      // 兩次播放的間隔（正式為 1~2 秒）
+var ANSWER_SEC = 15;    // 第三部分每題回答時間
+var PREP_SEC = 60;      // 第二部分準備時間
+var INTRO_SEC = 15;     // 自我介紹時間
+
+/* ================= 狀態 ================= */
+var state = { screen:"home", mode:null, round:0, qs:[], idx:0, stars:0, totalStars:0, answered:false, results:[], introNums:null, exam:null };
+var recognition = null, listening = false, lastTranscript = "";
+var timerId = null;
+
+/* ================= 進步紀錄（存在這台裝置的瀏覽器裡） ================= */
+function loadHistory(){
+  try{ return JSON.parse(localStorage.getItem("gept_history")||"[]"); }catch(e){ return []; }
+}
+function saveHistoryRecord(rec){
+  try{
+    var hst=loadHistory();
+    hst.push(rec);
+    if(hst.length>200){ hst=hst.slice(-200); }
+    localStorage.setItem("gept_history", JSON.stringify(hst));
+  }catch(e){}
+}
+function loadTotalStars(){
+  try{ return parseInt(localStorage.getItem("gept_stars")||"0",10)||0; }catch(e){ return 0; }
+}
+function saveTotalStars(){
+  try{ localStorage.setItem("gept_stars", String(state.totalStars)); }catch(e){}
+}
+state.totalStars = loadTotalStars();
+
+/* ================= 語音功能 ================= */
+function speak(text, rate, onend){
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US"; u.rate = rate || 0.85; u.pitch = 1.05;
+    var vs = window.speechSynthesis.getVoices();
+    for(var i=0;i<vs.length;i++){ if(vs[i].lang.indexOf("en")===0){ u.voice = vs[i]; break; } }
+    if(onend){ u.onend = function(){ setTimeout(onend, 100); }; }
+    window.speechSynthesis.speak(u);
+  }catch(e){ if(onend){ setTimeout(onend, 500); } }
+}
+// 正式規範：每題播出兩次，中間間隔約 1~2 秒
+function playTwice(text, statusFn, done){
+  statusFn("🔊 第一次播放，仔細聽…");
+  speak(text, 0.85, function(){
+    setTimeout(function(){
+      if(state.screen!=="q") return;
+      statusFn("🔊 第二次播放，再聽一次…");
+      speak(text, 0.85, function(){
+        if(state.screen!=="q") return;
+        done();
+      });
+    }, GAP_MS);
+  });
+}
+function initRecognition(){
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return null;
+  var r = new SR();
+  r.lang = "en-US"; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
+  return r;
+}
+
+/* ================= 錄音回放（MediaRecorder） ================= */
+var audioStream=null, mediaRec=null, recChunks=[], lastAudioURL=null, playbackAudio=null;
+// Android 的 Google 語音辨識和網頁錄音不能同時使用麥克風（會出現 cannot record now as Chrome is recording）
+// 所以在行動裝置上直接停用錄音回放，確保語音辨識一定能用；電腦上兩者可並存，回放功能保留
+var recorderDisabled = /Android|iPhone|iPad/i.test(navigator.userAgent);
+function releaseStream(){
+  try{
+    if(audioStream){
+      var tracks=audioStream.getTracks();
+      for(var i=0;i<tracks.length;i++){ tracks[i].stop(); }
+    }
+  }catch(e){}
+  audioStream=null;
+}
+function startRecorder(){
+  if(recorderDisabled) return;
+  if(!navigator.mediaDevices || !window.MediaRecorder) return;
+  var go=function(){
+    try{
+      recChunks=[];
+      mediaRec=new MediaRecorder(audioStream);
+      mediaRec.ondataavailable=function(e){ if(e.data && e.data.size>0){ recChunks.push(e.data); } };
+      mediaRec.onstop=function(){
+        try{
+          if(lastAudioURL){ URL.revokeObjectURL(lastAudioURL); lastAudioURL=null; }
+          if(recChunks.length>0){
+            var blob=new Blob(recChunks,{type: mediaRec.mimeType||"audio/webm"});
+            lastAudioURL=URL.createObjectURL(blob);
+            var pb=document.getElementById("myrec");
+            if(pb){ pb.disabled=false; }
+          }
+        }catch(e){}
+      };
+      mediaRec.start();
+    }catch(e){}
+  };
+  if(audioStream && audioStream.active){ go(); }
+  else{
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
+      audioStream=s; go();
+    }).catch(function(){ /* 拿不到就沒有回放功能，不影響辨識 */ });
+  }
+}
+function stopRecorder(){
+  if(mediaRec && mediaRec.state!=="inactive"){ try{ mediaRec.stop(); }catch(e){} }
+}
+function playRecording(){
+  if(!lastAudioURL) return;
+  try{
+    window.speechSynthesis.cancel();
+    if(playbackAudio){ playbackAudio.pause(); }
+    playbackAudio=new Audio(lastAudioURL);
+    playbackAudio.play();
+  }catch(e){}
+}
+
+/* ================= 倒數計時 ================= */
+function startTimer(sec, label, calm, onEnd){
+  stopTimer();
+  var el = document.getElementById("timer");
+  if(!el) return;
+  el.className = "timer show"+(calm?" calm":"");
+  var left = sec;
+  el.textContent = "⏱️ "+label+" "+left+" 秒";
+  timerId = setInterval(function(){
+    left--;
+    if(left<=0){
+      stopTimer();
+      if(el){ el.textContent = "⏱️ 時間到！"; }
+      if(onEnd){ onEnd(); }
+    }else if(el){
+      el.textContent = "⏱️ "+label+" "+left+" 秒";
+    }
+  }, 1000);
+}
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+function hideTimer(){
+  stopTimer();
+  var el=document.getElementById("timer");
+  if(el){ el.className="timer"; }
+}
+
+/* ================= 比對與計分 ================= */
+function normWords(s){
+  return s.toLowerCase().replace(/[^a-z0-9' ]+/g," ").split(/\s+/).filter(function(w){return w.length>0;});
+}
+function scoreRepeat(target, said){
+  var t = normWords(target), s = normWords(said);
+  var used = {}; var hit = 0; var marks = [];
+  for(var i=0;i<t.length;i++){
+    var found = false;
+    for(var j=0;j<s.length;j++){
+      if(!used[j] && s[j]===t[i]){ used[j]=true; found=true; break; }
+    }
+    marks.push(found); if(found) hit++;
+  }
+  var pct = t.length ? hit/t.length : 0;
+  var stars = pct>=0.85 ? 3 : pct>=0.6 ? 2 : pct>0 ? 1 : 0;
+  var tRaw = target.replace(/[.,!?]/g,"").split(" ");
+  var missed = [];
+  for(var k=0;k<marks.length;k++){ if(!marks[k]) missed.push(tRaw[k]); }
+  var extra = [];
+  for(var e=0;e<s.length;e++){ if(!used[e]) extra.push(s[e]); }
+  return {stars:stars, pct:pct, marks:marks, missed:missed, extra:extra};
+}
+function scoreAnswer(said, item){
+  var lower = " "+said.toLowerCase().replace(/[^a-z0-9' ]+/g," ").replace(/\s+/g," ")+" ";
+  var n = normWords(said).length;
+  var full = n>=3;
+  var onTopic = false;
+  if(item && item.keys){
+    for(var i=0;i<item.keys.length;i++){
+      if(lower.indexOf(item.keys[i])>=0){ onTopic=true; break; }
+    }
+  }
+  var stars = (full&&onTopic) ? 3 : ((full||onTopic)&&n>=1) ? 2 : n>=1 ? 1 : 0;
+  return {stars:stars, words:n, full:full, onTopic:onTopic};
+}
+function fbText(stars){
+  if(stars===3) return ["太棒了！🎉","你唸得又清楚又完整！"];
+  if(stars===2) return ["很好！👍","再多唸對幾個字就滿分囉！"];
+  if(stars===1) return ["加油！💪","多聽幾次，再試一次！"];
+  return ["沒關係，再來一次！🌈","靠近麥克風，大聲慢慢說。"];
+}
+
+/* ================= 畫面 ================= */
+function h(html){ document.getElementById("app").innerHTML = html; }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
+function fmtDate(t){
+  var d=new Date(t);
+  return (d.getMonth()+1)+"/"+d.getDate()+" "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+}
+
+function renderHome(){
+  state.screen="home"; state.exam=null;
+  hideTimer(); stopMic();
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  var srOK = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  h(
+    '<div class="home-head">'+
+      '<span class="mascot">🦉</span>'+
+      '<h1>英檢口說小教室</h1>'+
+      '<p>GEPT 初級口說 · 依正式考試流程練習</p>'+
+    '</div>'+
+    '<div class="star-row">'+
+      '<div class="star-bank">⭐ 已收集 '+state.totalStars+' 顆星星</div>'+
+      '<button class="btn-history" id="histbtn">📈 我的紀錄</button>'+
+    '</div>'+
+    '<div class="modes">'+
+      '<button class="mode-card exam" data-k="exam"><div class="icon">🏁</div><div><b>正式模擬考</b><span>自我介紹＋三部分連續進行 · 不能重來、不能重聽</span></div></button>'+
+      modeCard("intro","15 秒內唸出座位號碼和准考證號碼")+
+      modeCard("repeat","共 5 題 · 每題播兩次 · 目前有 "+ROUNDS.length+" 回")+
+      modeCard("read","5 個句子＋1 篇短文 · 1 分鐘準備 · 目前有 "+ROUNDS.length+" 回")+
+      modeCard("answer","共 7 題 · 每題播兩次 · 回答 15 秒 · 目前有 "+ROUNDS.length+" 回")+
+    '</div>'+
+    '<div class="tip">🎧 完全依照正式考試流程：複誦和回答問題的題目<b>不會顯示文字</b>，會用錄音<b>播出兩次</b>，聽完要馬上開口。每題答完可以<b>回放自己的錄音</b>，練習成績會自動記錄。<span style="float:right;color:#B9C9D8;">v3</span></div>'+
+    '<div class="warn" id="srwarn" style="display:'+(srOK?'none':'block')+'">⚠️ 這個瀏覽器不支援語音辨識。請用 <b>Chrome</b> 或 <b>Edge</b> 開啟 https 網址，就可以聽小朋友說話囉！</div>'
+  );
+  document.getElementById("histbtn").onclick=renderHistory;
+  var cards=document.querySelectorAll(".mode-card");
+  var keys=["exam","intro","repeat","read","answer"];
+  Array.prototype.forEach.call(cards, function(c,i){
+    c.onclick=function(){
+      if(keys[i]==="intro"){ renderIntro(false); }
+      else{ renderRoundPick(keys[i]); }
+    };
+  });
+}
+function modeCard(key, subtitle){
+  var m=BANK[key];
+  return '<button class="mode-card"><div class="icon">'+m.icon+'</div><div><b>'+m.name+'</b><span>'+subtitle+'</span></div></button>';
+}
+
+/* ================= 選擇回合 ================= */
+function renderRoundPick(mode){
+  state.screen="pick";
+  var m=BANK[mode];
+  var btns="";
+  for(var i=0;i<ROUNDS.length;i++){
+    var sub = mode==="exam" ? "自我介紹＋複誦 5 題＋朗讀 6 題＋問答 7 題" :
+              mode==="repeat" ? ROUNDS[i].repeat.length+" 題複誦" :
+              mode==="read" ? ROUNDS[i].read.sentences.length+" 句＋1 篇短文" :
+              ROUNDS[i].answer.length+" 題問答";
+    btns+='<button class="mode-card round-pick" data-r="'+i+'"><div class="icon">📚</div><div><b>'+esc(ROUNDS[i].name)+'</b><span>'+sub+'</span></div></button>';
+  }
+  h(
+    '<div class="topbar"><button class="btn-back" id="back">← 回首頁</button></div>'+
+    '<div class="stage" style="text-align:center;">'+
+      '<span class="part-tag'+(mode==="exam"?' exam-tag':'')+'">'+m.tag+'</span>'+
+      '<div class="prompt-zh">'+(mode==="exam"?"要考哪一回呢？考試中不能重聽、不能重來喔！":"要練哪一回呢？")+'</div>'+
+      '<div class="modes" style="margin-top:10px;">'+btns+'</div>'+
+    '</div>'
+  );
+  document.getElementById("back").onclick=renderHome;
+  var picks=document.querySelectorAll(".round-pick");
+  Array.prototype.forEach.call(picks, function(p){
+    p.onclick=function(){
+      var ri=parseInt(p.getAttribute("data-r"),10);
+      if(mode==="exam"){ startExam(ri); }
+      else{ startRound(mode, ri); }
+    };
+  });
+}
+
+/* ================= 正式模擬考 ================= */
+function startExam(roundIdx){
+  state.exam = { round:roundIdx, parts:{}, startTime:Date.now() };
+  renderIntro(true);
+}
+function examNextPart(){
+  var ex=state.exam;
+  ex.parts[state.mode] = { stars:state.stars, max:state.qs.length*3, results:state.results.slice() };
+  if(state.mode==="repeat"){ startRound("read", ex.round); }
+  else if(state.mode==="read"){ startRound("answer", ex.round); }
+  else{ renderExamFinish(); }
+}
+function renderExamFinish(){
+  state.screen="finish";
+  hideTimer();
+  var ex=state.exam;
+  var partNames={intro:"自我介紹",repeat:"第一部分 複誦",read:"第二部分 朗讀",answer:"第三部分 回答問題"};
+  var order=["intro","repeat","read","answer"];
+  var total=0, totalMax=0, weakSet={}, weakList=[];
+  var partHtml="", sumHtml='<div class="summary"><h3>📋 全卷批改總表</h3>';
+  for(var p=0;p<order.length;p++){
+    var key=order[p], pt=ex.parts[key];
+    if(!pt) continue;
+    total+=pt.stars; totalMax+=pt.max;
+    var starSpan="";
+    partHtml+='<div class="part-score"><span>'+partNames[key]+'</span><span class="ps-stars">'+pt.stars+' / '+pt.max+' ⭐</span></div>';
+    if(pt.results && pt.results.length){
+      sumHtml+='<div class="sum-part-title">'+partNames[key]+'</div>';
+      for(var i=0;i<pt.results.length;i++){
+        var r=pt.results[i];
+        if(!r) continue;
+        var starTxt="";
+        for(var s=0;s<3;s++){ starTxt+= s<r.stars ? "⭐" : "☆"; }
+        var qLabel=r.q; if(qLabel.length>60){ qLabel=qLabel.substring(0,60)+"…"; }
+        sumHtml+='<div class="sum-item"><span class="sum-stars">'+starTxt+'</span>'+
+          '<div class="sum-q">'+(i+1)+'. '+esc(qLabel)+'</div>'+
+          (r.said?'<div class="sum-said">你說：'+esc(r.said)+'</div>':'<div class="sum-said">（沒有作答）</div>')+
+          '</div>';
+        if(r.missed){
+          for(var w=0;w<r.missed.length;w++){
+            var k2=r.missed[w].toLowerCase();
+            if(!weakSet[k2]){ weakSet[k2]=true; weakList.push(r.missed[w]); }
+          }
+        }
+      }
+    }
+  }
+  sumHtml+='</div>';
+  var pct= totalMax? total/totalMax : 0;
+  var face = pct>=0.8?"🏆":pct>=0.5?"🎉":"🌱";
+  var word = pct>=0.8?"考得超級好！":pct>=0.5?"表現很棒！":"多練幾次會越來越棒！";
+  var weakHtml="";
+  if(weakList.length>0){
+    weakHtml='<div class="weak-box"><b>🔍 需要加強的單字（點一下聽發音）：</b>';
+    for(var k=0;k<weakList.length;k++){
+      weakHtml+='<button class="chip weak-chip" data-w="'+esc(weakList[k])+'">'+esc(weakList[k])+' 🔊</button>';
+    }
+    weakHtml+='</div>';
+  }
+  // 存入進步紀錄
+  saveHistoryRecord({
+    t:Date.now(), type:"exam", round:ROUNDS[ex.round].name,
+    stars:total, max:totalMax,
+    parts:{ intro:ex.parts.intro?ex.parts.intro.stars:0, repeat:ex.parts.repeat?ex.parts.repeat.stars:0,
+            read:ex.parts.read?ex.parts.read.stars:0, answer:ex.parts.answer?ex.parts.answer.stars:0 },
+    missed:weakList
+  });
+  h(
+    '<div class="finish">'+
+      '<div class="big">'+face+'</div>'+
+      '<h2>'+word+'</h2>'+
+      '<p>'+esc(ROUNDS[ex.round].name)+' · 正式模擬考成績單<br>總分 <b>'+total+'</b> / '+totalMax+' 顆星星</p>'+
+      '<div style="text-align:left;">'+partHtml+'</div>'+
+      '<div class="next-row">'+
+        '<button class="btn-ghost" id="again">再考一次</button>'+
+        '<button class="btn-ghost" id="hist">📈 看紀錄</button>'+
+        '<button class="btn-main" id="home">回首頁</button>'+
+      '</div>'+
+      sumHtml+weakHtml+
+    '</div>'
+  );
+  var ri=ex.round;
+  state.exam=null;
+  document.getElementById("again").onclick=function(){ startExam(ri); };
+  document.getElementById("hist").onclick=renderHistory;
+  document.getElementById("home").onclick=renderHome;
+  var chips=document.querySelectorAll(".weak-chip");
+  Array.prototype.forEach.call(chips, function(c){
+    c.onclick=function(){ speak(c.getAttribute("data-w"), 0.7); };
+  });
+  speak("Well done! You finished the whole test!",1);
+}
+
+/* ================= 自我介紹（考試開始） ================= */
+function rand5(){
+  var s="";
+  for(var i=0;i<5;i++){ s+=Math.floor(Math.random()*10); }
+  return s;
+}
+function renderIntro(inExam){
+  state.screen="q"; state.mode="intro"; state.answered=false; lastTranscript="";
+  state.introNums = { seat:rand5(), test:rand5() };
+  var tag = inExam ? '<span class="part-tag exam-tag">🏁 模擬考 · 自我介紹</span>' : '<span class="part-tag">考試開始 · 自我介紹</span>';
+  h(
+    '<div class="topbar"><button class="btn-back" id="back">← '+(inExam?'放棄考試':'回首頁')+'</button></div>'+
+    '<div class="stage">'+
+      tag+
+      '<div class="prompt-zh">請在 <b>15 秒內</b>完成並唸出下列自我介紹的句子<br>（號碼是隨機出的，練習唸英文數字！）</div>'+
+      '<div class="intro-sent">My seat number is <u>'+state.introNums.seat+'</u> ,<br>and my test number is <u>'+state.introNums.test+'</u> .</div>'+
+      '<div class="timer" id="timer"></div>'+
+      '<div class="controls">'+
+        (inExam?'':'<div class="ctrl"><button class="round-btn btn-listen" id="listen">🔊</button>聽示範</div>')+
+        '<div class="ctrl"><button class="round-btn btn-mic" id="mic">🎤</button><span id="miclabel">按一下開始說</span></div>'+
+      '</div>'+
+      '<div class="heard" id="heard">🦉 按下麥克風後開始倒數 15 秒，加油！</div>'+
+      '<div class="feedback" id="fb"></div>'+
+      '<div class="next-row" id="nextrow"></div>'+
+    '</div>'+
+    '<div class="warn" id="micwarn">⚠️ 拿不到麥克風。請確認網址是 https 開頭，並在瀏覽器允許麥克風權限。</div>'
+  );
+  document.getElementById("back").onclick=goHome;
+  var lb=document.getElementById("listen");
+  if(lb){ lb.onclick=function(){
+    speak("My seat number is "+state.introNums.seat.split("").join(" ")+", and my test number is "+state.introNums.test.split("").join(" ")+".", 0.8);
+  }; }
+  document.getElementById("mic").onclick=function(){
+    if(listening){ stopMic(); return; }
+    startMic(function(){
+      startTimer(INTRO_SEC, "剩下", false, function(){ stopMic(); });
+    });
+  };
+}
+function gradeIntro(said){
+  state.answered=true;
+  hideTimer();
+  var inExam = !!state.exam;
+  var lower = said.toLowerCase();
+  var digits = said.replace(/\D/g,"");
+  var hasSeatPhrase = lower.indexOf("seat number")>=0;
+  var hasTestPhrase = lower.indexOf("test number")>=0;
+  var seatOK = digits.indexOf(state.introNums.seat)>=0;
+  var testOK = digits.indexOf(state.introNums.test)>=0;
+  var okCount = (hasSeatPhrase?1:0)+(hasTestPhrase?1:0)+(seatOK?1:0)+(testOK?1:0);
+  var stars = okCount>=4 ? 3 : okCount>=2 ? 2 : okCount>=1 ? 1 : 0;
+  state.totalStars+=stars; saveTotalStars();
+  if(inExam){ state.exam.parts.intro={stars:stars, max:3, results:[]}; }
+  var msg=fbText(stars);
+  var starHtml="";
+  for(var s=0;s<3;s++){ starHtml+='<span class="'+(s<stars?"":"off")+'">⭐</span>'; }
+  document.getElementById("fb").innerHTML=
+    '<div class="stars">'+starHtml+'</div>'+
+    '<div class="fb-msg">'+msg[0]+'</div>'+
+    '<div class="playback-row">'+(recorderDisabled?'':'<button class="btn-play" id="myrec" disabled>▶️ 聽自己的錄音</button>')+'</div>'+
+    '<div class="report"><div class="rep-title">📝 批改結果</div>'+
+    '<div class="check-line '+(hasSeatPhrase?'ok':'no')+'">'+(hasSeatPhrase?'✅':'❌')+' 有說 My seat number is …</div>'+
+    '<div class="check-line '+(seatOK?'ok':'no')+'">'+(seatOK?'✅':'❌')+' 座位號碼 '+state.introNums.seat+' 唸對了</div>'+
+    '<div class="check-line '+(hasTestPhrase?'ok':'no')+'">'+(hasTestPhrase?'✅':'❌')+' 有說 and my test number is …</div>'+
+    '<div class="check-line '+(testOK?'ok':'no')+'">'+(testOK?'✅':'❌')+' 准考證號碼 '+state.introNums.test+' 唸對了</div>'+
+    '<div class="sample-box">💡 數字要一個一個唸，例如 12345 唸 one, two, three, four, five<button class="btn-say" id="saysample">🔊 聽</button></div>'+
+    '</div>';
+  var mrBtn2=document.getElementById("myrec");
+  if(mrBtn2){
+    if(lastAudioURL){ mrBtn2.disabled=false; }
+    mrBtn2.onclick=playRecording;
+  }
+  var sayBtn=document.getElementById("saysample");
+  if(sayBtn){ sayBtn.onclick=function(){
+    speak("My seat number is "+state.introNums.seat.split("").join(" ")+", and my test number is "+state.introNums.test.split("").join(" ")+".", 0.8);
+  }; }
+  if(inExam){
+    document.getElementById("nextrow").innerHTML=
+      '<button class="btn-main" id="gonext">進入第一部分 複誦 →</button>';
+    document.getElementById("gonext").onclick=function(){ startRound("repeat", state.exam.round); };
+  }else{
+    saveHistoryRecord({t:Date.now(), type:"practice", mode:"intro", round:"—", stars:stars, max:3, missed:[]});
+    document.getElementById("nextrow").innerHTML=
+      '<button class="btn-ghost" id="retry">換一組號碼再練</button>'+
+      '<button class="btn-main" id="gonext">練第一部分 →</button>';
+    document.getElementById("retry").onclick=function(){ renderIntro(false); };
+    document.getElementById("gonext").onclick=function(){ renderRoundPick("repeat"); };
+  }
+  if(stars===3){ speak("Great job!",1); } else if(stars>=1){ speak("Good try!",1); }
+}
+
+/* ================= 開始回合（依「回」取固定題目，照順序出題） ================= */
+function startRound(mode, roundIdx){
+  state.mode=mode; state.round=roundIdx;
+  state.idx=0; state.stars=0; state.answered=false; state.results=[];
+  var rd = ROUNDS[roundIdx];
+  if(mode==="read"){
+    state.qs = rd.read.sentences.slice();
+    state.qs.push(rd.read.passage); // 最後一題為短文
+    renderPrep();
+    return;
+  }
+  state.qs = rd[mode].slice();
+  renderQuestion();
+}
+function renderPrep(){
+  state.screen="prep";
+  var listHtml="";
+  var names=["One:","Two:","Three:","Four:","Five:","Six:","Seven:","Eight:","Nine:","Ten:"];
+  var lastIdx = state.qs.length-1; // 最後一題是短文
+  for(var i=0;i<lastIdx;i++){
+    listHtml+='<div><span class="no">'+(names[i]||((i+1)+":"))+'</span>'+esc(state.qs[i])+'</div>';
+  }
+  listHtml+='<div style="margin-top:6px;"><span class="no">'+(names[lastIdx]||((lastIdx+1)+":"))+'</span><span class="pss">'+esc(state.qs[lastIdx])+'</span></div>';
+  var tagCls = state.exam ? ' exam-tag' : '';
+  var tagPre = state.exam ? '🏁 模擬考 · ' : '';
+  h(
+    '<div class="topbar"><button class="btn-back" id="back">← '+(state.exam?'放棄考試':'回首頁')+'</button></div>'+
+    '<div class="stage">'+
+      '<span class="part-tag'+tagCls+'">'+tagPre+esc(ROUNDS[state.round].name)+' · 第二部分 · 朗讀句子與短文</span>'+
+      '<div class="prompt-zh">請先利用 <b>1 分鐘</b>閱讀下面的句子與短文，<br>然後以正常速度清楚正確地朗讀一遍。</div>'+
+      '<div class="timer" id="timer"></div>'+
+      '<div class="prep-list">'+listHtml+'</div>'+
+      '<div class="next-row"><button class="btn-main" id="ready">我準備好了，開始朗讀 →</button></div>'+
+    '</div>'
+  );
+  document.getElementById("back").onclick=goHome;
+  document.getElementById("ready").onclick=function(){ hideTimer(); renderQuestion(); };
+  startTimer(PREP_SEC, "準備時間", true, function(){
+    speak("Time is up. Please start reading.", 1);
+    setTimeout(function(){ if(state.screen==="prep"){ renderQuestion(); } }, 1200);
+  });
+}
+
+/* ================= 題目頁 ================= */
+function renderQuestion(){
+  state.screen="q"; state.answered=false; lastTranscript="";
+  hideTimer();
+  var m = BANK[state.mode], q = state.qs[state.idx];
+  var qText = (state.mode==="answer") ? q.q : q;
+  var isPassage = (state.mode==="read" && state.idx===state.qs.length-1);
+  var inExam = !!state.exam;
+  var roundName = esc(ROUNDS[state.round].name)+' · ';
+  var tagPre = inExam ? '🏁 ' : '';
+  var dots="";
+  for(var i=0;i<state.qs.length;i++){
+    dots+='<div class="dot '+(i<state.idx?'done':(i===state.idx?'now':''))+'"></div>';
+  }
+  var engHtml, tagText;
+  if(state.mode==="read"){
+    tagText = tagPre+roundName+m.tag+' · '+(isPassage?'短文':'第 '+(state.idx+1)+' 句');
+    engHtml = '<div class="eng'+(isPassage?' passage':'')+'" id="engline">'+wordSpans(qText)+'</div>';
+  }else{
+    tagText = tagPre+roundName+m.tag+' · 第 '+(state.idx+1)+' 題';
+    engHtml = '<div class="hidden-q" id="hiddenq">🙈 題目不會顯示文字，準備仔細聽…</div>'+
+              '<div class="eng small" id="engline" style="display:none">'+(state.mode==="repeat"?wordSpans(qText):esc(qText))+'</div>';
+  }
+  // 模擬考中不能重聽（朗讀本來就沒示範）
+  var listenHtml = inExam ? '' :
+    '<div class="ctrl"><button class="round-btn btn-listen" id="listen">🔊</button>'+(state.mode==="read"?"聽示範":"再聽一次")+'</div>';
+  h(
+    '<div class="topbar"><button class="btn-back" id="back">← '+(inExam?'放棄考試':'回首頁')+'</button><div class="progress">'+dots+'</div></div>'+
+    '<div class="stage">'+
+      '<span class="part-tag'+(inExam?' exam-tag':'')+'">'+tagText+'</span>'+
+      '<div class="prompt-zh">'+m.desc+'</div>'+
+      engHtml+
+      '<div class="timer" id="timer"></div>'+
+      '<div class="controls">'+
+        listenHtml+
+        '<div class="ctrl"><button class="round-btn btn-mic" id="mic">🎤</button><span id="miclabel">'+(state.mode==="read"?"按一下開始唸":"等播完再說")+'</span></div>'+
+      '</div>'+
+      '<div class="heard" id="heard">🦉 我在等你說話…</div>'+
+      '<div class="feedback" id="fb"></div>'+
+      '<div class="next-row" id="nextrow"></div>'+
+    '</div>'+
+    '<div class="warn" id="micwarn">⚠️ 拿不到麥克風。請確認網址是 https 開頭，並在瀏覽器允許麥克風權限。</div>'
+  );
+  document.getElementById("back").onclick=goHome;
+  var lb=document.getElementById("listen");
+  if(lb){ lb.onclick=function(){ speak(qText); }; }
+  document.getElementById("mic").onclick=function(){
+    if(listening){ stopMic(); return; }
+    beginSpeaking();
+  };
+  if(state.mode!=="read"){
+    setTimeout(function(){
+      if(state.screen!=="q") return;
+      playTwice(qText, setPlayStatus, function(){
+        setPlayStatus("🎤 換你了！馬上開口說！", true);
+        beginSpeaking();
+      });
+    }, 500);
+  }
+}
+function setPlayStatus(text, yourturn){
+  var el=document.getElementById("hiddenq");
+  if(el){
+    el.textContent=text;
+    el.className="hidden-q "+(yourturn?"yourturn":"playing");
+  }
+}
+function beginSpeaking(){
+  startMic(function(){
+    if(state.mode==="answer"){
+      startTimer(ANSWER_SEC, "回答時間 剩下", false, function(){ stopMic(); });
+    }
+  });
+}
+function wordSpans(sentence){
+  var parts = sentence.split(" "), out="";
+  for(var i=0;i<parts.length;i++){ out+='<span class="w" data-i="'+i+'">'+esc(parts[i])+'</span> '; }
+  return out;
+}
+function goHome(){ hideTimer(); stopMic(); stopRecorder(); renderHome(); }
+
+/* ================= 錄音流程 ================= */
+function startMic(onStarted){
+  recognition = initRecognition();
+  if(!recognition){
+    var w=document.getElementById("micwarn");
+    if(w){ w.style.display="block"; }
+    return;
+  }
+  var micBtn=document.getElementById("mic"), label=document.getElementById("miclabel"), heard=document.getElementById("heard");
+  lastTranscript="";
+  recognition.onstart=function(){
+    listening=true;
+    if(micBtn){ micBtn.className="round-btn btn-mic rec"; }
+    if(label){ label.textContent="正在聽…再按一下結束"; }
+    if(heard){ heard.innerHTML="👂 我在聽，請大聲說英文！"; }
+    window.speechSynthesis && window.speechSynthesis.cancel();
+    startRecorder(); // 同步開始錄音，供回放
+    if(onStarted){ onStarted(); }
+  };
+  recognition.onresult=function(ev){
+    // Android 會把「到目前為止的整句」不斷當成新片段重複回傳（有時還標成定案），
+    // 所以用合併法：新片段若包含舊結果就「取代」、已包含就「略過」、全新內容才「接上」
+    var out="";
+    for(var i=0;i<ev.results.length;i++){
+      var p=(ev.results[i][0].transcript||"").trim();
+      if(!p) continue;
+      if(p.indexOf(out)===0){ out=p; }               // 新片段以舊結果開頭 → 這是更長的累積快照，直接取代
+      else if(out.indexOf(p)>=0){ /* 舊結果已包含此片段 → 重複，略過 */ }
+      else{ out=(out+" "+p).trim(); }                // 真的是新內容 → 接在後面
+    }
+    lastTranscript=out;
+    if(heard){ heard.innerHTML="🗣️ 我聽到：<b>"+esc(lastTranscript)+"</b>"; }
+  };
+  recognition.onerror=function(ev){
+    listening=false; resetMicBtn(); hideTimer(); stopRecorder();
+    if(ev.error==="not-allowed" || ev.error==="service-not-allowed"){
+      var w=document.getElementById("micwarn");
+      if(w){ w.style.display="block"; }
+    }else if(ev.error==="no-speech" || ev.error==="audio-capture"){
+      // 可能是錄音功能和辨識搶麥克風（常見於 Android）→ 關閉錄音、把麥克風讓給辨識
+      if(!recorderDisabled){
+        recorderDisabled=true;
+        releaseStream();
+        if(heard){ heard.innerHTML="😅 沒有聽到聲音。我調整好了，<b>再按一次 🎤</b>，按下後馬上大聲說！"; }
+      }else{
+        if(heard){ heard.innerHTML="😅 還是沒聽到。請靠近手機一點，按 🎤 後<b>馬上</b>大聲說英文！"; }
+      }
+    }
+  };
+  recognition.onend=function(){
+    listening=false; resetMicBtn(); hideTimer(); stopRecorder();
+    if(lastTranscript && !state.answered){
+      if(state.mode==="intro"){ gradeIntro(lastTranscript); }
+      else{ grade(lastTranscript); }
+    }else if(!lastTranscript && !state.answered && heard){
+      heard.innerHTML="😅 沒有聽到聲音，按 🎤 再說一次！";
+    }
+  };
+  try{ recognition.start(); }catch(e){}
+}
+function stopMic(){ if(recognition){ try{recognition.stop();}catch(e){} } }
+function resetMicBtn(){
+  var b=document.getElementById("mic"), l=document.getElementById("miclabel");
+  if(b){ b.className="round-btn btn-mic"; }
+  if(l){ l.textContent="按一下開始說"; }
+}
+
+/* ================= 評分與批改 ================= */
+function grade(said){
+  state.answered=true;
+  hideTimer();
+  var inExam = !!state.exam;
+  var q=state.qs[state.idx], res, sub, reportHtml="", qText, missed=[];
+  if(state.mode==="answer"){
+    qText=q.q;
+    var hidA=document.getElementById("hiddenq"), lineA=document.getElementById("engline");
+    if(hidA){ hidA.style.display="none"; }
+    if(lineA){ lineA.style.display="block"; }
+    res=scoreAnswer(said, q);
+    sub = "你說了 "+res.words+" 個英文字";
+    reportHtml =
+      '<div class="report"><div class="rep-title">📝 批改結果</div>'+
+      '<div class="check-line '+(res.full?'ok':'no')+'">'+(res.full?'✅ 有用完整句子回答（3 個字以上）':'❌ 句子太短了，試著說完整的句子')+'</div>'+
+      '<div class="check-line '+(res.onTopic?'ok':'no')+'">'+(res.onTopic?'✅ 有回答到問題的重點':'❌ 好像沒有回答到問題，聽聽看參考答案')+'</div>'+
+      '<div class="sample-box">💡 參考答案：<b>'+esc(q.sample)+'</b><button class="btn-say" id="saysample">🔊 聽</button><br><span style="font-size:12.5px;color:#8FA9C0;">可以把名字、數字換成自己的喔！</span></div>'+
+      '</div>';
+  }else{
+    qText=q;
+    res=scoreRepeat(q, said);
+    missed=res.missed;
+    var line=document.getElementById("engline"), hid=document.getElementById("hiddenq");
+    if(hid){ hid.style.display="none"; }
+    if(line){
+      line.style.display="block";
+      var spans=line.querySelectorAll(".w");
+      for(var i=0;i<spans.length;i++){ spans[i].className="w "+(res.marks[i]?"hit":"miss"); }
+    }
+    sub = "唸對 "+Math.round(res.pct*100)+"% 的字（綠色是唸對的字）";
+    var rep = '<div class="report"><div class="rep-title">📝 批改結果</div>';
+    if(res.missed.length===0){
+      rep += '<span class="chip mint">🌟 全部唸對，沒有漏字！</span>';
+    }else{
+      rep += '<div class="rep-row"><span class="rep-label">要加強的字（點一下可以聽發音）：</span>';
+      for(var mi=0;mi<res.missed.length;mi++){
+        rep += '<button class="chip miss-chip" data-w="'+esc(res.missed[mi])+'">'+esc(res.missed[mi])+' 🔊</button>';
+      }
+      rep += '</div>';
+    }
+    if(res.extra.length>0){
+      rep += '<div class="rep-row"><span class="rep-label">我聽到多唸或唸成別的字：</span>';
+      for(var ei=0;ei<res.extra.length;ei++){
+        rep += '<span class="chip gray">'+esc(res.extra[ei])+'</span>';
+      }
+      rep += '</div>';
+    }
+    rep += '</div>';
+    reportHtml = rep;
+  }
+  state.results[state.idx] = { q:qText, said:said, stars:res.stars, missed:missed };
+  state.stars+=res.stars; state.totalStars+=res.stars; saveTotalStars();
+  var msg=fbText(res.stars);
+  var starHtml="";
+  for(var s=0;s<3;s++){ starHtml+='<span class="'+(s<res.stars?"":"off")+'">⭐</span>'; }
+  document.getElementById("fb").innerHTML=
+    '<div class="stars">'+starHtml+'</div>'+
+    '<div class="fb-msg">'+msg[0]+'</div>'+
+    '<div class="fb-sub">'+(sub||msg[1])+'</div>'+
+    '<div class="playback-row">'+
+      (recorderDisabled?'':'<button class="btn-play" id="myrec" disabled>▶️ 聽自己的錄音</button>')+
+      (state.mode!=="answer"?'<button class="btn-play demo" id="demorec">🔊 聽示範比較</button>':'')+
+    '</div>'+
+    reportHtml;
+  var mrBtn=document.getElementById("myrec");
+  if(mrBtn){
+    if(lastAudioURL){ mrBtn.disabled=false; }
+    mrBtn.onclick=playRecording;
+  }
+  var dm=document.getElementById("demorec");
+  if(dm){ dm.onclick=function(){ speak(qText); }; }
+  var sayBtn=document.getElementById("saysample");
+  if(sayBtn){ sayBtn.onclick=function(){ speak(q.sample); }; }
+  var chips=document.querySelectorAll(".miss-chip");
+  Array.prototype.forEach.call(chips, function(c){
+    c.onclick=function(){ speak(c.getAttribute("data-w"), 0.7); };
+  });
+  var last = state.idx===state.qs.length-1;
+  var nextLabel;
+  if(inExam){
+    nextLabel = !last ? "下一題 →" :
+      (state.mode==="repeat" ? "進入第二部分 朗讀 →" :
+       state.mode==="read" ? "進入第三部分 回答問題 →" : "看成績單 🏁");
+    document.getElementById("nextrow").innerHTML=
+      '<button class="btn-main" id="next">'+nextLabel+'</button>';
+  }else{
+    nextLabel = last ? "看成績 🏁" : "下一題 →";
+    document.getElementById("nextrow").innerHTML=
+      '<button class="btn-ghost" id="retry">再試一次</button>'+
+      '<button class="btn-main" id="next">'+nextLabel+'</button>';
+    document.getElementById("retry").onclick=function(){
+      state.stars-=res.stars; state.totalStars-=res.stars; saveTotalStars();
+      renderQuestion();
+    };
+  }
+  document.getElementById("next").onclick=function(){
+    if(last){
+      if(inExam){ examNextPart(); } else { renderFinish(); }
+    } else { state.idx++; renderQuestion(); }
+  };
+  if(res.stars===3){ speak("Great job!",1); }
+  else if(res.stars>=1){ speak("Good try!",1); }
+}
+
+/* ================= 結算（單部分練習） ================= */
+function renderFinish(){
+  state.screen="finish";
+  hideTimer();
+  var max=state.qs.length*3, pct=state.stars/max;
+  var face = pct>=0.8?"🏆":pct>=0.5?"🎉":"🌱";
+  var word = pct>=0.8?"超級厲害！":pct>=0.5?"表現很棒！":"每天練一點，會越來越棒！";
+
+  var sumHtml='<div class="summary"><h3>📋 本回合批改總表</h3>';
+  var weakSet={}, weakList=[];
+  for(var i=0;i<state.qs.length;i++){
+    var r=state.results[i];
+    var starTxt="";
+    if(r){ for(var s=0;s<3;s++){ starTxt+= s<r.stars ? "⭐" : "☆"; } }
+    var qLabel = r ? r.q : (state.mode==="answer" ? state.qs[i].q : state.qs[i]);
+    if(qLabel.length>60){ qLabel = qLabel.substring(0,60)+"…"; }
+    sumHtml+='<div class="sum-item">'+
+      '<span class="sum-stars">'+(r?starTxt:"—")+'</span>'+
+      '<div class="sum-q">'+(i+1)+'. '+esc(qLabel)+'</div>'+
+      (r&&r.said?'<div class="sum-said">你說：'+esc(r.said)+'</div>':'<div class="sum-said">（沒有作答）</div>')+
+      '</div>';
+    if(r&&r.missed){
+      for(var w=0;w<r.missed.length;w++){
+        var key=r.missed[w].toLowerCase();
+        if(!weakSet[key]){ weakSet[key]=true; weakList.push(r.missed[w]); }
+      }
+    }
+  }
+  sumHtml+='</div>';
+  var weakHtml="";
+  if(weakList.length>0){
+    weakHtml='<div class="weak-box"><b>🔍 需要加強的單字（點一下聽發音）：</b>';
+    for(var k=0;k<weakList.length;k++){
+      weakHtml+='<button class="chip weak-chip" data-w="'+esc(weakList[k])+'">'+esc(weakList[k])+' 🔊</button>';
+    }
+    weakHtml+='</div>';
+  }else if(state.mode!=="answer"){
+    weakHtml='<div class="weak-box"><b>🌟 沒有需要加強的單字，太厲害了！</b></div>';
+  }
+
+  // 存入進步紀錄
+  saveHistoryRecord({
+    t:Date.now(), type:"practice", mode:state.mode,
+    round:ROUNDS[state.round].name, stars:state.stars, max:max, missed:weakList
+  });
+
+  h(
+    '<div class="finish">'+
+      '<div class="big">'+face+'</div>'+
+      '<h2>'+word+'</h2>'+
+      '<p>'+esc(ROUNDS[state.round].name)+' · '+esc(BANK[state.mode].name)+'<br>這一回合得到 <b>'+state.stars+'</b> / '+max+' 顆星星<br>總共收集了 <b>'+state.totalStars+'</b> 顆 ⭐</p>'+
+      '<div class="next-row">'+
+        '<button class="btn-ghost" id="again">再練這一回</button>'+
+        '<button class="btn-ghost" id="pick">換一回</button>'+
+        '<button class="btn-main" id="home">回首頁</button>'+
+      '</div>'+
+      sumHtml+weakHtml+
+    '</div>'
+  );
+  document.getElementById("again").onclick=function(){ startRound(state.mode, state.round); };
+  document.getElementById("pick").onclick=function(){ renderRoundPick(state.mode); };
+  document.getElementById("home").onclick=renderHome;
+  var chips=document.querySelectorAll(".weak-chip");
+  Array.prototype.forEach.call(chips, function(c){
+    c.onclick=function(){ speak(c.getAttribute("data-w"), 0.7); };
+  });
+  speak("Well done! You did a great job!",1);
+}
+
+/* ================= 進步紀錄頁 ================= */
+function renderHistory(){
+  state.screen="history";
+  hideTimer(); stopMic();
+  var hst=loadHistory();
+  var modeNames={intro:"自我介紹",repeat:"複誦",read:"朗讀",answer:"回答問題"};
+  // 統計
+  var examCount=0, practiceCount=0, weakCount={};
+  for(var i=0;i<hst.length;i++){
+    if(hst[i].type==="exam"){ examCount++; } else { practiceCount++; }
+    if(hst[i].missed){
+      for(var w=0;w<hst[i].missed.length;w++){
+        var k=hst[i].missed[w].toLowerCase();
+        weakCount[k]=(weakCount[k]||0)+1;
+      }
+    }
+  }
+  // 最常漏掉的字 Top 10
+  var weakArr=[];
+  for(var key in weakCount){ weakArr.push({w:key, n:weakCount[key]}); }
+  weakArr.sort(function(a,b){ return b.n-a.n; });
+  weakArr=weakArr.slice(0,10);
+  var weakHtml="";
+  if(weakArr.length>0){
+    weakHtml='<div class="weak-box"><b>🔍 最常漏掉的單字（點一下聽發音）：</b>';
+    for(var j=0;j<weakArr.length;j++){
+      weakHtml+='<button class="chip weak-chip" data-w="'+esc(weakArr[j].w)+'">'+esc(weakArr[j].w)+' ×'+weakArr[j].n+' 🔊</button>';
+    }
+    weakHtml+='</div>';
+  }
+  // 紀錄清單（最新在上，最多顯示 30 筆）
+  var listHtml="";
+  var recent=hst.slice(-30).reverse();
+  for(var r=0;r<recent.length;r++){
+    var rec=recent[r];
+    if(rec.type==="exam"){
+      listHtml+='<div class="hist-item exam-rec">'+
+        '<span class="hi-stars">'+rec.stars+' / '+rec.max+' ⭐</span>'+
+        '<div class="hi-title">🏁 正式模擬考 · '+esc(rec.round)+'</div>'+
+        '<div class="hi-date">'+fmtDate(rec.t)+' · 自介 '+rec.parts.intro+'｜複誦 '+rec.parts.repeat+'｜朗讀 '+rec.parts.read+'｜問答 '+rec.parts.answer+'</div>'+
+        '</div>';
+    }else{
+      listHtml+='<div class="hist-item">'+
+        '<span class="hi-stars">'+rec.stars+' / '+rec.max+' ⭐</span>'+
+        '<div class="hi-title">'+(modeNames[rec.mode]||rec.mode)+(rec.round&&rec.round!=="—"?' · '+esc(rec.round):'')+'</div>'+
+        '<div class="hi-date">'+fmtDate(rec.t)+(rec.missed&&rec.missed.length?' · 漏字 '+rec.missed.length+' 個':'')+'</div>'+
+        '</div>';
+    }
+  }
+  if(!listHtml){
+    listHtml='<div class="hist-empty">還沒有練習紀錄，<br>快去練第一回吧！🦉</div>';
+  }
+  h(
+    '<div class="topbar"><button class="btn-back" id="back">← 回首頁</button>'+
+    (hst.length?'<button class="btn-back" id="clear" style="color:#C0392B;">清除紀錄</button>':'')+
+    '</div>'+
+    '<div class="home-head" style="margin-top:0;"><h1 style="font-size:24px;">📈 我的進步紀錄</h1><p>紀錄存在這台裝置的瀏覽器裡</p></div>'+
+    '<div class="hist-stats">'+
+      '<div class="hist-stat"><b>'+practiceCount+'</b><span>練習次數</span></div>'+
+      '<div class="hist-stat"><b>'+examCount+'</b><span>模擬考次數</span></div>'+
+      '<div class="hist-stat"><b>'+state.totalStars+'</b><span>累積星星 ⭐</span></div>'+
+    '</div>'+
+    weakHtml+
+    '<div style="margin-top:14px;">'+listHtml+'</div>'
+  );
+  document.getElementById("back").onclick=renderHome;
+  var clearBtn=document.getElementById("clear");
+  if(clearBtn){
+    clearBtn.onclick=function(){
+      if(confirm("確定要清除所有練習紀錄和星星嗎？清掉就找不回來囉！")){
+        try{
+          localStorage.removeItem("gept_history");
+          localStorage.removeItem("gept_stars");
+        }catch(e){}
+        state.totalStars=0;
+        renderHistory();
+      }
+    };
+  }
+  var chips=document.querySelectorAll(".weak-chip");
+  Array.prototype.forEach.call(chips, function(c){
+    c.onclick=function(){ speak(c.getAttribute("data-w"), 0.7); };
+  });
+}
+
+/* 預先載入語音列表 */
+if(window.speechSynthesis){ window.speechSynthesis.onvoiceschanged=function(){}; window.speechSynthesis.getVoices(); }
+renderHome();
+</script>
+</body>
+</html>
