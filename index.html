@@ -585,7 +585,7 @@ function renderHome(){
       modeCard("read","5 個句子＋1 篇短文 · 1 分鐘準備 · 目前有 "+ROUNDS.length+" 回")+
       modeCard("answer","共 7 題 · 每題播兩次 · 回答 15 秒 · 目前有 "+ROUNDS.length+" 回")+
     '</div>'+
-    '<div class="tip">🎧 完全依照正式考試流程：複誦和回答問題的題目<b>不會顯示文字</b>，會用錄音<b>播出兩次</b>，聽完要馬上開口。每題答完可以<b>回放自己的錄音</b>，練習成績會自動記錄。<span style="float:right;color:#B9C9D8;">v5</span></div>'+
+    '<div class="tip">🎧 完全依照正式考試流程：複誦和回答問題的題目<b>不會顯示文字</b>，會用錄音<b>播出兩次</b>，聽完要馬上開口。每題答完可以<b>回放自己的錄音</b>，練習成績會自動記錄。<span style="float:right;color:#B9C9D8;">v6</span></div>'+
     '<div class="warn" id="srwarn" style="display:'+(srOK?'none':'block')+'">⚠️ 這個瀏覽器不支援語音辨識。請用 <b>Chrome</b> 或 <b>Edge</b> 開啟 https 網址，就可以聽小朋友說話囉！</div>'
   );
   document.getElementById("histbtn").onclick=renderHistory;
@@ -670,7 +670,7 @@ function renderExamFinish(){
         var qLabel=r.q; if(qLabel.length>60){ qLabel=qLabel.substring(0,60)+"…"; }
         sumHtml+='<div class="sum-item"><span class="sum-stars">'+starTxt+'</span>'+
           '<div class="sum-q">'+(i+1)+'. '+esc(qLabel)+'</div>'+
-          (r.said?'<div class="sum-said">你說：'+esc(r.said)+'</div>':'<div class="sum-said">（沒有作答）</div>')+
+          (r.said?'<div class="sum-said">你說：'+esc(r.said)+'</div>':'')+
           '</div>';
         if(r.missed){
           for(var w=0;w<r.missed.length;w++){
@@ -854,11 +854,140 @@ function renderPrep(){
     '</div>'
   );
   document.getElementById("back").onclick=goHome;
-  document.getElementById("ready").onclick=function(){ hideTimer(); renderQuestion(); };
+  document.getElementById("ready").onclick=function(){ hideTimer(); renderReadAll(); };
   startTimer(PREP_SEC, "準備時間", true, function(){
     speak("Time is up. Please start reading.", 1);
-    setTimeout(function(){ if(state.screen==="prep"){ renderQuestion(); } }, 1200);
+    setTimeout(function(){ if(state.screen==="prep"){ renderReadAll(); } }, 1200);
   });
+}
+
+/* ================= 第二部分：整段朗讀（1 分鐘內唸完全部） ================= */
+var readAccum="", readManualStop=false;
+function renderReadAll(){
+  state.screen="q"; state.answered=false; lastTranscript="";
+  readAccum=""; readManualStop=false; state.readEndsAt=null;
+  hideTimer();
+  var names=["One:","Two:","Three:","Four:","Five:","Six:","Seven:","Eight:"];
+  var lastIdx=state.qs.length-1;
+  var listHtml="";
+  for(var i=0;i<state.qs.length;i++){
+    var inner='<span class="rd-words" data-item="'+i+'">'+wordSpans(state.qs[i])+'</span>';
+    if(i===lastIdx){
+      listHtml+='<div class="rd-item"><span class="no">'+(names[i]||((i+1)+":"))+'</span><span class="pss">'+inner+'</span></div>';
+    }else{
+      listHtml+='<div class="rd-item"><span class="no">'+(names[i]||((i+1)+":"))+'</span>'+inner+'</div>';
+    }
+  }
+  var inExam=!!state.exam;
+  h(
+    '<div class="topbar"><button class="btn-back" id="back">← '+(inExam?'放棄考試':'回首頁')+'</button></div>'+
+    '<div class="stage">'+
+      '<span class="part-tag'+(inExam?' exam-tag':'')+'">'+(inExam?'🏁 ':'')+esc(ROUNDS[state.round].name)+' · 第二部分 · 朗讀句子與短文</span>'+
+      '<div class="prompt-zh">按 🎤 開始計時，請在 <b>1 分鐘內</b>把 5 個句子和短文<b>從頭到尾唸完</b>，唸完再按一下 🎤 結束批改。</div>'+
+      '<div class="timer" id="timer"></div>'+
+      '<div class="prep-list" id="readlist">'+listHtml+'</div>'+
+      '<div class="controls">'+
+        '<div class="ctrl"><button class="round-btn btn-mic" id="mic">🎤</button><span id="miclabel">按一下開始唸</span></div>'+
+      '</div>'+
+      '<div class="heard" id="heard">🦉 按下麥克風就開始倒數 60 秒，加油！</div>'+
+      '<div class="feedback" id="fb"></div>'+
+      '<div class="next-row" id="nextrow"></div>'+
+    '</div>'+
+    '<div class="warn" id="micwarn">⚠️ 拿不到麥克風。請確認網址是 https 開頭，並在瀏覽器允許麥克風權限。</div>'
+  );
+  document.getElementById("back").onclick=goHome;
+  document.getElementById("mic").onclick=function(){
+    if(listening){ readManualStop=true; stopMic(); return; }
+    beginReadAll();
+  };
+}
+function beginReadAll(){
+  readManualStop=false;
+  startMic(function(){
+    if(!state.readEndsAt){ state.readEndsAt=Date.now()+PREP_SEC*1000; }
+    var remain=Math.ceil((state.readEndsAt-Date.now())/1000);
+    if(remain>0){
+      startTimer(remain, "朗讀時間 剩下", false, function(){
+        readManualStop=true;
+        stopMic();
+      });
+    }
+  });
+}
+function gradeReadAll(said){
+  state.answered=true;
+  hideTimer();
+  var combined = state.qs.join(" ");
+  var res = scoreRepeat(combined, said);
+  // 依每題的字數把整體比對結果切回各題，逐題上色、給星、記漏字
+  var ptr=0, partStars=0, weakSet={}, weakList=[];
+  for(var i=0;i<state.qs.length;i++){
+    var n = normWords(state.qs[i]).length;
+    var m = res.marks.slice(ptr, ptr+n);
+    var hit=0;
+    for(var a=0;a<m.length;a++){ if(m[a]) hit++; }
+    var pct = n? hit/n : 0;
+    var stars = pct>=0.85 ? 3 : pct>=0.6 ? 2 : pct>0 ? 1 : 0;
+    var tRaw = state.qs[i].replace(/[.,!?]/g,"").split(" ");
+    var missed=[];
+    for(var k=0;k<m.length;k++){
+      if(!m[k]){
+        missed.push(tRaw[k]);
+        var wk=tRaw[k].toLowerCase();
+        if(!weakSet[wk]){ weakSet[wk]=true; weakList.push(tRaw[k]); }
+      }
+    }
+    // 上色
+    var cont=document.querySelector('.rd-words[data-item="'+i+'"]');
+    if(cont){
+      var spans=cont.querySelectorAll(".w");
+      for(var s2=0;s2<spans.length;s2++){ spans[s2].className="w "+(m[s2]?"hit":"miss"); }
+    }
+    state.results[i]={ q:state.qs[i], said:"", stars:stars, missed:missed };
+    partStars+=stars;
+    ptr+=n;
+  }
+  state.stars+=partStars; state.totalStars+=partStars; saveTotalStars();
+  var overall = res.pct>=0.85 ? 3 : res.pct>=0.6 ? 2 : res.pct>0 ? 1 : 0;
+  var msg=fbText(overall);
+  var starHtml="";
+  for(var s=0;s<3;s++){ starHtml+='<span class="'+(s<overall?"":"off")+'">⭐</span>'; }
+  var repHtml='<div class="report"><div class="rep-title">📝 批改結果</div>';
+  if(weakList.length===0){
+    repHtml+='<span class="chip mint">🌟 全部唸對，沒有漏字！</span>';
+  }else{
+    repHtml+='<div class="rep-row"><span class="rep-label">要加強的字（點一下可以聽發音）：</span>';
+    for(var w2=0;w2<weakList.length;w2++){
+      repHtml+='<button class="chip miss-chip" data-w="'+esc(weakList[w2])+'">'+esc(weakList[w2])+' 🔊</button>';
+    }
+    repHtml+='</div>';
+  }
+  repHtml+='</div>';
+  document.getElementById("fb").innerHTML=
+    '<div class="stars">'+starHtml+'</div>'+
+    '<div class="fb-msg">'+msg[0]+'</div>'+
+    '<div class="fb-sub">整段唸對 '+Math.round(res.pct*100)+'% 的字 · 六題共得 '+partStars+' / '+(state.qs.length*3)+' 顆星（綠色是唸對的字）</div>'+
+    repHtml;
+  var chips=document.querySelectorAll(".miss-chip");
+  Array.prototype.forEach.call(chips, function(c){
+    c.onclick=function(){ speak(c.getAttribute("data-w"), 0.7); };
+  });
+  if(state.exam){
+    document.getElementById("nextrow").innerHTML=
+      '<button class="btn-main" id="next">進入第三部分 回答問題 →</button>';
+    document.getElementById("next").onclick=function(){ examNextPart(); };
+  }else{
+    document.getElementById("nextrow").innerHTML=
+      '<button class="btn-ghost" id="retry">再唸一次</button>'+
+      '<button class="btn-main" id="next">看成績 🏁</button>';
+    document.getElementById("retry").onclick=function(){
+      state.stars-=partStars; state.totalStars-=partStars; saveTotalStars();
+      state.results=[];
+      renderReadAll();
+    };
+    document.getElementById("next").onclick=function(){ renderFinish(); };
+  }
+  if(overall===3){ speak("Great job!",1); } else if(overall>=1){ speak("Good try!",1); }
 }
 
 /* ================= 題目頁 ================= */
@@ -911,37 +1040,14 @@ function renderQuestion(){
     if(listening){ stopMic(); return; }
     beginSpeaking();
   };
-  if(state.mode==="read"){
-    // 正式規範：5 句 + 短文要在 1 分鐘內全部唸完（跨題持續倒數，批改時也不暫停）
-    if(!state.readEndsAt){ state.readEndsAt = Date.now() + PREP_SEC*1000; }
-    var remain = Math.ceil((state.readEndsAt - Date.now())/1000);
-    if(remain > 0){
-      startTimer(remain, "朗讀時間 剩下", false, onReadTimeUp);
-    }else{
-      onReadTimeUp();
-    }
-  }else{
-    setTimeout(function(){
-      if(state.screen!=="q") return;
-      playTwice(qText, setPlayStatus, function(){
-        setPlayStatus("🎤 換你了！馬上開口說！", true);
-        beginSpeaking();
-      });
-    }, 500);
-  }
-}
-// 朗讀 1 分鐘到：模擬考直接結束這部分；平常練習提醒後可繼續唸完
-function onReadTimeUp(){
-  stopMic();
-  speak("Time is up.", 1);
-  if(state.exam){
-    setTimeout(function(){
-      if(state.exam && state.mode==="read"){ examNextPart(); }
-    }, 1500);
-  }else{
-    var heard=document.getElementById("heard");
-    if(heard){ heard.innerHTML="⏱️ <b>一分鐘到了！</b>正式考試要在 1 分鐘內唸完全部 6 題喔。練習時可以繼續唸完，下次試著加快一點！"; }
-  }
+  // 複誦、回答問題：自動播兩次後開麥克風（朗讀已改為整段一次唸完，不會進到這裡）
+  setTimeout(function(){
+    if(state.screen!=="q") return;
+    playTwice(qText, setPlayStatus, function(){
+      setPlayStatus("🎤 換你了！馬上開口說！", true);
+      beginSpeaking();
+    });
+  }, 500);
 }
 function setPlayStatus(text, yourturn){
   var el=document.getElementById("hiddenq");
@@ -1007,15 +1113,18 @@ function startMic(onStarted){
       else{ out=(out+" "+p).trim(); }
     }
     lastTranscript=out;
-    if(heard){ heard.innerHTML="🗣️ 我聽到：<b>"+esc(lastTranscript)+"</b>"; }
+    if(heard){
+      var show=(state.mode==="read" && readAccum) ? (readAccum+" "+lastTranscript).trim() : lastTranscript;
+      heard.innerHTML="🗣️ 我聽到：<b>"+esc(show)+"</b>";
+    }
   };
   recognition.onerror=function(ev){
     listening=false; resetMicBtn(); stopRecorder();
-    if(state.mode!=="read"){ hideTimer(); } // 朗讀的 1 分鐘總計時不因收音結束而停止
+    if(state.mode!=="read"){ hideTimer(); } // 朗讀的 1 分鐘總計時不因收音中斷而停止
     if(ev.error==="not-allowed" || ev.error==="service-not-allowed"){
       var w=document.getElementById("micwarn");
       if(w){ w.style.display="block"; }
-    }else if(ev.error==="no-speech" || ev.error==="audio-capture"){
+    }else if((ev.error==="no-speech" || ev.error==="audio-capture") && state.mode!=="read"){
       // 可能是錄音功能和辨識搶麥克風（常見於 Android）→ 關閉錄音、把麥克風讓給辨識
       if(!recorderDisabled){
         recorderDisabled=true;
@@ -1028,7 +1137,21 @@ function startMic(onStarted){
   };
   recognition.onend=function(){
     listening=false; resetMicBtn(); stopRecorder();
-    if(state.mode!=="read"){ hideTimer(); }
+    if(state.mode==="read"){
+      if(state.screen!=="q" || state.answered) return;
+      // 小朋友句間停頓時 Android 常自動斷線 → 時間還沒到就自動續錄，把文字累積起來
+      if(!readManualStop && state.readEndsAt && Date.now() < state.readEndsAt){
+        readAccum=(readAccum+" "+lastTranscript).trim();
+        lastTranscript="";
+        try{ recognition.start(); return; }catch(e){}
+      }
+      hideTimer();
+      var full=(readAccum+" "+lastTranscript).trim();
+      if(full){ gradeReadAll(full); }
+      else if(heard){ heard.innerHTML="😅 沒有聽到聲音，按 🎤 重新開始（會重新計時 60 秒）"; state.readEndsAt=null; }
+      return;
+    }
+    hideTimer();
     if(lastTranscript && !state.answered){
       if(state.mode==="intro"){ gradeIntro(lastTranscript); }
       else{ grade(lastTranscript); }
@@ -1169,7 +1292,7 @@ function renderFinish(){
     sumHtml+='<div class="sum-item">'+
       '<span class="sum-stars">'+(r?starTxt:"—")+'</span>'+
       '<div class="sum-q">'+(i+1)+'. '+esc(qLabel)+'</div>'+
-      (r&&r.said?'<div class="sum-said">你說：'+esc(r.said)+'</div>':'<div class="sum-said">（沒有作答）</div>')+
+      (r ? (r.said?'<div class="sum-said">你說：'+esc(r.said)+'</div>':'') : '<div class="sum-said">（沒有作答）</div>')+
       '</div>';
     if(r&&r.missed){
       for(var w=0;w<r.missed.length;w++){
