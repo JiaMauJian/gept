@@ -271,23 +271,6 @@ h1,h2,.eng{font-family:'Fredoka','Microsoft JhengHei',sans-serif;}
 @media (prefers-reduced-motion: reduce){
   .home-head .mascot,.finish .big,.btn-mic.rec{animation:none;}
 }
-
-.pending-box{background:#FFF7E6;border:1px solid #FFE0A3;border-radius:14px;padding:12px;margin-top:14px;}
-.pending-head{font-weight:800;color:#B26A00;margin-bottom:8px;font-size:15px;}
-.ans-card{background:#fff;border:1px solid #F0E2C4;border-radius:12px;padding:10px 12px;margin-bottom:10px;}
-.ac-q{font-weight:700;color:#333;line-height:1.4;}
-.ac-date{font-size:12.5px;color:#9AA6B2;margin:3px 0 8px;}
-.ac-tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
-.ac-noaudio{font-size:12.5px;color:#B0B0B0;align-self:center;}
-.grade-row{display:flex;align-items:center;gap:2px;flex-wrap:wrap;margin-top:4px;}
-.gr-label{font-size:13px;color:#666;margin-right:4px;}
-.gstar{font-size:30px;color:#DDD;cursor:pointer;line-height:1;user-select:none;padding:0 2px;}
-.gstar.on{color:#FFC53D;}
-.gstar:active{transform:scale(1.2);}
-.hi-q2{font-size:13px;color:#555;margin:2px 0;line-height:1.4;}
-.ans-done{border-left:4px solid #7BC67B;}
-.btn-mini{border:1px solid #CFE0CF;background:#fff;color:#3A7A3A;border-radius:20px;padding:4px 12px;font-size:13px;cursor:pointer;}
-.hist-stat.hot b{color:#E67E22;}
 </style>
 </head>
 <body>
@@ -769,7 +752,7 @@ function initRecognition(){
 var audioStream=null, mediaRec=null, recChunks=[], lastAudioURL=null, playbackAudio=null;
 // Android 的 Google 語音辨識和網頁錄音不能同時使用麥克風（會出現 cannot record now as Chrome is recording）
 // 所以在行動裝置上直接停用錄音回放，確保語音辨識一定能用；電腦上兩者可並存，回放功能保留
-var recorderDisabled = /Android|iPhone|iPad/i.test(navigator.userAgent);
+var recorderDisabled = !(navigator.mediaDevices && window.MediaRecorder); // 只在瀏覽器不支援時停用；Android 也嘗試錄音（best-effort，失敗不影響批改）
 function releaseStream(){
   try{
     if(audioStream){
@@ -817,170 +800,8 @@ function playRecording(){
     window.speechSynthesis.cancel();
     if(playbackAudio){ playbackAudio.pause(); }
     playbackAudio=new Audio(lastAudioURL);
-
     playbackAudio.play();
   }catch(e){}
-}
-
-/* ================= 錄音存檔（IndexedDB）＋ 回答問題錄音流程 ================= */
-var AudioDB=(function(){
-  var dbp=null;
-  function open(){
-    if(dbp) return dbp;
-    dbp=new Promise(function(res,rej){
-      try{
-        var rq=indexedDB.open("gept_audio",1);
-        rq.onupgradeneeded=function(e){ e.target.result.createObjectStore("clips"); };
-        rq.onsuccess=function(e){ res(e.target.result); };
-        rq.onerror=function(e){ rej(e.target.error); };
-      }catch(err){ rej(err); }
-    });
-    return dbp;
-  }
-  function put(id,blob){ return open().then(function(db){ return new Promise(function(res,rej){ var tx=db.transaction("clips","readwrite"); tx.objectStore("clips").put(blob,id); tx.oncomplete=function(){res();}; tx.onerror=function(e){rej(e.target.error);}; }); }); }
-  function get(id){ return open().then(function(db){ return new Promise(function(res,rej){ var tx=db.transaction("clips","readonly"); var rq=tx.objectStore("clips").get(id); rq.onsuccess=function(){res(rq.result||null);}; rq.onerror=function(e){rej(e.target.error);}; }); }); }
-  function del(id){ return open().then(function(db){ return new Promise(function(res){ var tx=db.transaction("clips","readwrite"); tx.objectStore("clips").delete(id); tx.oncomplete=function(){res();}; tx.onerror=function(){res();}; }); }); }
-  function clearAll(){ return open().then(function(db){ return new Promise(function(res){ var tx=db.transaction("clips","readwrite"); tx.objectStore("clips").clear(); tx.oncomplete=function(){res();}; tx.onerror=function(){res();}; }); }); }
-  return {put:put,get:get,del:del,clearAll:clearAll};
-})();
-
-// 回答問題（練習）：只錄音、不開語音辨識，手機也能用；分數晚上到「我的紀錄」再打
-var ansStream=null, ansRec=null, ansChunks=[], ansPlayback=null, ansStopTid=null;
-function ansCleanupPlayback(){ try{ if(ansPlayback){ ansPlayback.pause(); ansPlayback=null; } }catch(e){} }
-function releaseAnsStream(){
-  try{ if(ansRec && ansRec.state!=="inactive"){ ansRec.stop(); } }catch(e){}
-  try{ if(ansStream){ var t=ansStream.getTracks(); for(var i=0;i<t.length;i++){ t[i].stop(); } } }catch(e){}
-  ansStream=null; ansRec=null;
-}
-function startAnswerRecording(){
-  state.answered=false;
-  var micBtn=document.getElementById("mic"), label=document.getElementById("miclabel"), heard=document.getElementById("heard");
-  if(!navigator.mediaDevices || !window.MediaRecorder){
-    var w=document.getElementById("micwarn"); if(w){ w.style.display="block"; }
-    return;
-  }
-  window.speechSynthesis && window.speechSynthesis.cancel();
-  var begin=function(){
-    try{
-      ansChunks=[];
-      ansRec=new MediaRecorder(ansStream);
-      ansRec.ondataavailable=function(e){ if(e.data && e.data.size>0){ ansChunks.push(e.data); } };
-      ansRec.onstop=function(){
-        var blob=null;
-        try{ if(ansChunks.length>0){ blob=new Blob(ansChunks,{type:ansRec.mimeType||"audio/webm"}); } }catch(e){}
-        finishAnswerRecording(blob);
-      };
-      ansRec.start();
-      if(micBtn){ micBtn.className="round-btn btn-mic rec"; }
-      if(label){ label.textContent="錄音中…講完按一下停止"; }
-      if(heard){ heard.innerHTML="🎙️ 正在錄音！把想說的都說出來～"; }
-      startTimer(ANSWER_SEC, "回答時間 剩下", false, function(){ stopAnswerRecording(); });
-      if(ansStopTid){ clearTimeout(ansStopTid); }
-      ansStopTid=setTimeout(function(){ stopAnswerRecording(); }, ANSWER_SEC*1000+400);
-    }catch(e){
-      var w2=document.getElementById("micwarn"); if(w2){ w2.style.display="block"; }
-    }
-  };
-  if(ansStream && ansStream.active){ begin(); }
-  else{
-    navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){ ansStream=s; begin(); })
-    .catch(function(){ var w=document.getElementById("micwarn"); if(w){ w.style.display="block"; } });
-  }
-}
-function stopAnswerRecording(){
-  if(ansStopTid){ clearTimeout(ansStopTid); ansStopTid=null; }
-  hideTimer();
-  if(ansRec && ansRec.state!=="inactive"){ try{ ansRec.stop(); }catch(e){} }
-}
-function finishAnswerRecording(blob){
-  if(state.answered) return;
-  state.answered=true;
-  hideTimer();
-  var q=state.qs[state.idx];
-  var hidA=document.getElementById("hiddenq"), lineA=document.getElementById("engline");
-  if(hidA){ hidA.style.display="none"; }
-  if(lineA){ lineA.style.display="block"; }
-  var mb=document.getElementById("mic"); if(mb){ mb.className="round-btn btn-mic"; }
-  var label=document.getElementById("miclabel"); if(label){ label.textContent="錄好了！"; }
-  var id="a_"+Date.now()+"_"+Math.floor(Math.random()*1e6);
-  var saveRec=function(hasAudio){
-    saveHistoryRecord({
-      t:Date.now(), type:"answer", mode:"answer",
-      round:ROUNDS[state.round].name, roundIdx:state.round,
-      qIdx:state.idx, qText:q.q, sample:q.sample||"",
-      audioId: hasAudio? id : null, status:"pending", stars:null
-    });
-    trimAnswerAudio();
-  };
-  if(blob && blob.size>0){ AudioDB.put(id, blob).then(function(){ saveRec(true); }).catch(function(){ saveRec(false); }); }
-  else{ saveRec(false); }
-  var tmpURL = (blob && blob.size>0) ? URL.createObjectURL(blob) : null;
-  var last = state.idx===state.qs.length-1;
-  var fb=document.getElementById("fb");
-  fb.innerHTML=
-    '<div class="fb-msg">✅ 錄好了！可以先聽聽看，晚上再到「我的紀錄」打分數</div>'+
-    '<div class="playback-row">'+
-      (tmpURL?'<button class="btn-play" id="myrec">▶️ 聽我剛剛說的</button>':'<span class="fb-sub">（這次沒有錄到聲音，可以按「重錄」再試）</span>')+
-      '<button class="btn-play demo" id="saysample">🔊 聽老師示範</button>'+
-    '</div>'+
-    '<div class="sample-box">💡 老師示範：<b>'+esc(q.sample||"")+'</b></div>';
-  var mr=document.getElementById("myrec");
-  if(mr && tmpURL){ mr.onclick=function(){ try{ window.speechSynthesis.cancel(); ansCleanupPlayback(); ansPlayback=new Audio(tmpURL); ansPlayback.play(); }catch(e){} }; }
-  var ss=document.getElementById("saysample");
-  if(ss){ ss.onclick=function(){ speak(q.sample||"",0.95); }; }
-  document.getElementById("nextrow").innerHTML=
-    '<button class="btn-ghost" id="reans">🔁 重錄</button>'+
-    '<button class="btn-main" id="nexta">'+(last?"完成 🏁":"下一題 →")+'</button>';
-  document.getElementById("reans").onclick=function(){
-    removeAnswerRecord(id);
-    ansCleanupPlayback();
-    renderQuestion();
-  };
-  document.getElementById("nexta").onclick=function(){
-    ansCleanupPlayback();
-    if(last){ renderAnswerFinish(); } else { state.idx++; renderQuestion(); }
-  };
-}
-function removeAnswerRecord(id){
-  try{
-    var hst=loadHistory();
-    for(var i=hst.length-1;i>=0;i--){
-      if(hst[i].type==="answer" && hst[i].audioId===id){ hst.splice(i,1); break; }
-    }
-    localStorage.setItem("gept_history", JSON.stringify(hst));
-  }catch(e){}
-  if(id){ AudioDB.del(id); }
-}
-function trimAnswerAudio(){
-  try{
-    var hst=loadHistory(), withAudio=[];
-    for(var i=0;i<hst.length;i++){ if(hst[i].type==="answer" && hst[i].audioId){ withAudio.push(hst[i]); } }
-    if(withAudio.length>60){
-      var over=withAudio.slice(0, withAudio.length-60);
-      for(var j=0;j<over.length;j++){ AudioDB.del(over[j].audioId); over[j].audioId=null; }
-      localStorage.setItem("gept_history", JSON.stringify(hst));
-    }
-  }catch(e){}
-}
-function renderAnswerFinish(){
-  state.screen="finish"; hideTimer(); releaseAnsStream();
-  var n=state.qs.length;
-  h(
-    '<div class="finish">'+
-      '<div class="big">🎙️</div>'+
-      '<h2>錄好囉！</h2>'+
-      '<p>'+esc(ROUNDS[state.round].name)+' · 回答問題<br>今天錄了 <b>'+n+'</b> 題<br>晚上可以到「我的紀錄」聽錄音、打分數 ⭐</p>'+
-      '<div class="next-row">'+
-        '<button class="btn-ghost" id="again">再練這一回</button>'+
-        '<button class="btn-ghost" id="tohist">去我的紀錄批改</button>'+
-        '<button class="btn-main" id="home">回首頁</button>'+
-      '</div>'+
-    '</div>'
-  );
-  document.getElementById("again").onclick=function(){ startRound("answer", state.round); };
-  document.getElementById("tohist").onclick=renderHistory;
-  document.getElementById("home").onclick=goHome;
-  speak("Well done!",1);
 }
 
 /* ================= 倒數計時 ================= */
@@ -1154,7 +975,7 @@ function renderHome(){
       modeCard("read","5 個句子＋1 篇短文 · 1 分鐘準備 · 目前有 "+ROUNDS.length+" 回")+
       modeCard("answer","共 7 題 · 每題播兩次 · 回答 15 秒 · 目前有 "+ROUNDS.length+" 回")+
     '</div>'+
-    '<div class="tip">🎧 完全依照正式考試流程：複誦和回答問題的題目<b>不會顯示文字</b>，會用錄音<b>播出兩次</b>，聽完要馬上開口。每題答完可以<b>回放自己的錄音</b>，練習成績會自動記錄。<span style="float:right;color:#B9C9D8;">v22</span></div>'+
+    '<div class="tip">🎧 完全依照正式考試流程：複誦和回答問題的題目<b>不會顯示文字</b>，會用錄音<b>播出兩次</b>，聽完要馬上開口。每題答完可以<b>回放自己的錄音</b>，練習成績會自動記錄。<span style="float:right;color:#B9C9D8;">v23</span></div>'+
     '<div class="warn" id="srwarn" style="display:'+(srOK?'none':'block')+'">⚠️ 這個瀏覽器不支援語音辨識。請用 <b>Chrome</b> 或 <b>Edge</b> 開啟 https 網址，就可以聽小朋友說話囉！</div>'
   );
   document.getElementById("histbtn").onclick=renderHistory;
@@ -1654,11 +1475,6 @@ function renderQuestion(){
   var lb=document.getElementById("listen");
   if(lb){ lb.onclick=function(){ speak(qText); }; }
   document.getElementById("mic").onclick=function(){
-    if(state.mode==="answer" && !state.exam){
-      if(ansRec && ansRec.state==="recording"){ stopAnswerRecording(); }
-      else if(!state.answered){ beginSpeaking(); }
-      return;
-    }
     if(listening){ stopMicManual(); return; }
     beginSpeaking();
   };
@@ -1679,10 +1495,6 @@ function setPlayStatus(text, yourturn){
   }
 }
 function beginSpeaking(){
-  if(state.mode==="answer" && !state.exam){
-    startAnswerRecording();
-    return;
-  }
   startMicSession(function(){
     if(state.mode==="answer"){
       startTimer(ANSWER_SEC, "回答時間 剩下", false, function(){ stopMicManual(); });
@@ -1694,7 +1506,7 @@ function wordSpans(sentence){
   for(var i=0;i<parts.length;i++){ out+='<span class="w" data-i="'+i+'">'+esc(parts[i])+'</span> '; }
   return out;
 }
-function goHome(){ micManualStop=true; clearSilence(); hideTimer(); stopMic(); stopRecorder(); releaseAnsStream(); renderHome(); }
+function goHome(){ micManualStop=true; clearSilence(); hideTimer(); stopMic(); stopRecorder(); renderHome(); }
 
 /* ================= 錄音流程（停頓續錄：安靜滿 4 秒才算講完） ================= */
 var micAccum="", micManualStop=false, silenceTid=null, sessionTimerStarted=false, micSessionStart=0;
@@ -2005,67 +1817,43 @@ function renderFinish(){
 /* ================= 進步紀錄頁 ================= */
 function renderHistory(){
   state.screen="history";
-  hideTimer(); stopMic(); releaseAnsStream();
+  hideTimer(); stopMic();
   var hst=loadHistory();
   var modeNames={intro:"自我介紹",repeat:"複誦",read:"朗讀",answer:"回答問題"};
-  var examCount=0, practiceCount=0, ansCount=0, pending=[], weakCount={};
+  // 統計
+  var examCount=0, practiceCount=0, weakCount={};
   for(var i=0;i<hst.length;i++){
-    var it=hst[i];
-    if(it.type==="exam"){ examCount++; }
-    else if(it.type==="answer"){ ansCount++; if(it.status!=="graded"){ pending.push({rec:it, idx:i}); } }
-    else{ practiceCount++; }
-    if(it.missed){ for(var w=0;w<it.missed.length;w++){ var k=it.missed[w].toLowerCase(); weakCount[k]=(weakCount[k]||0)+1; } }
+    if(hst[i].type==="exam"){ examCount++; } else { practiceCount++; }
+    if(hst[i].missed){
+      for(var w=0;w<hst[i].missed.length;w++){
+        var k=hst[i].missed[w].toLowerCase();
+        weakCount[k]=(weakCount[k]||0)+1;
+      }
+    }
   }
-  var weakArr=[]; for(var key in weakCount){ weakArr.push({w:key,n:weakCount[key]}); }
-  weakArr.sort(function(a,b){ return b.n-a.n; }); weakArr=weakArr.slice(0,10);
+  // 最常漏掉的字 Top 10
+  var weakArr=[];
+  for(var key in weakCount){ weakArr.push({w:key, n:weakCount[key]}); }
+  weakArr.sort(function(a,b){ return b.n-a.n; });
+  weakArr=weakArr.slice(0,10);
   var weakHtml="";
   if(weakArr.length>0){
     weakHtml='<div class="weak-box"><b>🔍 最常漏掉的單字（點一下聽發音）：</b>';
-    for(var j=0;j<weakArr.length;j++){ weakHtml+='<button class="chip weak-chip" data-w="'+esc(weakArr[j].w)+'">'+esc(weakArr[j].w)+' ×'+weakArr[j].n+' 🔊</button>'; }
+    for(var j=0;j<weakArr.length;j++){
+      weakHtml+='<button class="chip weak-chip" data-w="'+esc(weakArr[j].w)+'">'+esc(weakArr[j].w)+' ×'+weakArr[j].n+' 🔊</button>';
+    }
     weakHtml+='</div>';
   }
-  // 待批改區（回答問題，最新在上）
-  var pendHtml="";
-  if(pending.length>0){
-    pendHtml='<div class="pending-box"><div class="pending-head">🕐 等你批改（'+pending.length+' 題）— 聽錄音，再點星星給分</div>';
-    for(var p=pending.length-1;p>=0;p--){
-      var pr=pending[p].rec, pi=pending[p].idx;
-      pendHtml+='<div class="ans-card" data-idx="'+pi+'">'+
-        '<div class="ac-q">Q. '+esc(pr.qText||"")+'</div>'+
-        '<div class="ac-date">'+fmtDate(pr.t)+' · '+esc(pr.round||"")+'</div>'+
-        '<div class="ac-tools">'+
-          (pr.audioId?'<button class="btn-play ac-play" data-audio="'+pr.audioId+'">▶️ 聽小朋友錄音</button>':'<span class="ac-noaudio">（這題沒有錄到聲音）</span>')+
-          '<button class="btn-play demo ac-say" data-idx="'+pi+'">🔊 聽老師示範</button>'+
-        '</div>'+
-        gradeStarsHtml(pi, 0)+
-      '</div>';
-    }
-    pendHtml+='</div>';
-  }
-  // 一般紀錄清單（最新 30，略過還沒批改的回答題）
-  var listHtml="", shown=0;
-  for(var r=hst.length-1;r>=0 && shown<30;r--){
-    var rec=hst[r];
-    if(rec.type==="answer" && rec.status!=="graded"){ continue; }
-    shown++;
+  // 紀錄清單（最新在上，最多顯示 30 筆）
+  var listHtml="";
+  var recent=hst.slice(-30).reverse();
+  for(var r=0;r<recent.length;r++){
+    var rec=recent[r];
     if(rec.type==="exam"){
       listHtml+='<div class="hist-item exam-rec">'+
         '<span class="hi-stars">'+rec.stars+' / '+rec.max+' ⭐</span>'+
         '<div class="hi-title">🏁 正式模擬考 · '+esc(rec.round)+'</div>'+
         '<div class="hi-date">'+fmtDate(rec.t)+' · 自介 '+rec.parts.intro+'｜複誦 '+rec.parts.repeat+'｜朗讀 '+rec.parts.read+'｜問答 '+rec.parts.answer+'</div>'+
-        '</div>';
-    }else if(rec.type==="answer"){
-      var st=""; for(var s=0;s<5;s++){ st+= s<(rec.stars||0)?"⭐":"☆"; }
-      listHtml+='<div class="hist-item ans-done" data-idx="'+r+'">'+
-        '<span class="hi-stars">'+st+'</span>'+
-        '<div class="hi-title">🎤 回答問題 · '+esc(rec.round||"")+'</div>'+
-        '<div class="hi-q2">Q. '+esc(rec.qText||"")+'</div>'+
-        '<div class="hi-date">'+fmtDate(rec.t)+'</div>'+
-        '<div class="ac-tools">'+
-          (rec.audioId?'<button class="btn-play ac-play" data-audio="'+rec.audioId+'">▶️ 聽錄音</button>':'')+
-          '<button class="btn-play demo ac-say" data-idx="'+r+'">🔊 示範</button>'+
-          '<button class="btn-mini ac-regrade" data-idx="'+r+'">改分數</button>'+
-        '</div>'+
         '</div>';
     }else{
       listHtml+='<div class="hist-item">'+
@@ -2075,99 +1863,40 @@ function renderHistory(){
         '</div>';
     }
   }
-  if(!listHtml && !pendHtml){ listHtml='<div class="hist-empty">還沒有練習紀錄，<br>快去練第一回吧！🦉</div>'; }
+  if(!listHtml){
+    listHtml='<div class="hist-empty">還沒有練習紀錄，<br>快去練第一回吧！🦉</div>';
+  }
   h(
     '<div class="topbar"><button class="btn-back" id="back">← 回首頁</button>'+
-    (hst.length?'<button class="btn-back" id="export" style="color:#2E7D32;">匯出備份</button><button class="btn-back" id="clear" style="color:#C0392B;">清除紀錄</button>':'')+
+    (hst.length?'<button class="btn-back" id="clear" style="color:#C0392B;">清除紀錄</button>':'')+
     '</div>'+
-    '<div class="home-head" style="margin-top:0;"><h1 style="font-size:24px;">📈 我的進步紀錄</h1><p>紀錄與錄音都存在這台裝置裡</p></div>'+
+    '<div class="home-head" style="margin-top:0;"><h1 style="font-size:24px;">📈 我的進步紀錄</h1><p>紀錄存在這台裝置的瀏覽器裡</p></div>'+
     '<div class="hist-stats">'+
-      '<div class="hist-stat"><b>'+practiceCount+'</b><span>複誦/朗讀</span></div>'+
-      '<div class="hist-stat"><b>'+ansCount+'</b><span>回答題數</span></div>'+
-      '<div class="hist-stat'+(pending.length?' hot':'')+'"><b>'+pending.length+'</b><span>待批改</span></div>'+
-      '<div class="hist-stat"><b>'+state.totalStars+'</b><span>星星 ⭐</span></div>'+
+      '<div class="hist-stat"><b>'+practiceCount+'</b><span>練習次數</span></div>'+
+      '<div class="hist-stat"><b>'+examCount+'</b><span>模擬考次數</span></div>'+
+      '<div class="hist-stat"><b>'+state.totalStars+'</b><span>累積星星 ⭐</span></div>'+
     '</div>'+
-    weakHtml+ pendHtml+
+    weakHtml+
     '<div style="margin-top:14px;">'+listHtml+'</div>'
   );
   document.getElementById("back").onclick=renderHome;
-  var eb=document.getElementById("export"); if(eb){ eb.onclick=exportHistory; }
   var clearBtn=document.getElementById("clear");
   if(clearBtn){
     clearBtn.onclick=function(){
-      if(confirm("確定要清除所有紀錄、星星和錄音嗎？清掉就找不回來囉！")){
-        try{ localStorage.removeItem("gept_history"); localStorage.removeItem("gept_stars"); }catch(e){}
-        try{ AudioDB.clearAll(); }catch(e){}
+      if(confirm("確定要清除所有練習紀錄和星星嗎？清掉就找不回來囉！")){
+        try{
+          localStorage.removeItem("gept_history");
+          localStorage.removeItem("gept_stars");
+        }catch(e){}
         state.totalStars=0;
         renderHistory();
       }
     };
   }
-  Array.prototype.forEach.call(document.querySelectorAll(".weak-chip"), function(c){ c.onclick=function(){ speak(c.getAttribute("data-w"),0.7); }; });
-  Array.prototype.forEach.call(document.querySelectorAll(".ac-play"), function(b){ b.onclick=function(){ playHistAudio(b.getAttribute("data-audio"), b); }; });
-  Array.prototype.forEach.call(document.querySelectorAll(".ac-say"), function(b){ b.onclick=function(){ var idx=parseInt(b.getAttribute("data-idx"),10); var rec=loadHistory()[idx]; if(rec){ speak(rec.sample||"",0.95); } }; });
-  bindGradeStars(document);
-  Array.prototype.forEach.call(document.querySelectorAll(".ac-regrade"), function(b){
-    b.onclick=function(){
-      var idx=parseInt(b.getAttribute("data-idx"),10);
-      var host=b.closest(".hist-item"); if(!host) return;
-      var old=host.querySelector(".grade-row");
-      if(old){ old.parentNode.removeChild(old); return; }
-      var cur=(loadHistory()[idx]||{}).stars||0;
-      host.insertAdjacentHTML("beforeend", gradeStarsHtml(idx, cur));
-      bindGradeStars(host);
-    };
+  var chips=document.querySelectorAll(".weak-chip");
+  Array.prototype.forEach.call(chips, function(c){
+    c.onclick=function(){ speak(c.getAttribute("data-w"), 0.7); };
   });
-}
-function gradeStarsHtml(idx, cur){
-  var out='<div class="grade-row"><span class="gr-label">給分：</span>';
-  for(var v=1;v<=5;v++){ out+='<span class="gstar'+(v<=cur?' on':'')+'" data-idx="'+idx+'" data-v="'+v+'">★</span>'; }
-  out+='</div>';
-  return out;
-}
-function bindGradeStars(root){
-  Array.prototype.forEach.call(root.querySelectorAll(".gstar"), function(s){
-    s.onclick=function(){ gradeAnswer(parseInt(s.getAttribute("data-idx"),10), parseInt(s.getAttribute("data-v"),10)); };
-  });
-}
-var histAudio=null;
-function playHistAudio(audioId, btn){
-  if(!audioId) return;
-  AudioDB.get(audioId).then(function(blob){
-    if(!blob){ if(btn){ btn.textContent="（錄音已清除）"; btn.disabled=true; } return; }
-    try{
-      window.speechSynthesis.cancel();
-      if(histAudio){ histAudio.pause(); }
-      var url=URL.createObjectURL(blob);
-      histAudio=new Audio(url);
-      histAudio.onended=function(){ URL.revokeObjectURL(url); };
-      histAudio.play();
-    }catch(e){}
-  }).catch(function(){});
-}
-function gradeAnswer(idx, v){
-  var hst=loadHistory(), rec=hst[idx];
-  if(!rec || rec.type!=="answer") return;
-  var prev=rec.stars||0;
-  rec.stars=v; rec.status="graded";
-  state.totalStars += (v-prev); if(state.totalStars<0){ state.totalStars=0; }
-  saveTotalStars();
-  try{ localStorage.setItem("gept_history", JSON.stringify(hst)); }catch(e){}
-  speak("Good job!",1);
-  renderHistory();
-}
-function exportHistory(){
-  try{
-    var data=localStorage.getItem("gept_history")||"[]";
-    var blob=new Blob([data],{type:"application/json"});
-    var url=URL.createObjectURL(blob);
-    var d=new Date(), p=function(n){ return (n<10?"0":"")+n; };
-    var a=document.createElement("a");
-    a.href=url; a.download="英檢紀錄備份_"+d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+".json";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    setTimeout(function(){ URL.revokeObjectURL(url); },1000);
-    alert("已匯出紀錄備份（含日期、題目、分數與進度）。\n提醒：錄音檔存在這台裝置上，備份檔不含錄音。");
-  }catch(e){ alert("匯出失敗，請稍後再試"); }
 }
 
 /* 預先載入語音列表 */
