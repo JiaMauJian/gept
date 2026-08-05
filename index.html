@@ -281,6 +281,12 @@ h1,h2,.eng{font-family:'Fredoka','Microsoft JhengHei',sans-serif;}
 .voice-rec{border-left:4px solid #E67E22;}
 .hi-q2{font-size:13px;color:#555;margin:2px 0;line-height:1.4;}
 .voice-play{margin-top:6px;}
+
+.mode-switch{display:flex;gap:8px;margin:12px 0 6px;}
+.ms-btn{flex:1;border:2px solid #D9E2EC;background:#fff;color:#5A6B7B;border-radius:24px;padding:11px 8px;font-size:15px;font-weight:800;cursor:pointer;}
+.ms-btn.on{background:#2E7D32;border-color:#2E7D32;color:#fff;box-shadow:0 3px 8px rgba(46,125,50,.25);}
+.rec-prompt{font-size:26px;font-weight:800;color:#2E7D32;text-align:center;margin:18px 8px;line-height:1.5;}
+.btn-prec.big{font-size:20px;padding:14px 30px;}
 </style>
 </head>
 <body>
@@ -678,7 +684,7 @@ var PREP_SEC = 60;      // 第二部分準備時間
 var INTRO_SEC = 15;     // 自我介紹時間
 
 /* ================= 狀態 ================= */
-var state = { screen:"home", mode:null, round:0, qs:[], idx:0, stars:0, totalStars:0, answered:false, results:[], introNums:null, exam:null, readEndsAt:null };
+var state = { screen:"home", mode:null, round:0, qs:[], idx:0, stars:0, totalStars:0, answered:false, results:[], introNums:null, exam:null, readEndsAt:null, recordMode:false };
 var recognition = null, listening = false, lastTranscript = "";
 var timerId = null;
 
@@ -1074,6 +1080,23 @@ function renderHome(){
   hideTimer(); stopMic();
   window.speechSynthesis && window.speechSynthesis.cancel();
   var srOK = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  var rec = state.recordMode;
+  var modesHtml, keys, tip;
+  if(rec){
+    keys=["repeat","read","answer"];
+    modesHtml = modeCard("repeat","共 5 題 · 只錄音給爸媽聽")+
+                modeCard("read","5 句＋1 篇短文 · 只錄音給爸媽聽")+
+                modeCard("answer","共 7 題 · 只錄音給爸媽聽");
+    tip='🎤 <b>錄音給爸媽</b>：小朋友照題目唸／回答，程式只<b>錄音、不打分</b>。一題一題錄好會存進「我的紀錄」，你晚上可以慢慢聽、比較有沒有進步。';
+  }else{
+    keys=["exam","intro","repeat","read","answer"];
+    modesHtml = '<button class="mode-card exam" data-k="exam"><div class="icon">🏁</div><div><b>正式模擬考</b><span>自我介紹＋三部分連續進行 · 不能重來、不能重聽</span></div></button>'+
+                modeCard("intro","15 秒內唸出座位號碼和准考證號碼")+
+                modeCard("repeat","共 5 題 · 每題播兩次 · 目前有 "+ROUNDS.length+" 回")+
+                modeCard("read","5 個句子＋1 篇短文 · 1 分鐘準備 · 目前有 "+ROUNDS.length+" 回")+
+                modeCard("answer","共 7 題 · 每題播兩次 · 回答 15 秒 · 目前有 "+ROUNDS.length+" 回");
+    tip='🎧 完全依照正式考試流程：複誦和回答問題的題目<b>不會顯示文字</b>，會用錄音<b>播出兩次</b>，聽完要馬上開口，練習成績會自動記錄。';
+  }
   h(
     '<div class="home-head">'+
       '<span class="mascot">🦉</span>'+
@@ -1085,20 +1108,19 @@ function renderHome(){
       '<button class="btn-history" id="histbtn">📈 我的紀錄</button>'+
       '<button class="btn-history" id="fontbtn">🔠 字級：'+FONT_LEVELS[fontIdx].label+'</button>'+
     '</div>'+
-    '<div class="modes">'+
-      '<button class="mode-card exam" data-k="exam"><div class="icon">🏁</div><div><b>正式模擬考</b><span>自我介紹＋三部分連續進行 · 不能重來、不能重聽</span></div></button>'+
-      modeCard("intro","15 秒內唸出座位號碼和准考證號碼")+
-      modeCard("repeat","共 5 題 · 每題播兩次 · 目前有 "+ROUNDS.length+" 回")+
-      modeCard("read","5 個句子＋1 篇短文 · 1 分鐘準備 · 目前有 "+ROUNDS.length+" 回")+
-      modeCard("answer","共 7 題 · 每題播兩次 · 回答 15 秒 · 目前有 "+ROUNDS.length+" 回")+
+    '<div class="mode-switch">'+
+      '<button class="ms-btn'+(!rec?' on':'')+'" id="msGrade">🖥️ 電腦批改</button>'+
+      '<button class="ms-btn'+(rec?' on':'')+'" id="msRec">🎤 錄音給爸媽</button>'+
     '</div>'+
-    '<div class="tip">🎧 完全依照正式考試流程：複誦和回答問題的題目<b>不會顯示文字</b>，會用錄音<b>播出兩次</b>，聽完要馬上開口。每題答完可以<b>回放自己的錄音</b>，練習成績會自動記錄。<span style="float:right;color:#B9C9D8;">v24</span></div>'+
-    '<div class="warn" id="srwarn" style="display:'+(srOK?'none':'block')+'">⚠️ 這個瀏覽器不支援語音辨識。請用 <b>Chrome</b> 或 <b>Edge</b> 開啟 https 網址，就可以聽小朋友說話囉！</div>'
+    '<div class="modes">'+modesHtml+'</div>'+
+    '<div class="tip">'+tip+'<span style="float:right;color:#B9C9D8;">v25</span></div>'+
+    '<div class="warn" id="srwarn" style="display:'+((srOK||rec)?'none':'block')+'">⚠️ 這個瀏覽器不支援語音辨識。請用 <b>Chrome</b> 或 <b>Edge</b> 開啟 https 網址，就可以聽小朋友說話囉！</div>'
   );
   document.getElementById("histbtn").onclick=renderHistory;
   document.getElementById("fontbtn").onclick=cycleFontSize;
+  document.getElementById("msGrade").onclick=function(){ state.recordMode=false; renderHome(); };
+  document.getElementById("msRec").onclick=function(){ state.recordMode=true; renderHome(); };
   var cards=document.querySelectorAll(".mode-card");
-  var keys=["exam","intro","repeat","read","answer"];
   Array.prototype.forEach.call(cards, function(c,i){
     c.onclick=function(){
       if(keys[i]==="intro"){ renderIntro(false); }
@@ -1137,6 +1159,7 @@ function renderRoundPick(mode){
     p.onclick=function(){
       var ri=parseInt(p.getAttribute("data-r"),10);
       if(mode==="exam"){ startExam(ri); }
+      else if(state.recordMode){ startRecordRound(mode, ri); }
       else{ renderQuestionPick(mode, ri); }
     };
   });
@@ -1375,6 +1398,66 @@ function gradeIntro(said){
 }
 
 /* ================= 開始回合（依「回」取固定題目，照順序出題） ================= */
+/* ================= 錄音給爸媽 模式 ================= */
+function startRecordRound(mode, roundIdx){
+  state.mode=mode; state.round=roundIdx; state.singleQi=null;
+  state.idx=0; state.answered=false;
+  var rd=ROUNDS[roundIdx];
+  if(mode==="read"){ state.qs=rd.read.sentences.slice(); state.qs.push(rd.read.passage); }
+  else{ state.qs=rd[mode].slice(); }
+  renderRecordQuestion();
+}
+function renderRecordQuestion(){
+  parentRecStop();
+  state.screen="recq";
+  var item=state.qs[state.idx];
+  var isAnswer = state.mode==="answer";
+  var promptText = isAnswer ? item.q : item;
+  var total=state.qs.length, last=state.idx===total-1;
+  h(
+    '<div class="topbar"><button class="btn-back" id="back">← 回首頁</button></div>'+
+    '<div class="stage" style="text-align:center;">'+
+      '<span class="part-tag">'+esc(ROUNDS[state.round].name)+' · 🎤 錄音給爸媽 · '+esc(BANK[state.mode].name)+' · 第 '+(state.idx+1)+' / '+total+' 題</span>'+
+      '<div class="rec-prompt">'+esc(promptText)+'</div>'+
+      '<div class="playback-row" style="justify-content:center;">'+
+        '<button class="btn-play demo" id="sayp">🔊 聽一次題目</button>'+
+      '</div>'+
+      '<div class="prec-row" style="justify-content:center;"><button class="btn-prec big" id="prec">🎤 開始錄音</button><span id="precstatus" class="prec-status"></span></div>'+
+      '<div class="next-row" id="nextrow">'+
+        '<button class="btn-ghost" id="skip">'+(last?"錄完了 🏁":"下一題 →")+'</button>'+
+      '</div>'+
+    '</div>'
+  );
+  document.getElementById("back").onclick=goHome;
+  document.getElementById("sayp").onclick=function(){ speak(promptText, isAnswer?0.95:0.9); };
+  var precBtn=document.getElementById("prec");
+  precBtn.textContent="🎤 開始錄音";
+  precBtn.onclick=function(){ toggleParentRec({ qText:promptText, mode:state.mode, round:ROUNDS[state.round].name }); };
+  document.getElementById("skip").onclick=function(){
+    parentRecStop();
+    if(last){ renderRecordFinish(); } else { state.idx++; renderRecordQuestion(); }
+  };
+  setTimeout(function(){ if(state.screen==="recq"){ speak(promptText, isAnswer?0.95:0.9); } }, 400);
+}
+function renderRecordFinish(){
+  state.screen="finish"; parentRecStop(); releasePRecStream(); hideTimer();
+  h(
+    '<div class="finish">'+
+      '<div class="big">🎤</div>'+
+      '<h2>錄好囉！</h2>'+
+      '<p>'+esc(ROUNDS[state.round].name)+' · '+esc(BANK[state.mode].name)+'<br>都錄好了，晚上到「我的紀錄」聽聽看 ⭐</p>'+
+      '<div class="next-row">'+
+        '<button class="btn-ghost" id="again">再錄一次</button>'+
+        '<button class="btn-ghost" id="tohist">去我的紀錄聽</button>'+
+        '<button class="btn-main" id="home">回首頁</button>'+
+      '</div>'+
+    '</div>'
+  );
+  document.getElementById("again").onclick=function(){ startRecordRound(state.mode, state.round); };
+  document.getElementById("tohist").onclick=renderHistory;
+  document.getElementById("home").onclick=goHome;
+  speak("Well done!",1);
+}
 function startRound(mode, roundIdx){
   state.mode=mode; state.round=roundIdx; state.singleQi=null;
   state.idx=0; state.stars=0; state.answered=false; state.results=[]; state.readEndsAt=null;
@@ -1819,7 +1902,6 @@ function grade(said){
       (recorderDisabled?'':'<button class="btn-play" id="myrec" disabled>▶️ 聽自己的錄音</button>')+
       (state.mode!=="answer"?'<button class="btn-play demo" id="demorec">🔊 聽示範比較</button>':'')+
     '</div>'+
-    (inExam?'':'<div class="prec-row"><button class="btn-prec" id="prec">🎤 錄給爸媽聽</button><span id="precstatus" class="prec-status"></span></div>')+
     reportHtml;
   var mrBtn=document.getElementById("myrec");
   if(mrBtn){
@@ -1828,8 +1910,7 @@ function grade(said){
   }
   var dm=document.getElementById("demorec");
   if(dm){ dm.onclick=function(){ speak(qText); }; }
-  var precBtn=document.getElementById("prec");
-  if(precBtn){ precBtn.onclick=function(){ toggleParentRec({ qText:qText, mode:state.mode, round:(typeof ROUNDS!=="undefined" && ROUNDS[state.round] && ROUNDS[state.round].name)||"—" }); }; }
+
   var sayBtn=document.getElementById("saysample");
   if(sayBtn){ sayBtn.onclick=function(){ speak(q.sample); }; }
   var chips=document.querySelectorAll(".miss-chip");
