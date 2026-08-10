@@ -682,6 +682,7 @@ var GAP_MS = 1500;      // 兩次播放的間隔（正式為 1~2 秒）
 var ANSWER_SEC = 15;    // 第三部分每題回答時間
 var PREP_SEC = 60;      // 第二部分準備時間
 var INTRO_SEC = 15;     // 自我介紹時間
+var READ_SEC = 60;      // 第二部分朗讀時間（錄音給爸媽的短文也用這個）
 
 /* ================= 狀態 ================= */
 var state = { screen:"home", mode:null, round:0, qs:[], idx:0, stars:0, totalStars:0, answered:false, results:[], introNums:null, exam:null, readEndsAt:null, recordMode:false };
@@ -744,13 +745,14 @@ function speak(text, rate, onend){
 }
 // 正式規範：每題播出兩次，中間間隔約 1~2 秒
 function playTwice(text, statusFn, done){
+  var onScreen = state.screen; // 批改是 "q"、錄給爸媽是 "recq"，中途離開就不要繼續
   statusFn("🔊 第一次播放，仔細聽…");
   speak(text, 0.85, function(){
     setTimeout(function(){
-      if(state.screen!=="q") return;
+      if(state.screen!==onScreen) return;
       statusFn("🔊 第二次播放，再聽一次…");
       speak(text, 0.85, function(){
-        if(state.screen!=="q") return;
+        if(state.screen!==onScreen) return;
         done();
       });
     }, GAP_MS);
@@ -843,13 +845,14 @@ var AudioDB=(function(){
 })();
 
 var pRecStream=null, pRec=null, pRecChunks=[], pRecActive=false, pRecTid=null, pRecPlayback=null;
+var pRecTok=0; // 每題一個號碼：換題後才存好的錄音仍會存檔，但不會去動新題目的畫面
 function releasePRecStream(){
   parentRecStop();
   try{ if(pRecStream){ var t=pRecStream.getTracks(); for(var i=0;i<t.length;i++){ t[i].stop(); } } }catch(e){}
   pRecStream=null; pRec=null;
 }
 function toggleParentRec(ctx){
-  if(pRecActive){ parentRecStop(); } else { parentRecStart(ctx); }
+  if(pRecActive){ hideTimer(); parentRecStop(); } else { parentRecStart(ctx); }
 }
 function parentRecStart(ctx){
   var btn=document.getElementById("prec"), st=document.getElementById("precstatus");
@@ -869,8 +872,11 @@ function parentRecStart(ctx){
       pRec.start(); pRecActive=true;
       if(btn){ btn.textContent="⏹ 停止錄音"; btn.className="btn-prec recing"; }
       if(st){ st.textContent="錄音中…講完按一下停止"; }
+      // 和批改一樣：畫面上看得到倒數，時間到自動收音存檔
+      var secs = ctx && ctx.secs ? ctx.secs : ANSWER_SEC;
       if(pRecTid){ clearTimeout(pRecTid); }
-      pRecTid=setTimeout(function(){ parentRecStop(); }, 15000);
+      pRecTid=setTimeout(function(){ parentRecStop(); }, secs*1000+400);
+      startTimer(secs, "錄音中 剩下", false, function(){ parentRecStop(); });
     }catch(e){ if(st){ st.textContent="這台裝置沒辦法錄音"; } }
   };
   if(pRecStream && pRecStream.active){ begin(); }
@@ -881,11 +887,13 @@ function parentRecStart(ctx){
 }
 function parentRecStop(){
   if(pRecTid){ clearTimeout(pRecTid); pRecTid=null; }
+  stopTimer();
   pRecActive=false;
   if(pRec && pRec.state!=="inactive"){ try{ pRec.stop(); }catch(e){} }
 }
 function parentRecSaved(ctx, blob){
-  var btn=document.getElementById("prec"), st=document.getElementById("precstatus");
+  var fresh = !ctx || !ctx.tok || ctx.tok===pRecTok; // 已經換題了就別動畫面
+  var btn=fresh?document.getElementById("prec"):null, st=fresh?document.getElementById("precstatus"):null;
   if(btn){ btn.textContent="🎤 重錄一次"; btn.className="btn-prec"; }
   if(!blob || blob.size===0){ if(st){ st.textContent="沒有錄到聲音，再按一次試試"; } return; }
   var id="v_"+Date.now()+"_"+Math.floor(Math.random()*1e6);
@@ -1084,10 +1092,10 @@ function renderHome(){
   var modesHtml, keys, tip;
   if(rec){
     keys=["repeat","read","answer"];
-    modesHtml = modeCard("repeat","共 5 題 · 只錄音給爸媽聽")+
-                modeCard("read","5 句＋1 篇短文 · 只錄音給爸媽聽")+
-                modeCard("answer","共 7 題 · 只錄音給爸媽聽");
-    tip='🎤 <b>錄音給爸媽</b>：小朋友照題目唸／回答，程式只<b>錄音、不打分</b>。一題一題錄好會存進「我的紀錄」，你晚上可以慢慢聽、比較有沒有進步。';
+    modesHtml = modeCard("repeat","共 5 題 · 每題播兩次 · 錄 15 秒 · 只錄音不打分")+
+                modeCard("read","5 句＋1 篇短文 · 看著唸 · 只錄音不打分")+
+                modeCard("answer","共 7 題 · 每題播兩次 · 錄 15 秒 · 只錄音不打分");
+    tip='🎤 <b>錄音給爸媽</b>：流程和電腦批改一樣（複誦、回答問題<b>不顯示文字</b>，播兩次後自動錄音倒數 <b>15 秒</b>），只是程式<b>不打分</b>。錄好會存進「我的紀錄」，晚上可以慢慢聽、比較有沒有進步。';
   }else{
     keys=["exam","intro","repeat","read","answer"];
     modesHtml = '<button class="mode-card exam" data-k="exam"><div class="icon">🏁</div><div><b>正式模擬考</b><span>自我介紹＋三部分連續進行 · 不能重來、不能重聽</span></div></button>'+
@@ -1407,6 +1415,11 @@ function startRecordRound(mode, roundIdx){
   else{ state.qs=rd[mode].slice(); }
   renderRecordQuestion();
 }
+// 錄音秒數：複誦／回答問題和批改一樣 15 秒；朗讀短文字多，給長一點
+function recSecFor(mode, idx, total){
+  if(mode==="read"){ return idx===total-1 ? READ_SEC : 20; }
+  return ANSWER_SEC;
+}
 function renderRecordQuestion(){
   parentRecStop();
   state.screen="recq";
@@ -1414,13 +1427,24 @@ function renderRecordQuestion(){
   var isAnswer = state.mode==="answer";
   var promptText = isAnswer ? item.q : item;
   var total=state.qs.length, last=state.idx===total-1;
+  var isRead = state.mode==="read";           // 朗讀要看著字唸，其他兩部分和正式考試一樣不顯示題目
+  var secs = recSecFor(state.mode, state.idx, total);
+  var promptHtml = isRead
+    ? '<div class="rec-prompt">'+esc(promptText)+'</div>'
+    : '<div class="hidden-q" id="hiddenq">🙈 題目不會顯示文字，準備仔細聽…</div>';
+  var zh = isRead
+    ? '看著句子清楚唸出來，按 🎤 開始錄 '+secs+' 秒'
+    : (isAnswer ? '題目播兩次後馬上回答，把 '+secs+' 秒講好講滿！'
+                : '題目會播兩次，聽完後請馬上複誦一次（錄 '+secs+' 秒）');
   h(
     '<div class="topbar"><button class="btn-back" id="back">← 回首頁</button></div>'+
     '<div class="stage" style="text-align:center;">'+
       '<span class="part-tag">'+esc(ROUNDS[state.round].name)+' · 🎤 錄音給爸媽 · '+esc(BANK[state.mode].name)+' · 第 '+(state.idx+1)+' / '+total+' 題</span>'+
-      '<div class="rec-prompt">'+esc(promptText)+'</div>'+
+      '<div class="prompt-zh">'+zh+'</div>'+
+      promptHtml+
+      '<div class="timer" id="timer"></div>'+
       '<div class="playback-row" style="justify-content:center;">'+
-        '<button class="btn-play demo" id="sayp">🔊 聽一次題目</button>'+
+        '<button class="btn-play demo" id="sayp">🔊 '+(isRead?'聽一次題目':'再聽一次')+'</button>'+
       '</div>'+
       '<div class="prec-row" style="justify-content:center;"><button class="btn-prec big" id="prec">🎤 開始錄音</button><span id="precstatus" class="prec-status"></span></div>'+
       '<div class="next-row" id="nextrow">'+
@@ -1432,12 +1456,25 @@ function renderRecordQuestion(){
   document.getElementById("sayp").onclick=function(){ speak(promptText, isAnswer?0.95:0.9); };
   var precBtn=document.getElementById("prec");
   precBtn.textContent="🎤 開始錄音";
-  precBtn.onclick=function(){ toggleParentRec({ qText:promptText, mode:state.mode, round:ROUNDS[state.round].name }); };
+  pRecTok++;
+  var recCtx={ qText:promptText, mode:state.mode, round:ROUNDS[state.round].name, secs:secs, tok:pRecTok };
+  precBtn.onclick=function(){ toggleParentRec(recCtx); };
   document.getElementById("skip").onclick=function(){
-    parentRecStop();
+    hideTimer(); parentRecStop();
     if(last){ renderRecordFinish(); } else { state.idx++; renderRecordQuestion(); }
   };
-  setTimeout(function(){ if(state.screen==="recq"){ speak(promptText, isAnswer?0.95:0.9); } }, 400);
+  if(isRead){
+    setTimeout(function(){ if(state.screen==="recq"){ speak(promptText, 0.9); } }, 400);
+  }else{
+    // 和批改一樣：題目自動播兩次，播完直接開始錄音並倒數
+    setTimeout(function(){
+      if(state.screen!=="recq") return;
+      playTwice(promptText, setPlayStatus, function(){
+        setPlayStatus("🎤 換你了！馬上開口說！", true);
+        if(state.screen==="recq" && !pRecActive){ parentRecStart(recCtx); }
+      });
+    }, 500);
+  }
 }
 function renderRecordFinish(){
   state.screen="finish"; parentRecStop(); releasePRecStream(); hideTimer();
