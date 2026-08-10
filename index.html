@@ -685,7 +685,7 @@ var INTRO_SEC = 15;     // 自我介紹時間
 var READ_SEC = 60;      // 第二部分朗讀時間（錄音給爸媽的短文也用這個）
 
 /* ================= 狀態 ================= */
-var state = { screen:"home", mode:null, round:0, qs:[], idx:0, stars:0, totalStars:0, answered:false, results:[], introNums:null, exam:null, readEndsAt:null, recordMode:false };
+var state = { screen:"home", mode:null, round:0, qs:[], idx:0, stars:0, totalStars:0, answered:false, results:[], introNums:null, exam:null, readEndsAt:null, recordMode:true };  // 預設就是「錄音給爸媽」，要打分再切到電腦批改
 var recognition = null, listening = false, lastTranscript = "";
 var timerId = null;
 
