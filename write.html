@@ -111,6 +111,7 @@ textarea{min-height:260px;line-height:1.7;resize:vertical}
 .hidebox{font-size:22px;color:var(--muted);background:#fbf3e6;border-radius:16px;padding:16px;text-align:center}
 .score{font-size:40px;font-weight:800}
 .pics{display:flex;flex-direction:column;align-items:center;margin:10px 0 14px}
+.picimg{width:100%;max-width:460px;border-radius:12px;border:2px solid #ddd}
 .parrow{font-size:28px;line-height:1.4;color:#333}
 .pic{position:relative;width:100%;max-width:420px;background:#fffdf5;border:3px solid #333;border-radius:14px;min-height:120px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 6px 10px;text-align:center}
 .pic .pe{font-size:clamp(34px,9vw,56px);line-height:1.25;letter-spacing:4px}
@@ -462,81 +463,88 @@ const TOPICS = [
    每張圖：e 畫面（emoji）、t 圖上的時間／地點標示、d 給 Claude 批改用的畫面說明、q 引導問題 */
 const PG=(e,t,d,q)=>({e,t,d,q});
 const PIC_TOPICS = [
-  {id:'g1', story:'Tom 星期六早上在公園散步時，看到地上有一個錢包。他把錢包送到警察局。當天下午，失主來領回錢包，向 Tom 道謝，還送他一盒餅乾。', emo:'👛', color:'#0ea5e9', title:'撿到錢包', en:'Finding a Wallet', tense:'過去式（was walking, saw, took, gave…）',
-   pics:[PG('🧒🌳👛','Saturday morning','一個男孩早上在公園散步，看到地上有一個錢包','誰？什麼時候？在哪裡？看到什麼？'),
-         PG('🧒👛👮','Police station','男孩把錢包拿到警察局交給警察','他怎麼處理那個錢包？'),
-         PG('👩🙏🍪🧒','That afternoon','一位女士（失主）來向男孩道謝，送他一盒餅乾','後來發生什麼事？男孩的心情怎麼樣？')],
+  {id:'g1', img:'img/wallet.jpg', story:'Tom 上星期六早上在公園散步時，看到地上有一個錢包。他把錢包送到警察局。當天下午，失主來領回錢包，向 Tom 道謝，還送他一盒餅乾。', emo:'👛', color:'#0ea5e9', title:'撿到錢包', en:'Finding a Wallet', tense:'過去式（was walking, saw, took, gave…）',
+   pics:[PG('','','背著書包的男孩在公園的步道上走，指著草地上的一個咖啡色錢包',''),
+         PG('','','男孩在警察局的櫃台，把錢包交給戴眼鏡的警察',''),
+         PG('','','在警察局門口，一位戴眼鏡的女士（失主）笑著送男孩一盒餅乾向他道謝','')],
    words:['was walking','saw','picked it up','took it to','thanked','felt happy'],
    sample:'Last Saturday morning, Tom was walking in the park. Suddenly, he saw a wallet on the ground. He picked it up and took it to the police station. That afternoon, a woman came to get her wallet. She thanked Tom and gave him a box of cookies. Tom felt very happy.'},
-  {id:'g2', story:'Amy 早上出門時天氣很好，所以沒有帶傘。放學時突然下起大雨，她站在學校門口很煩惱。後來媽媽帶著雨傘來接她，兩人一起撐傘回家。', emo:'🌂', color:'#64748b', title:'忘了帶傘', en:'No Umbrella', tense:'過去式（was, didn\'t take, started, came…）',
-   pics:[PG('☀️👧🎒','Morning','早上天氣晴朗，女孩背著書包出門上學，沒有帶雨傘','早上天氣怎麼樣？她有沒有帶傘？'),
-         PG('🌧️🏫😟','After school','放學時下大雨，女孩站在學校門口很煩惱','放學時發生什麼事？她的心情？'),
-         PG('👩☂️👧','','媽媽帶著雨傘來學校接她，兩人一起撐傘回家','最後誰來幫她？她學到什麼？')],
+  {id:'g2', img:'img/umbrella.jpg', story:'Amy 昨天早上出門時天氣很好，所以沒有帶傘。放學時突然下起大雨，她站在學校門口很煩惱。後來媽媽帶著雨傘來接她，兩人一起撐傘回家。', emo:'🌂', color:'#64748b', title:'忘了帶傘', en:'No Umbrella', tense:'過去式（was, didn\'t take, started, came…）',
+   pics:[PG('','','早上出太陽，穿制服、背紅色書包的女孩開心地走出家門，手上沒有拿雨傘',''),
+         PG('','','下大雨，女孩雙手抱胸站在學校門口的屋簷下，表情很煩惱',''),
+         PG('','','媽媽撐著綠色雨傘來接她，兩人一起在雨中走回家，女孩很開心','')],
    words:['was sunny','didn\'t take','started to rain','felt worried','came to pick her up','next time'],
    sample:'Yesterday morning, it was sunny, so Amy didn\'t take an umbrella to school. After school, it started to rain heavily. Amy stood at the school gate and felt worried. Then her mother came with an umbrella. They walked home together under the umbrella. Amy said, "I will check the weather next time."'},
-  {id:'g3', story:'母親節那天，Ben 和妹妹想給媽媽一個驚喜，在廚房一起做蛋糕，還在蛋糕上放了草莓。媽媽回家看到蛋糕非常開心，抱住了他們。', emo:'🎂', color:'#ec4899', title:'送媽媽的蛋糕', en:'A Cake for Mom', tense:'過去式（made, put, came, was…）',
-   pics:[PG('👦👧🥚🥛','Mother\'s Day','母親節那天，哥哥和妹妹在廚房準備材料做蛋糕','誰？什麼日子？他們在做什麼？'),
-         PG('🎂🍓😊','','他們做好一個草莓蛋糕，很開心','蛋糕做得怎麼樣？'),
-         PG('👩🎂❤️👦👧','','媽媽回家看到蛋糕非常開心，抱住他們','媽媽看到蛋糕有什麼反應？')],
+  {id:'g3', img:'img/cake.jpg', story:'上星期日是母親節，Ben 和妹妹想給媽媽一個驚喜，在廚房一起做蛋糕，還在蛋糕上放了草莓。媽媽回家看到蛋糕非常開心，抱住了他們。', emo:'🎂', color:'#ec4899', title:'送媽媽的蛋糕', en:'A Cake for Mom', tense:'過去式（made, put, came, was…）',
+   pics:[PG('','','哥哥和妹妹穿著圍裙在廚房做蛋糕，哥哥在攪拌麵糊，妹妹在蛋糕上放草莓',''),
+         PG('','','媽媽提著購物袋回到家，看到桌上的草莓蛋糕，又驚訝又感動，兄妹在旁邊開心地笑',''),
+         PG('','','媽媽笑著流下開心的眼淚，緊緊抱住哥哥和妹妹','')],
    words:['wanted to','a surprise','made a cake','put … on','came home','hugged'],
    sample:'Last Sunday was Mother\'s Day. Ben and his sister wanted to give their mother a surprise. They made a cake in the kitchen with eggs, milk, and flour. Then they put some strawberries on the cake. When their mother came home, she saw the cake. She was very happy and hugged them.'},
-  {id:'g4', story:'Lily 星期一晚上忘了關門，她的小狗 Lucky 跑了出去。Lily 很難過，做了尋狗海報貼在街上。兩天後，隔壁的爺爺把 Lucky 帶了回來。', emo:'🐶', color:'#8b5cf6', title:'小狗不見了', en:'The Lost Dog', tense:'過去式（forgot, ran, put up, brought…）',
-   pics:[PG('🚪🐶💨','Monday evening','家門沒關好，小狗跑出去了','小狗怎麼不見的？'),
-         PG('👧📄🐶😢','','女孩很難過，在街上貼尋狗海報','女孩做了什麼來找狗？她的心情？'),
-         PG('👴🐶👧😄','Two days later','兩天後，鄰居爺爺把小狗帶回來，女孩很開心','最後怎麼找到小狗的？')],
+  {id:'g4', img:'img/dog.jpg', story:'Lily 星期三晚上忘了關門，她的小狗 Lucky 跑了出去。Lily 很難過，做了尋狗海報貼在街上。兩天後，隔壁的爺爺把 Lucky 帶了回來。', emo:'🐶', color:'#8b5cf6', title:'小狗不見了', en:'The Lost Dog', tense:'過去式（forgot, ran, put up, brought…）',
+   pics:[PG('','','晚上家門開著，穿黃色帽T的女孩在門口伸手想抓，小狗從門口跑了出去',''),
+         PG('','','白天女孩蹲在街上的電線桿旁邊，難過地把畫著小狗的尋狗海報貼上去，電線桿上已經貼了好幾張',''),
+         PG('','','戴帽子和眼鏡的爺爺抱著小狗還給女孩，女孩開心得流下眼淚跑過去接','')],
    words:['forgot to','ran out','was very sad','put up','brought … back','said thank you'],
-   sample:'Last Monday evening, Lily forgot to close the door, and her dog Lucky ran out. Lily was very sad. She made some posters and put them up on the street. Two days later, an old man next door brought Lucky back. Lily was so happy. She said thank you to him many times.'},
-  {id:'g5', story:'上星期六，你和家人開車去海邊。你們在海邊游泳、打排球。傍晚一起吃西瓜、看夕陽，回家的路上你累得在車上睡著了。', emo:'🏖️', color:'#14b8a6', title:'海邊的一天', en:'A Day at the Beach', tense:'過去式（went, swam, played, fell asleep…）',
-   pics:[PG('👨‍👩‍👧🚗🏖️','Last Saturday','一家人開車去海邊','誰？什麼時候？怎麼去？去哪裡？'),
-         PG('🏊🏐☀️','','他們在海邊游泳、打沙灘排球','他們在海邊做了什麼？'),
-         PG('🌅🍉😴🚗','Evening','傍晚看夕陽、吃西瓜，回家路上女孩在車上睡著了','最後做什麼？感覺怎麼樣？')],
+   sample:'Last Wednesday evening, Lily forgot to close the door, and her dog Lucky ran out. Lily was very sad. She made some posters and put them up on the street. Two days later, an old man next door brought Lucky back. Lily was so happy. She said thank you to him many times.'},
+  {id:'g5', img:'img/beach.jpg', story:'上星期六，你和家人開車去海邊。你們在海邊游泳、打排球。傍晚一起吃西瓜、看夕陽，回家的路上你累得在車上睡著了。', emo:'🏖️', color:'#14b8a6', title:'海邊的一天', en:'A Day at the Beach', tense:'過去式（went, swam, played, fell asleep…）',
+   pics:[PG('','','一家三口開車到海邊（車停在沙灘旁），爸爸在海裡游泳，媽媽和小男孩在海邊丟排球玩',''),
+         PG('','','傍晚太陽下山，一家人坐在沙灘的野餐墊上一起吃西瓜、看夕陽',''),
+         PG('','','晚上爸爸開車回家，小男孩蓋著毯子在後座的安全座椅上睡著了，媽媽坐在旁邊','')],
    words:['went to the beach','by car','swam','played volleyball','watched the sunset','fell asleep'],
    sample:'Last Saturday, my family and I went to the beach by car. The weather was hot and sunny. We swam in the sea and played volleyball on the beach. In the evening, we ate watermelon and watched the sunset. It was beautiful. On the way home, I fell asleep in the car because I was very tired.'},
-  {id:'g6', story:'Jack 的鬧鐘早上 7:30 響了，他卻還在睡覺。他起床後跑去公車站，但公車已經開走了。他 8:20 才到學校，老師很不高興。', emo:'⏰', color:'#f97316', title:'睡過頭了', en:'Late for School', tense:'過去式、過去進行式（rang, was sleeping, ran, left…）',
-   pics:[PG('⏰😴🛏️','7:30 a.m.','鬧鐘 7:30 響了，男孩還在睡覺','幾點了？他在做什麼？'),
-         PG('🏃🚌💨','','他起床跑去公車站，但公車已經開走了','他趕上公車了嗎？'),
-         PG('🏫👨‍🏫😓','8:20 a.m.','他 8:20 才到學校，老師很不高興，男孩很後悔','他幾點到學校？老師怎麼了？他以後要怎麼做？')],
+  {id:'g6', img:'img/late.jpg', story:'Jack 的鬧鐘今天早上響了，他卻還在睡覺。他起床後跑去公車站，但公車已經開走了。他 8:00 才到學校，老師很不高興。', emo:'⏰', color:'#f97316', title:'睡過頭了', en:'Late for School', tense:'過去式、過去進行式（rang, was sleeping, ran, left…）',
+   pics:[PG('','','床邊的鬧鐘在響，男孩穿著睡衣還在床上睡覺',''),
+         PG('','','男孩背著書包慌張地跑向公車站，黃色公車已經開走了',''),
+         PG('','','男孩站在學校門口，牆上時鐘是 8:00，女老師雙手抱胸、表情很不高興地看著他','')],
    words:['rang','was still sleeping','ran to','the bus left','got to school','decided to'],
-   sample:'This morning, Jack\'s alarm clock rang at 7:30, but he was still sleeping. When he got up, it was very late. He ran to the bus stop, but the bus left. He had to walk to school. He got to school at 8:20, and his teacher was not happy. Jack decided to go to bed early tonight.'},
-  {id:'g7', story:'Kevin 放學時看到一位老奶奶提著兩個很重的袋子。他幫老奶奶提袋子，陪她走回家。老奶奶向他道謝，還送他糖果。', emo:'👵', color:'#e11d48', title:'幫助老奶奶', en:'Helping an Old Woman', tense:'過去式、過去進行式（saw, was carrying, helped…）',
-   pics:[PG('👵🛍️🛍️😣','After school','放學後，一位老奶奶提著很重的購物袋，看起來很累','男孩放學時看到什麼？'),
-         PG('👦🛍️👵','','男孩幫老奶奶提袋子，陪她走回家','男孩怎麼幫忙？'),
-         PG('👵😊🍬👦','','到家後老奶奶謝謝他，給他糖果，男孩很開心','老奶奶怎麼謝謝他？男孩覺得怎麼樣？')],
+   sample:'This morning, Jack\'s alarm clock rang, but he was still sleeping. When he got up, it was very late. He ran to the bus stop, but the bus left. He had to walk to school. He got to school at eight, and his teacher was not happy. Jack decided to go to bed early tonight.'},
+  {id:'g7', img:'img/grandma.jpg', story:'Kevin 昨天放學時看到一位老奶奶提著兩個很重的袋子。他幫老奶奶提一個袋子，陪她走回家。老奶奶向他道謝，還送他一顆糖果。', emo:'👵', color:'#e11d48', title:'幫助老奶奶', en:'Helping an Old Woman', tense:'過去式、過去進行式（saw, was carrying, helped…）',
+   pics:[PG('','','背書包的男孩在路上看到一位老奶奶，雙手提著兩個裝滿蔬菜水果的大袋子，看起來很吃力',''),
+         PG('','','男孩幫老奶奶提一個袋子，兩人一起走在路上，老奶奶笑了',''),
+         PG('','','到了老奶奶家門口，老奶奶笑著送男孩一顆糖果，男孩很開心','')],
    words:['saw','was carrying','looked tired','Let me help you','walked her home','felt happy'],
-   sample:'Yesterday after school, Kevin saw an old woman on the street. She was carrying two heavy bags, and she looked tired. Kevin said, "Let me help you." He carried the bags and walked her home. The old woman thanked him and gave him some candy. Kevin felt happy because he helped someone.'},
-  {id:'g8', story:'Amy 每天早上 6:30 起床，刷牙、吃早餐，然後騎腳踏車去上學。放學後她和朋友打羽毛球，回家後寫功課。', emo:'🚲', color:'#22c55e', title:'Amy 的一天', en:'Amy\'s Day', tense:'現在式！圖上寫 every day，是每天的習慣 —— 主詞 Amy 是單數，動詞要加 s（gets up, rides, plays…）',
-   pics:[PG('⏰🪥🍞','6:30 a.m. every day','女孩每天早上 6:30 起床，刷牙、吃早餐','她每天幾點起床？起床後做什麼？'),
-         PG('🚲🏫📚','','她騎腳踏車去上學，在學校認真上課','她怎麼去上學？'),
-         PG('🏸🌇🏠📝','After school','放學後她和朋友打羽毛球，然後回家寫功課','放學後她做什麼？')],
-   words:['gets up','brushes her teeth','rides her bike','after school','does her homework'],
-   sample:'Amy gets up at six thirty every day. She brushes her teeth and eats bread for breakfast. Then she rides her bike to school. She studies hard in class. After school, she plays badminton with her friends in the park. When she gets home, she does her homework. She is busy but happy.'},
-  {id:'g9', story:'Miss Chen 在百貨公司的鞋店看到一雙喜歡的鞋子，馬上就買了。回家打開盒子後，她發現兩隻鞋子的大小不一樣。她很生氣地回到店裡，店員向她道歉，並換了一雙新的鞋子給她。',
+   sample:'Yesterday after school, Kevin saw an old woman on the street. She was carrying two heavy bags, and she looked tired. Kevin said, "Let me help you." He carried one of the bags and walked her home. The old woman thanked him and gave him a piece of candy. Kevin felt happy because he helped someone.'},
+  {id:'g8', img:'img/amyday.jpg', story:'Amy 每天早上 7:00 吃完早餐，就騎腳踏車去上學。放學後她和朋友在學校打羽毛球，晚上回家寫功課。', emo:'🚲', color:'#22c55e', title:'Amy 的一天', en:'Amy\'s Day', tense:'現在式！圖上寫 every day，是每天的習慣 —— 主詞 Amy 是單數，動詞要加 s（gets up, rides, plays…）',
+   pics:[PG('','','早上 7:00（門口的鬧鐘），桌上有吃過的吐司、蛋、果汁和牙刷，女孩背著粉紅書包騎紅色腳踏車往學校去',''),
+         PG('','','放學後，女孩和戴眼鏡的朋友在學校操場打羽毛球，兩人都很開心',''),
+         PG('','','晚上女孩在書桌前開著檯燈認真寫功課','')],
+   words:['every morning','eats breakfast','rides her bike','after school','does her homework'],
+   sample:'Every morning, Amy eats breakfast at seven. Then she rides her bike to school. After school, she plays badminton with her friend at school. They always have a lot of fun. In the evening, she goes home and does her homework at her desk. Amy is busy every day, but she is happy.'},
+  {id:'g9', img:'img/shoes.jpg', story:'上星期日，Miss Chen 在百貨公司的鞋店看到一雙喜歡的鞋子，馬上就買了。回家打開盒子後，她發現兩隻鞋子的大小不一樣。她很生氣地回到店裡，店員向她道歉，並換了一雙新的鞋子給她。',
    emo:'👟', color:'#0891b2', title:'鞋子大小不一樣', en:'The Wrong Shoes', tense:'過去式（saw, bought, found, went back, gave…）',
-   pics:[PG('👩👉👟🏬','Shoe store','Miss Chen 在百貨公司鞋店指著一雙喜歡的鞋子，店員在旁邊','她在哪裡？看到什麼？做了什麼決定？'),
-         PG('📦👟👞😮','At home','回家打開鞋盒，發現兩隻鞋子大小不一樣，很驚訝','回家打開盒子發現什麼問題？'),
-         PG('😠👩👟🙇','Back to the store','她生氣地回到店裡，店員鞠躬道歉，換一雙新鞋給她','她怎麼做？店員怎麼處理？')],
+   pics:[PG('','','短髮的 Miss Chen 在鞋店裡拿著一隻咖啡色樂福鞋，很開心、很喜歡',''),
+         PG('','','她在家裡的沙發上打開鞋盒，發現盒子裡兩隻鞋子一大一小，嚇了一跳',''),
+         PG('','','她拿著鞋盒回到鞋店，生氣地指著鞋子，戴眼鏡的男店員一臉抱歉，拿出一盒新的鞋子給她','')],
    words:['a pair of shoes','bought them right away','different sizes','was angry','went back to','said sorry'],
-   sample:'Last Sunday, Miss Chen saw a pair of nice shoes at a shoe store, so she bought them right away. At home, she opened the box and found the two shoes were different sizes. She was angry and went back to the store. The clerk said sorry and gave her a new pair.'},
-  {id:'g10', story:'Jack 上課時常常偷偷玩手機遊戲，所以考試考得很差。爸爸看到考卷非常生氣，從此不准他再用電腦和手機。',
+   sample:'Last Sunday, Miss Chen saw a pair of nice shoes at a shoe store in a department store, so she bought them right away. At home, she opened the box and found the two shoes were different sizes. She was angry and went back to the store. The clerk said sorry and gave her a new pair.'},
+  {id:'g10', img:'img/phone.jpg', story:'Jack 上課時常常偷偷玩手機遊戲，所以考試考得很差。爸爸看到考卷非常生氣，從此不准他再用電腦和手機。',
    emo:'📱', color:'#7c3aed', title:'上課玩手機', en:'Games in Class', tense:'過去式（played, got, was angry, didn\'t let…）；「常常」可以用 often / always',
-   pics:[PG('👨‍🏫📖🧒📱🎮','In class','老師在台上上課，Jack 在座位上偷偷玩手機遊戲','上課時 Jack 在做什麼？'),
-         PG('📄❌❌❌😟','Test','Jack 考試考得很差，爸爸拿著打滿叉的考卷，表情很生氣','考試結果怎麼樣？爸爸看到考卷的反應？'),
-         PG('👨😠👉🧒🚫📱💻','At home','爸爸生氣地指著 Jack，不准他用電腦和手機，Jack 低著頭','爸爸做了什麼決定？Jack 的心情？')],
+   pics:[PG('','','老師在黑板前上課，Jack 在座位上把平板／手機藏在桌子下偷偷玩遊戲，桌上的考卷有紅色叉叉',''),
+         PG('','','在家裡的餐桌，爸爸很生氣地指著打滿紅色叉叉的考卷，Jack 低著頭很難過',''),
+         PG('','','爸爸雙手抱胸，Jack 的手機和平板被放在一個紙箱上，旁邊有筆電，表示不准他再用，Jack 很沮喪','')],
    words:['in class','secretly','played games on his phone','did badly on the test','got angry','didn\'t let him use'],
    sample:'Jack often played games on his phone in class. He didn\'t listen to the teacher, so he did badly on his math test. When his father saw the test, he was very angry. He said, "No more computer games or phone for you!" Jack felt sorry and decided to study harder.'},
-  /* 簡短提示型：題目只給一句話，情節要自己從圖片看出來 */
-  {id:'g11', story:'Jason 今天工作的時候不專心，闖了大禍。', short:true,
-   emo:'💇', color:'#475569', title:'理髮師闖禍了', en:'A Bad Haircut', tense:'過去式、過去進行式（was cutting, was watching, cut…）',
-   pics:[PG('💇‍♂️✂️🙂','Barbershop','理髮師 Jason 在理髮店幫客人剪頭髮，旁邊有一台電視','Jason 的工作是什麼？他在做什麼？'),
-         PG('📺👀✂️😱','','Jason 一邊剪頭髮一邊轉頭看電視，不小心把客人的頭髮剪掉一大塊，客人嚇一跳','他為什麼不專心？發生了什麼事？'),
-         PG('🙏😰💇‍♂️😨','','Jason 很緊張地雙手合十道歉，客人看著手上剪掉的頭髮，非常驚訝','Jason 和客人的反應？')],
-   words:['was cutting','was watching TV','by accident','too much hair','was shocked','said sorry'],
-   sample:'Jason is a barber. This morning, he was cutting a man\'s hair. At the same time, he was watching a basketball game on TV. Suddenly, he cut off too much hair by accident. The man was shocked when he saw his hair. Jason felt very sorry and said sorry to him again and again.'},
+  /* 真的圖片：img 放圖片路徑，pics 只留 d（給 Claude 批改用的畫面說明） */
+  {id:'g12', img:'img/bike.jpg', story:'Amy 每天都騎腳踏車上下學。有一天放學回家的路上，她的腳踏車突然壞掉了，不能再騎。她只好把腳踏車留在路邊，難過地哭著跑回家。',
+   emo:'🚲', color:'#16a34a', title:'騎腳踏車壞掉了', en:'The Broken Bike', tense:'現在式＋過去式：每天的習慣用現在式（rides），「有一天」發生的事用過去式（broke, left, ran…）',
+   pics:[PG('','','穿制服、背紅書包的女孩開心地騎著紅色腳踏車（籃子裡有書）在路上',''),
+         PG('','','路上腳踏車的車身斷成兩半、鏈條掉在地上，女孩扶著車子快哭了',''),
+         PG('','','傍晚腳踏車靠在路邊的石牆旁，女孩一邊大哭一邊跑回家','')],
+   words:[],
+   sample:'Amy rides her bike to school and back home every day. One day, on her way home, her bike suddenly broke. The chain fell off, and she couldn\'t ride it anymore. Amy was very sad. She left the bike by the wall and ran home crying.'},
+  {id:'g13', img:'img/vase.jpg', story:'上星期六下午，Ben 在客廳玩球，不小心把媽媽最喜歡的花瓶打破了。媽媽回家後，Ben 誠實地向她道歉。媽媽沒有生氣，還稱讚他很誠實。',
+   emo:'🏺', color:'#d97706', title:'打破花瓶', en:'The Broken Vase', tense:'過去式、過去進行式（was playing, hit, broke, told…）',
+   pics:[PG('','','客廳裡，藍白花紋的花瓶破了一個大洞、碎片和花掉在地上，旁邊有一顆足球，男孩嚇得張大嘴巴',''),
+         PG('','','媽媽提著袋子回家坐在沙發上，男孩雙手合十、很緊張地向媽媽道歉，破花瓶倒在地上',''),
+         PG('','','媽媽跪坐在地上，笑著摟住男孩的肩膀，男孩也安心地笑了','')],
+   words:['was playing with a ball','hit','broke','was scared','told her the truth','honest'],
+   sample:'Last Saturday afternoon, Ben was playing with a ball in the living room. Suddenly, the ball hit his mother\'s favorite vase, and it broke. Ben was very scared. When his mother came home, he told her the truth and said sorry. His mother was not angry. She said, "Thank you for being honest."'},
 ];
 PIC_TOPICS.forEach(t=>{t.prompt=t.story+'請根據這些圖片寫一篇約 50 字的短文。'});
 TOPICS.forEach((t,i)=>{t.emo=['🌞','👫','🎂','🍉','🏖️','☔'][i];t.color=['#f97316','#ec4899','#8b5cf6','#14b8a6','#3b82f6','#64748b'][i]});
 TOPICS.unshift(...PIC_TOPICS);
-const picsHTML=t=>`<div class="pics">${t.pics.map((p,k)=>`${k?'<div class="parrow">⬇</div>':''}<div class="pic"><span class="pnum">${k+1}</span><div class="pe">${p.e}</div>${p.t?`<div class="pt en">${esc(p.t)}</div>`:''}</div>`).join('')}</div>`;
+const picsHTML=t=>t.img?`<div class="pics"><img class="picimg" src="${esc(t.img)}" alt="三張連環圖"></div>`:`<div class="pics">${t.pics.map((p,k)=>`${k?'<div class="parrow">⬇</div>':''}<div class="pic"><span class="pnum">${k+1}</span><div class="pe">${p.e}</div>${p.t?`<div class="pt en">${esc(p.t)}</div>`:''}</div>`).join('')}</div>`;
 // 給 Claude / 其他 AI 的題目說明
 const topicDesc=t=>t.pics?`看圖寫作（三張連環圖，寫約 50 字短文，未依提示作答會扣分）。中文提示：${t.story} 圖片內容：${t.pics.map((p,k)=>`圖${k+1}${p.t?`（圖上標示 ${p.t}）`:''}：${p.d}`).join('；')}`:`${t.title}（${t.en}）— ${t.prompt}`;
 
@@ -1575,12 +1583,12 @@ function countWords(s){return (s.match(/[A-Za-z0-9]+(?:['’][A-Za-z]+)?/g)||[])
 function viewPara(i){
   const t=TOPICS[i];
   app.innerHTML=`<h2>📝 ${esc(t.title)}　<span class="en muted" style="font-size:24px">${esc(t.en)}</span></h2>
-  <div class="split">
+  <div class="${t.pics?'':'split'}">
     <div>
       <div class="card"><div class="inst">${t.pics?`<span class="muted small">題目：</span>${esc(t.story)}請根據這些圖片寫一篇約 50 字的短文。<div style="color:var(--bad);font-weight:800;font-size:18px;margin-top:4px">注意：沒有照提示的內容寫，會被扣分！</div>`:esc(t.prompt)}</div>
-        ${t.pics?picsHTML(t)+`<details class="muted small" style="margin-bottom:4px"><summary style="cursor:pointer">⏰ 先想一想：這個故事要用什麼時態？（想好再點開）</summary><b>${esc(t.tense)}</b></details>`
-          :`<div class="muted small">⏰ 時態提示：${esc(t.tense)}</div>`}
-        <div class="muted small">🧰 好用的字：<span class="en">${t.words.map(esc).join('、')}</span></div>
+        ${t.pics?picsHTML(t)
+          :`<div class="muted small">⏰ 時態提示：${esc(t.tense)}</div>
+        <div class="muted small">🧰 好用的字：<span class="en">${t.words.map(esc).join('、')}</span></div>`}
         <div class="paper-tip">${t.pics?'✏️ 先把中文提示的情節一個一個圈起來、決定時態，每張圖寫 1～2 句，再<b>寫在紙上</b>（50 字左右）。':'✏️ 先用右邊的 5W1H 想內容，再<b>寫在紙上</b>（50 字左右）。'}寫完用下面的按鈕檢查。</div>
         <div class="row">
           <button class="btn teal" onclick="paraList(${i})">☑️ 自我檢查清單</button>
@@ -1601,12 +1609,8 @@ function viewPara(i){
         </details>
       </div>
     </div>
-    <div class="card" style="padding:16px">${t.pics
-      ?`<div style="font-weight:800;font-size:22px;margin-bottom:8px">💭 每張圖想一想</div>
-        ${t.pics.map((p,k)=>`<div class="wh"><b>圖 ${k+1}</b><br>${esc(p.q)}</div>`).join('')}
-        <div class="wh"><b>開頭</b><br>什麼時候？誰？（Last Saturday, Tom…）</div><div class="wh"><b>結尾</b><br>心情或學到什麼？（He felt happy.）</div>`
-      :`<div style="font-weight:800;font-size:22px;margin-bottom:8px">💭 5W1H 想一想</div>
-        ${Object.entries(t.w).map(([k,v])=>`<div class="wh"><b class="en">${k}</b><br>${esc(v)}</div>`).join('')}`}</div>
+    ${t.pics?'':`<div class="card" style="padding:16px"><div style="font-weight:800;font-size:22px;margin-bottom:8px">💭 5W1H 想一想</div>
+        ${Object.entries(t.w).map(([k,v])=>`<div class="wh"><b class="en">${k}</b><br>${esc(v)}</div>`).join('')}</div>`}
   </div>`;
   const ta=$('#para');ta.value=DB.drafts[t.id]||'';
   const upd=()=>{
