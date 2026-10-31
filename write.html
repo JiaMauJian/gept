@@ -1,0 +1,1584 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+</head>
+<body>
+<title>GEPT 初級說寫練習</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* 刻意只做明亮主題：給小朋友用的活潑配色 */
+:root{
+  color-scheme:light;
+  --bg:#fff8ec; --card:#ffffff; --ink:#2d2a32; --muted:#6b6577; --line:#f0e2cc;
+  --ai:#7c3aed; --aibg:#f4efff;
+  --pri:#ff7a45; --ok:#1f9d63; --okbg:#e3f8ec; --bad:#e5484d; --badbg:#ffecec;
+  --blue:#3b82f6; --purple:#8b5cf6; --teal:#14b8a6; --pink:#ec4899; --amber:#f59e0b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans TC","Microsoft JhengHei","PingFang TC",system-ui,sans-serif;font-size:22px;line-height:1.6}
+.en{font-family:"Segoe UI","Nunito",Arial,sans-serif;letter-spacing:.2px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:#ff7a45}
+header{background:linear-gradient(135deg,#ff7a45,#ffb347);color:#fff;padding-block:12px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+header h1{margin:0;font-size:28px;cursor:pointer;white-space:nowrap}
+.countdown{background:rgba(255,255,255,.28);border-radius:999px;padding:4px 16px;font-weight:700}
+header .homebtn{margin-left:auto;background:#fff;color:var(--pri);box-shadow:none;min-height:48px;padding:8px 18px}
+main{max-width:960px;margin:0 auto;padding-block:20px 80px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ai-only,.img-only{display:none!important}
+body.has-ai .ai-only,body.has-img .img-only{display:revert!important}
+body.has-img label.img-only{display:inline-flex!important}
+label.btn{display:inline-flex;align-items:center}
+.sel{font:inherit;font-size:22px;padding:8px 14px;border:3px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);min-height:52px;max-width:100%}
+.paper-tip{background:#fff6d6;border-radius:14px;padding:10px 14px;margin:12px 0;font-size:20px}
+ol.sheet{padding-left:40px;margin:8px 0}
+ol.sheet>li{padding:14px 0;border-bottom:2px dashed var(--line)}
+ol.sheet>li::marker{font-weight:800;color:var(--pri)}
+.sq-inst{font-weight:700}
+.sq{font-size:26px;font-weight:600;line-height:1.5}
+.tok{display:inline-block;background:#eef4ff;color:#1e3a8a;border-radius:8px;padding:0 10px;margin:3px 2px}
+.key{margin-top:10px}
+.checklist label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;cursor:pointer}
+.checklist input{width:24px;height:24px;margin-top:6px;flex:none}
+body.has-ai .no-ai{display:none!important}
+.btn.ai{background:var(--ai)}
+.aibox{background:var(--aibg);border:3px solid #d9c9ff;border-radius:18px;padding:16px 20px;margin-top:16px}
+.aibox .fbt{color:var(--ai)}
+.aibox ul{margin:6px 0;padding-left:24px}
+.fix{background:#fff;border-radius:12px;padding:8px 12px;margin:8px 0;font-size:20px}
+.fix .from{color:#b42318;text-decoration:line-through}
+.fix .to{color:var(--ok);font-weight:700}
+.pick{display:flex;gap:10px;flex-wrap:wrap}
+.pick .btn{min-height:52px;padding:8px 18px}
+.pick .btn.sec.active{border-color:var(--ai);color:var(--ai);background:var(--aibg)}
+.thinking{animation:blink 1.2s infinite}
+@keyframes blink{50%{opacity:.4}}
+@media (prefers-reduced-motion:reduce){.thinking,.pulse{animation:none}}
+h2{font-size:30px;margin:8px 0 14px}
+h3{font-size:24px;margin:22px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.tile{border:none;border-radius:22px;padding:20px 22px;text-align:left;color:#fff;font:inherit;font-size:25px;font-weight:800;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.16);transition:transform .08s}
+.tile .emo{font-size:42px;display:block;line-height:1.2}
+.tile small{display:block;font-size:17px;font-weight:500;opacity:.95;margin-top:4px}
+.tile:hover{filter:brightness(1.05)}
+.tile:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
+.card{background:var(--card);border-radius:22px;padding:24px;box-shadow:0 4px 14px rgba(120,80,20,.08);margin-bottom:18px}
+.btn{font:inherit;font-size:22px;font-weight:700;border:none;border-radius:16px;padding:12px 24px;cursor:pointer;background:var(--pri);color:#fff;box-shadow:0 4px 0 rgba(0,0,0,.18);min-height:60px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.btn.sec{background:#fff;color:var(--ink);border:3px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn.blue{background:var(--blue)} .btn.green{background:var(--ok)} .btn.red{background:var(--bad)} .btn.purple{background:var(--purple)} .btn.teal{background:var(--teal)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.mini{font:inherit;font-size:22px;border:none;background:#fff1e6;border-radius:12px;padding:2px 10px;cursor:pointer;vertical-align:middle}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.muted{color:var(--muted)} .small{font-size:18px}
+input.ans,textarea{width:100%;font-size:26px;padding:14px 18px;border:3px solid var(--line);border-radius:16px;font-family:"Segoe UI",Arial,sans-serif;background:#fffdf9;color:var(--ink)}
+input.ans:focus,textarea:focus{outline:none;border-color:var(--pri);background:#fff}
+textarea{min-height:260px;line-height:1.7;resize:vertical}
+.qhead{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-weight:700}
+.badge{display:inline-block;color:#fff;border-radius:999px;padding:2px 14px;font-size:18px;font-weight:700}
+.bar{height:14px;background:#f6ead8;border-radius:999px;overflow:hidden;margin:10px 0 18px}
+.bar>div{height:100%;background:linear-gradient(90deg,#ffb347,#ff7a45);border-radius:999px;transition:width .3s}
+.inst{font-size:24px;font-weight:700;margin-bottom:10px}
+.hint{color:var(--muted);font-weight:500;font-size:20px}
+.big-en{font-size:32px;font-weight:700;margin:6px 0 18px;line-height:1.4}
+.big-en u{text-decoration-color:var(--pri);text-decoration-thickness:4px;text-underline-offset:6px}
+.conj{display:inline-block;background:var(--blue);color:#fff;border-radius:12px;padding:0 14px;font-size:28px}
+.fb{border-radius:18px;padding:16px 20px;margin-top:16px}
+.fb.ok{background:var(--okbg);border:3px solid var(--ok)}
+.fb.bad{background:var(--badbg);border:3px solid var(--bad)}
+.fbt{font-size:28px;font-weight:800;margin-bottom:6px}
+.right{font-size:28px;font-weight:700;color:var(--ok)}
+.said{font-size:26px}
+.exp{margin-top:10px;background:#fff;border-radius:14px;padding:10px 14px;font-size:22px}
+.slots{min-height:84px;border:3px dashed #e7d3b3;border-radius:18px;padding:12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:#fffdf9;margin:10px 0}
+.bank{display:flex;flex-wrap:wrap;gap:12px;margin-top:6px}
+.chip{font:inherit;font-family:"Segoe UI",Arial,sans-serif;font-size:27px;font-weight:600;padding:8px 18px;border-radius:14px;border:3px solid #c7dbff;background:#eef4ff;color:#1e3a8a;cursor:pointer;box-shadow:0 3px 0 #c7dbff}
+.chip.on{background:#fff4e6;border-color:#ffc58f;color:#9a3412;box-shadow:0 3px 0 #ffc58f}
+.chip.used{visibility:hidden}
+.chip:disabled{cursor:default}
+.punct{font-size:30px;font-weight:800;color:var(--muted)}
+.w-bad{background:#ffd3d3;color:#b42318;border-radius:6px;padding:0 4px;text-decoration:underline wavy #e5484d}
+.w-need{color:var(--ok);font-weight:800;text-decoration:underline;text-decoration-thickness:3px}
+.w-ok{color:var(--ok)}
+.w-miss{background:#ffd3d3;color:#b42318;border-radius:6px;padding:0 4px;font-weight:700}
+.w-extra{background:#fff0c2;color:#92400e;border-radius:6px;padding:0 4px}
+.diffline{font-size:28px;line-height:1.8}
+.live{min-height:40px;font-size:24px;color:var(--blue);margin-top:10px}
+.pulse{animation:pulse 1s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 10px rgba(229,72,77,.25)}}
+.timer{width:150px;height:150px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:64px;font-weight:800;background:#fff;border:10px solid var(--teal);color:var(--teal);margin:10px auto}
+.timer.hot{border-color:var(--bad);color:var(--bad)}
+.hidebox{font-size:22px;color:var(--muted);background:#fbf3e6;border-radius:16px;padding:16px;text-align:center}
+.score{font-size:40px;font-weight:800}
+.split{display:grid;grid-template-columns:1fr 300px;gap:18px;align-items:start}
+.wh{background:#fff8ef;border-radius:16px;padding:12px 14px;margin-bottom:10px;font-size:19px;line-height:1.5}
+.wh b{color:var(--pri);font-size:21px}
+.wc{font-size:24px;font-weight:800}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.tabs .btn{min-height:52px;padding:8px 20px}
+.tabs .btn.sec.active{border-color:var(--pri);color:var(--pri)}
+table{width:100%;border-collapse:collapse;font-size:20px}
+th,td{padding:8px 10px;border-bottom:2px solid var(--line);text-align:left}
+.bars{display:flex;align-items:flex-end;gap:8px;height:180px;padding:10px 0;border-bottom:3px solid var(--line)}
+.bars div{flex:1;background:linear-gradient(180deg,#ffb347,#ff7a45);border-radius:10px 10px 0 0;position:relative;min-height:4px}
+.bars span{position:absolute;top:-26px;left:0;right:0;text-align:center;font-size:16px;font-weight:700}
+.wl-item{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:2px solid var(--line);font-size:20px}
+.wl-item .en{flex:1}
+.toast{position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#2d2a32;color:#fff;padding:12px 24px;border-radius:999px;font-size:22px;z-index:20;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+audio{width:100%;max-width:480px;margin-top:8px}
+@media (max-width:720px){
+  body{font-size:19px}
+  .split{grid-template-columns:1fr}
+  .big-en{font-size:26px}
+  .chip{font-size:22px;padding:6px 12px}
+  header h1{font-size:22px}
+}
+</style>
+<header>
+  <h1 onclick="go('home')">🦉 GEPT 初級說寫練習</h1>
+  <span class="countdown" id="countdown"></span>
+  <button class="btn homebtn" onclick="go('home')">🏠 首頁</button>
+</header>
+<main id="app"></main>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= 題庫 ================= */
+const REWRITE = [
+  {k:'改成否定句', q:'Tom likes apples.', a:['Tom does not like apples.'], e:'主詞 Tom 是第三人稱單數，否定要用 does not（doesn\'t），後面的動詞改回原形 like。'},
+  {k:'改成疑問句', q:'She is a teacher.', a:['Is she a teacher?'], e:'有 be 動詞（is）的句子，把 is 移到句首就是疑問句，句尾用問號。'},
+  {k:'改成過去式', h:'把 every day 換成 yesterday', q:'I go to school every day.', a:['I went to school yesterday.','Yesterday I went to school.'], e:'過去式要用 went！go 是不規則動詞，不是 goed。'},
+  {k:'改成否定句', q:'They played basketball yesterday.', a:['They did not play basketball yesterday.'], e:'過去式的否定用 did not（didn\'t），後面動詞要改回原形 play。'},
+  {k:'改成疑問句', q:'You can swim.', a:['Can you swim?'], e:'有助動詞 can 的句子，把 can 移到句首就變成疑問句。'},
+  {k:'改成現在進行式', q:'My mother cooks dinner.', a:['My mother is cooking dinner.','My mother is cooking dinner now.'], e:'現在進行式 = am / is / are + V-ing，cooks 變成 is cooking。'},
+  {k:'改成未來式', h:'用 will，並加上 tomorrow', q:'I visit my grandparents.', a:['I will visit my grandparents tomorrow.','Tomorrow I will visit my grandparents.'], e:'未來式用 will + 原形動詞，表示「將會」。'},
+  {k:'改成疑問句', q:'He has a dog.', a:['Does he have a dog?'], e:'一般動詞的疑問句：主詞是 he，句首加 Does，has 要改回原形 have。'},
+  {k:'改成過去式', q:'We are happy.', a:['We were happy.'], e:'are 的過去式是 were；am、is 的過去式是 was。'},
+  {k:'改成否定句', q:'There is a cat under the table.', a:['There is not a cat under the table.','There is no cat under the table.'], e:'There is 的否定是在 is 後面加 not（isn\'t），也可以說 There is no cat。'},
+  {k:'改用 be going to', q:'She will buy a new bike.', a:['She is going to buy a new bike.'], e:'will 和 be going to 都是未來式；主詞 She 要用 is going to + 原形動詞。'},
+  {k:'改成疑問句', q:'Amy watched TV last night.', a:['Did Amy watch TV last night?'], e:'過去式的疑問句在句首加 Did，watched 要改回原形 watch。'},
+  {k:'用 Where 問劃線的部分', q:'Ben lives in Taipei.', u:'in Taipei', a:['Where does Ben live?'], e:'問「地點」用 Where，後面接 does + 主詞 + 原形動詞 live。'},
+  {k:'用 What time 問劃線的部分', q:'The movie starts at seven.', u:'at seven', a:['What time does the movie start?'], e:'問「幾點」用 What time；the movie 是單數，用 does，starts 改回 start。'},
+  {k:'改成過去進行式', h:'把 now 換成 at eight last night', q:'I am reading a book now.', a:['I was reading a book at eight last night.','At eight last night I was reading a book.'], e:'過去進行式 = was / were + V-ing，表示過去某個時間「正在」做的事。'},
+  {k:'改成肯定句', q:'Mary doesn\'t like milk.', a:['Mary likes milk.'], e:'拿掉 doesn\'t 之後，主詞 Mary 是第三人稱單數，動詞要加 s 變成 likes。'},
+  {k:'把主詞換成 He', q:'I eat breakfast at seven.', a:['He eats breakfast at seven.'], e:'主詞是 He（第三人稱單數），現在式動詞要加 s：eat → eats。'},
+  {k:'用 Who 問劃線的部分', q:'Kevin broke the window.', u:'Kevin', a:['Who broke the window?'], e:'問「誰」做了某事，Who 直接當主詞，動詞維持 broke 不用變。'},
+  {k:'改成否定句', q:'My brother can drive a car.', a:['My brother cannot drive a car.'], e:'can 的否定是 cannot（can\'t），後面動詞維持原形 drive。'},
+  {k:'改成疑問句', q:'They will come to the party.', a:['Will they come to the party?'], e:'有 will 的句子，把 will 移到句首就變成疑問句。'},
+];
+const COMBINE = [
+  {s1:'I was hungry.', s2:'I ate a sandwich.', c:'so', a:['I was hungry, so I ate a sandwich.'], e:'so 表示「所以」：前面是原因、後面是結果；so 前面通常加逗號。'},
+  {s1:'I like dogs.', s2:'My sister likes cats.', c:'but', a:['I like dogs, but my sister likes cats.'], e:'but 表示「但是」，連接兩個不一樣或相反的事情。My 在句中改小寫 my。'},
+  {s1:'Tom stayed home.', s2:'He was sick.', c:'because', a:['Tom stayed home because he was sick.','Because he was sick, Tom stayed home.'], e:'because 表示「因為」，後面接原因；He 在句子中間要改成小寫 he。'},
+  {s1:'She can sing.', s2:'She can dance.', c:'and', a:['She can sing and dance.','She can sing, and she can dance.','She can sing and she can dance.'], e:'and 表示「而且」；主詞和 can 都一樣時，可以省略，直接說 sing and dance。'},
+  {s1:'It was raining.', s2:'We didn\'t go out.', c:'so', a:['It was raining, so we didn\'t go out.'], e:'下雨是原因，沒出門是結果，用 so 連接。'},
+  {s1:'The bag is nice.', s2:'It is too expensive.', c:'but', a:['The bag is nice, but it is too expensive.'], e:'「好看」和「太貴」意思相反，用 but 連接。'},
+  {s1:'I am tired.', s2:'I studied all night.', c:'because', a:['I am tired because I studied all night.','Because I studied all night, I am tired.'], e:'熬夜讀書是累的「原因」，放在 because 後面。'},
+  {s1:'Ann went to the park.', s2:'She played tennis.', c:'and', a:['Ann went to the park and played tennis.','Ann went to the park, and she played tennis.','Ann went to the park and she played tennis.'], e:'兩件事依序發生，用 and 連接；主詞是同一個人時可以省略 she。'},
+  {s1:'He studied hard.', s2:'He passed the test.', c:'so', a:['He studied hard, so he passed the test.'], e:'認真讀書（原因）→ 通過考試（結果），用 so。第二個 He 要改小寫。'},
+  {s1:'I want to buy the book.', s2:'I don\'t have money.', c:'but', a:['I want to buy the book, but I don\'t have money.','I want to buy the book, but I don\'t have any money.'], e:'but 連接「想買」和「沒錢」兩個相反的情況。'},
+  {s1:'We like summer.', s2:'We can swim in the sea.', c:'because', a:['We like summer because we can swim in the sea.','Because we can swim in the sea, we like summer.'], e:'可以去海邊游泳是喜歡夏天的「原因」，用 because。'},
+  {s1:'My father is a doctor.', s2:'My mother is a nurse.', c:'and', a:['My father is a doctor, and my mother is a nurse.'], e:'and 可以連接兩個並列的事實；第二個 My 改小寫。'},
+  {s1:'The soup was hot.', s2:'I waited a few minutes.', c:'so', a:['The soup was hot, so I waited a few minutes.'], e:'湯太燙（原因）→ 等幾分鐘（結果），用 so。'},
+  {s1:'Jack is tall.', s2:'His brother is short.', c:'but', a:['Jack is tall, but his brother is short.'], e:'tall 和 short 意思相反，用 but。His 在句中改小寫 his。'},
+  {s1:'Lisa is happy.', s2:'She got a gift.', c:'because', a:['Lisa is happy because she got a gift.','Because she got a gift, Lisa is happy.'], e:'收到禮物是開心的原因，用 because。'},
+  {s1:'I brushed my teeth.', s2:'I went to bed.', c:'and', a:['I brushed my teeth and went to bed.','I brushed my teeth, and I went to bed.','I brushed my teeth and I went to bed.','I brushed my teeth and then went to bed.','I brushed my teeth, and then I went to bed.'], e:'兩個動作依序發生，用 and 連接，兩個動詞都是過去式。'},
+  {s1:'The store was closed.', s2:'I went home.', c:'so', a:['The store was closed, so I went home.'], e:'商店關門（原因）→ 回家（結果），用 so。'},
+  {s1:'Peter can\'t come.', s2:'He has to work.', c:'because', a:['Peter can\'t come because he has to work.','Because he has to work, Peter can\'t come.'], e:'要上班是不能來的原因，用 because。'},
+];
+const REORDER = [
+  {s:'My brother is playing the guitar now.', zh:'我哥哥現在正在彈吉他。', alt:['Now my brother is playing the guitar.'], e:'現在進行式：主詞 + is + V-ing（playing）。'},
+  {s:'Did you see the movie last night?', zh:'你昨晚有看那部電影嗎？', e:'過去式疑問句：Did + 主詞 + 原形動詞，時間 last night 放句尾。'},
+  {s:'We are going to visit our aunt next week.', zh:'我們下星期要去拜訪阿姨。', alt:['Next week we are going to visit our aunt.'], e:'未來式：be going to + 原形動詞。'},
+  {s:'She doesn\'t like to eat carrots.', zh:'她不喜歡吃紅蘿蔔。', e:'否定句：主詞 + doesn\'t + 原形動詞 like。'},
+  {s:'What time do you get up every morning?', zh:'你每天早上幾點起床？', e:'疑問詞 What time + do + 主詞 + 原形動詞。'},
+  {s:'My mother made a cake for me.', zh:'我媽媽做了一個蛋糕給我。', e:'句型「主詞 + 動詞 + 受詞」：made a cake，for me 表示「給我」。'},
+  {s:'The little girl looks very happy.', zh:'那個小女孩看起來很開心。', e:'句型「主詞 + 連綴動詞 + 補語」：looks 後面接形容詞 happy。'},
+  {s:'He gave his friend a nice present.', zh:'他送他朋友一個很棒的禮物。', e:'句型「主詞 + 動詞 + 人 + 物」：gave + his friend + a nice present。'},
+  {s:'They call the dog Lucky.', zh:'他們叫那隻狗 Lucky。', e:'句型「主詞 + 動詞 + 受詞 + 補語」：call the dog Lucky。', keep:['Lucky']},
+  {s:'Where were you at nine last night?', zh:'你昨晚九點在哪裡？', e:'be 動詞過去式的問句：Where + were + you。'},
+  {s:'I was doing my homework when you called.', zh:'你打電話來的時候，我正在寫功課。', alt:['When you called I was doing my homework.'], e:'過去進行式 was doing 表示「當時正在做」。'},
+  {s:'Can you help me carry the box?', zh:'你可以幫我搬這個箱子嗎？', e:'Can 放句首變疑問句；help + 人 + 原形動詞。'},
+  {s:'I wore a coat because it was cold.', zh:'因為很冷，所以我穿了外套。', alt:['Because it was cold I wore a coat.'], e:'because 後面接原因 it was cold。'},
+  {s:'There are five people in my family.', zh:'我家有五個人。', e:'There are + 複數名詞，表示「有…」。'},
+  {s:'The sun rises in the east.', zh:'太陽從東邊升起。', e:'事實用現在式；The sun 是單數，動詞加 s：rises。'},
+  {s:'How many books did you borrow from the library?', zh:'你從圖書館借了幾本書？', e:'How many + 複數名詞 + did + 主詞 + 原形動詞。'},
+  {s:'I will call you after school.', zh:'我放學後會打電話給你。', alt:['After school I will call you.'], e:'未來式：will + 原形動詞 call。'},
+  {s:'Kevin and I went swimming yesterday.', zh:'Kevin 和我昨天去游泳。', alt:['Yesterday Kevin and I went swimming.'], e:'go swimming 是「去游泳」，過去式是 went swimming。', keep:['Kevin']},
+  {s:'My dog is smaller than your cat.', zh:'我的狗比你的貓小。', e:'比較級：形容詞 + er + than，small → smaller。'},
+];
+REWRITE.forEach((q,i)=>{q.id='rw'+(i+1);q.type='rewrite'});
+COMBINE.forEach((q,i)=>{q.id='cb'+(i+1);q.type='combine'});
+REORDER.forEach((q,i)=>{q.id='ro'+(i+1);q.type='reorder'});
+const BANK = {rewrite:REWRITE, combine:COMBINE, reorder:REORDER};
+const BYID = {}; [...REWRITE,...COMBINE,...REORDER].forEach(q=>BYID[q.id]=q);
+
+const TOPICS = [
+  {id:'p1', title:'我的週末', en:'My Weekend', prompt:'寫一寫你上個週末做了什麼事。', tense:'過去式（went, played, ate…）',
+   w:{Who:'和誰一起？（my family, my friends）', What:'做了什麼？（went to the park, watched a movie）', When:'星期六還是星期日？早上還是下午？', Where:'在哪裡？（at home, at the night market）', Why:'為什麼去？（because it was sunny）', How:'感覺怎麼樣？（It was fun. I was tired but happy.）'},
+   words:['last weekend','went to','had a good time','delicious','tired but happy'],
+   sample:'Last Saturday, I went to the night market with my family. We ate a lot of delicious food, like fried chicken and stinky tofu. Then we played some games, and I won a small toy bear. We went home at ten o\'clock. I was tired but very happy.'},
+  {id:'p2', title:'我最好的朋友', en:'My Best Friend', prompt:'介紹你最好的朋友。', tense:'現在式（is, has, likes…）',
+   w:{Who:'他／她叫什麼名字？幾歲？', What:'長什麼樣子？個性如何？（kind, funny）', When:'你們常常什麼時候在一起？（after school）', Where:'你們在哪裡認識？（in my class）', Why:'為什麼他／她是你最好的朋友？', How:'你們一起做什麼？（play badminton）'},
+   words:['my best friend','kind','funny','often','after school','helps me'],
+   sample:'My best friend is Lily. She is twelve years old, and she is in my class. She has long hair and big eyes. She is very kind and funny. We often play badminton after school. When I am sad, she always helps me. I am happy to have a friend like her.'},
+  {id:'p3', title:'生日派對', en:'My Birthday Party', prompt:'情境：上星期日是你的生日，描述你的生日派對。', tense:'過去式（had, came, gave…）',
+   w:{Who:'誰來參加？（my grandparents, my friends）', What:'你們做了什麼？吃了什麼？（a big cake）', When:'什麼時候？（last Sunday evening）', Where:'在哪裡辦？（at home, at a restaurant）', Why:'為什麼很特別？', How:'你收到什麼禮物？心情如何？'},
+   words:['had a party','came to','sang','gave me','gifts','the best birthday'],
+   sample:'Last Sunday was my birthday. My parents had a party for me at home. My grandparents and three good friends came to the party. My mother made a big chocolate cake. Everyone sang "Happy Birthday" to me. My friends gave me some nice gifts. It was the best birthday ever!'},
+  {id:'p4', title:'我最喜歡的季節', en:'My Favorite Season', prompt:'你最喜歡哪個季節？為什麼？', tense:'現在式',
+   w:{Who:'你常和誰一起？', What:'這個季節可以做什麼？吃什麼？', When:'是幾月到幾月？', Where:'會去哪裡玩？（the beach, the mountains）', Why:'為什麼喜歡？（because…）', How:'天氣怎麼樣？（hot and sunny, cool）'},
+   words:['my favorite season','the weather is','often','because','That\'s why'],
+   sample:'My favorite season is summer. In summer, the weather is hot and sunny. I don\'t have to go to school because of summer vacation. I often go swimming with my brother. We also eat ice cream and watermelon. Sometimes my family goes to the beach. That\'s why I love summer.'},
+  {id:'p5', title:'暑假計畫', en:'My Summer Vacation Plan', prompt:'寫一寫你這個暑假打算做什麼。', tense:'未來式（will, be going to）',
+   w:{Who:'和誰一起？', What:'打算做什麼？（visit my aunt, learn to swim）', When:'什麼時候？（in July）', Where:'要去哪裡？', Why:'為什麼想做這件事？', How:'怎麼去？（by train）你覺得會怎樣？'},
+   words:['I am going to','I will','by train','I think','have a lot of fun'],
+   sample:'This summer vacation, I am going to visit my aunt in Hualien with my family. We are going to take the train there. Hualien is a beautiful place with mountains and the sea. I will go swimming and ride a bike with my cousins. I think we will have a lot of fun.'},
+  {id:'p6', title:'突然下雨了', en:'A Rainy Afternoon', prompt:'情境：昨天放學回家的路上突然下大雨，寫出發生了什麼事。', tense:'過去式、過去進行式（was walking）',
+   w:{Who:'有誰？（I, my mother）', What:'發生什麼事？（it started to rain）', When:'什麼時候？（yesterday afternoon）', Where:'你在哪裡？（on my way home）', Why:'為什麼淋濕／沒淋濕？（I didn\'t have an umbrella）', How:'最後怎麼解決？你學到什麼？'},
+   words:['was walking','suddenly','started to rain','so I','next time'],
+   sample:'Yesterday afternoon, I was walking home from school. Suddenly, it started to rain. I didn\'t have an umbrella, so I ran to a convenience store. Then I called my mother, and she came to pick me up. When I got home, I took a hot shower. I will bring an umbrella next time.'},
+];
+
+const REPEAT = [
+  'Good morning, Mr. Wang.','I usually get up at six thirty.','My sister is good at drawing.','Please close the window.',
+  'We had a great time at the beach.','What are you going to do this weekend?','The library is next to the post office.',
+  'Don\'t forget to bring your umbrella.','He takes the bus to school every day.','Can I borrow your eraser?',
+  'It\'s very hot today, so let\'s go swimming.','My favorite subject is English.','Where did you go last Sunday?',
+  'The movie was really interesting.','Thank you for your help.','I\'m sorry I\'m late.'
+];
+const READ_SENT = [
+  'There are many beautiful flowers in the park.','My father usually reads the newspaper after dinner.',
+  'Could you tell me how to get to the train station?','Last night, we watched a basketball game on TV.',
+  'Don\'t run in the hallway. It\'s dangerous.','I am going to buy a present for my mother.',
+  'The weather will be cold and rainy tomorrow.','Which do you like better, tea or coffee?'
+];
+const READ_PASS = [
+  'Hi, my name is Amy. I am twelve years old. I live in Taichung with my parents and my little brother. Every Saturday, we go to the park near our home. My brother likes to play on the slide, and I like to ride my bike.',
+  'Yesterday was Mother\'s Day. My father and I got up early and made breakfast for my mother. We made eggs, toast, and orange juice. My mother was very happy. She said it was the best breakfast in the world.',
+  'Welcome to Sunny Zoo! The zoo opens at nine in the morning and closes at five in the afternoon. Please do not give food to the animals. You can buy drinks and snacks at the shop near the gate. Have a nice day!',
+  'Tom has a dog named Lucky. Lucky is brown and white. Every evening, Tom walks Lucky in the park. Last week, Lucky was sick, so Tom took him to the animal doctor. Now Lucky is fine and happy again.'
+];
+const QUESTIONS = [
+  {q:'What do you usually do on weekends?', a:'I usually play basketball with my friends on weekends. Sometimes I watch movies at home.'},
+  {q:'What did you eat for breakfast this morning?', a:'I ate a sandwich and drank a glass of milk this morning.'},
+  {q:'Who is your best friend? Why?', a:'My best friend is Kevin, because he is funny and always helps me.'},
+  {q:'How do you go to school?', a:'I go to school by bus. It takes about twenty minutes.'},
+  {q:'What is your favorite food?', a:'My favorite food is beef noodles. My mother cooks them very well.'},
+  {q:'What time do you go to bed?', a:'I usually go to bed at ten o\'clock, because I get up early.'},
+  {q:'What are you going to do after school today?', a:'I am going to do my homework, and then I will play the piano.'},
+  {q:'What\'s the weather like today?', a:'It is sunny and a little hot today.'},
+  {q:'Do you like sports? Which sport do you like?', a:'Yes, I do. I like swimming, because it is fun and good for my health.'},
+  {q:'Where did you go last summer vacation?', a:'I went to Kenting with my family. We swam in the sea.'},
+  {q:'How many people are there in your family?', a:'There are four people in my family: my parents, my sister, and me.'},
+  {q:'What do you want to be in the future?', a:'I want to be a doctor, because I want to help sick people.'},
+  {q:'What is your favorite season? Why?', a:'My favorite season is winter, because I can eat hot pot with my family.'},
+  {q:'Do you have any pets?', a:'Yes, I have a cat. Her name is Mimi, and she is very cute.'},
+  {q:'What did you do last night?', a:'I did my homework and watched TV with my brother last night.'},
+];
+
+/* ================= 課本題庫（來自原本的「英檢口說小教室」，共 12 回） ================= */
+const ROUNDS = [
+  { /* ---------------- 第一回（課本題目） ---------------- */
+    name:"第一回",
+    repeat:[
+      "You are my best friend.",
+      "Can I borrow your pen?",
+      "Do you want some bread for breakfast?",
+      "He doesn't play basketball.",
+      "What time do you get up every day?"
+    ],
+    read:{
+      sentences:[
+        "We often have a barbecue at the beach in summer.",
+        "He doesn't like spicy food at all.",
+        "Do you know how to bake a cake by yourself?",
+        "I saw a beautiful sunset while I was walking by the river.",
+        "Can you help me carry these heavy boxes?"
+      ],
+      passage:"I love pizza because it's so tasty and easy to eat. My favorite kind of pizza has cheese and mushrooms. I usually eat it with my family on weekends. We sometimes make our own pizza at home. It's fun to choose the toppings and cook together. Pizza always makes me feel happy."
+    },
+    answer:[
+      {q:"What do you usually do on weekends?", sample:"I usually play basketball with my friends on weekends. Sometimes I watch TV and read comic books at home. It is a lot of fun.", keys:["i usually","i play","i watch","i go","i read","i relax","weekend","homework","hiking","sports"]},
+      {q:"Where do you like to go shopping?", sample:"I like to go shopping at the supermarket with my mom, because there are many snacks and drinks. We go there every weekend.", keys:["i like","shopping","supermarket","department store","mall","night market","market","online","store","shop"]},
+      {q:"What do you like to eat for breakfast?", sample:"I like to eat toast and eggs for breakfast, and I drink milk. It is yummy and it makes me strong.", keys:["i like","i eat","i have","toast","bread","egg","milk","sandwich","rice","cereal","pancake","soup","juice"]},
+      {q:"Do you like to exercise?", sample:"Yes, I do. I like to play basketball after school with my friends, because it is fun and good for my body.", keys:["yes","no","i like","i love","i play","basketball","run","jog","swim","walk","exercise","don't"]},
+      {q:"What do you usually do after work or school?", sample:"After school, I do my homework first. Then I watch TV or play games to relax. Sometimes I play with my dog.", keys:["after school","i do","homework","i watch","i play","i read","i go","i meet","games","tv"]},
+      {q:"How do you usually get to work or school?", sample:"I usually go to school by bus with my sister. It takes about ten minutes, and I like to look out the window.", keys:["by bus","by car","by bike","by mrt","by subway","on foot","i walk","scooter","i take","i ride","i go"]},
+      {q:"What do you like to do when it rains?", sample:"When it rains, I like to stay at home and read books. Sometimes I watch movies and drink hot chocolate. It feels cozy.", keys:["when it rains","i like","i stay","i read","i watch","i listen","i play","at home","inside","movies","music"]}
+    ]
+  },
+  { /* ---------------- 第二回（課本題目） ---------------- */
+    name:"第二回",
+    repeat:[
+      "Could you do me a favor?",
+      "Make yourself at home.",
+      "Let's keep in touch.",
+      "It's very nice of you to help me.",
+      "Let me introduce myself."
+    ],
+    read:{
+      sentences:[
+        "Why don't we hang out at the park this afternoon?",
+        "If you're free, why don't we grab a bite to eat?",
+        "Don't forget to call me back when you get home.",
+        "You can count on me if you ever need help.",
+        "Hold on a second. I'll be right back."
+      ],
+      passage:"I think learning English is very important. It helps me talk to people from other countries and understand different cultures. I like to practice English by watching movies and reading books. Sometimes, I talk to my friends in English. I hope one day I can speak it fluently and travel around the world."
+    },
+    answer:[
+      {q:"When is your birthday?", sample:"My birthday is on May tenth. Every year, I eat cake with my family, and my friends give me presents. I love my birthday.", keys:["birthday is","born","january","february","march","april","may","june","july","august","september","october","november","december","cake","party"]},
+      {q:"Do you enjoy learning English? Why or why not?", sample:"Yes, I like learning English, because it is fun and useful. I can watch cartoons in English and talk to people from other countries.", keys:["yes","no","i like","i enjoy","i love","english","because","fun","useful","difficult","hard"]},
+      {q:"How many people are there in your family? Who are they?", sample:"There are four people in my family: my father, my mother, my brother, and me. We often watch TV and play games together.", keys:["there are","people","family","father","mother","brother","sister","grandma","grandpa","grandmother","grandfather","parents","dad","mom"]},
+      {q:"Have you ever been abroad?", sample:"Yes, I have been to Japan with my family. We ate sushi and visited many fun places. I want to go there again.", keys:["yes","no","i have been","never","abroad","japan","korea","america","i would","want to go","i went"]},
+      {q:"What kind of sport do you like to play?", sample:"I like to play basketball with my friends after school, because it is exciting. It also keeps me healthy and strong.", keys:["i like","i play","i love","basketball","badminton","swim","soccer","baseball","dodge ball","run","jog","sport","tennis"]},
+      {q:"Do you have a lucky number? What is it?", sample:"Yes, my lucky number is seven, because my birthday is on July seventh. I think it brings me good luck.", keys:["yes","no","lucky number","number is","one","two","three","four","five","six","seven","eight","nine","don't have","because"]},
+      {q:"Are you a shy or outgoing person?", sample:"I am an outgoing person. I like to talk to people and make new friends, because it is fun to play together.", keys:["i am","i'm","shy","outgoing","quiet","introverted","friendly","friends","person","i like to talk"]}
+    ]
+  },
+  { /* ---------------- 第三回（課本題目） ---------------- */
+    name:"第三回",
+    repeat:[
+      "It's getting hotter and hotter.",
+      "Come on in and have a seat.",
+      "Do you understand what I said?",
+      "We're looking forward to the trip.",
+      "It's a pleasure to meet you."
+    ],
+    read:{
+      sentences:[
+        "Mom is trying to learn how to bake a chocolate cake.",
+        "Give me some time, and I'll think about it.",
+        "Don't worry; everything will be fine.",
+        "Let's catch up over coffee when you have free time.",
+        "I haven't made up my mind yet."
+      ],
+      passage:"Last Saturday, my family and I went to the beach. The weather was warm, and the sky was clear. We played in the sand and built a big sandcastle. After that, we swam in the sea for a while. It was so relaxing and fun. I hope we can go there again soon."
+    },
+    answer:[
+      {q:"Do you love outdoor activities?", sample:"Yes, I do. I like to ride my bike and play in the park with my friends, because I love the fresh air and sunshine.", keys:["yes","no","i like","i love","i enjoy","outdoor","bike","hiking","camping","park","play","indoors","i prefer","jogging","picnic"]},
+      {q:"What's the first thing you do after you wake up?", sample:"The first thing I do is brush my teeth and wash my face. Then I eat breakfast with my family before I go to school.", keys:["first thing","i brush","i wash","i drink","i check","i eat","i stay","teeth","face","water","get dressed","bed","phone"]},
+      {q:"Have you ever shopped online?", sample:"Yes, I have. My mom and I buy books and toys online, because it is fast and easy. The things come to our home.", keys:["yes","no","i have","never","online","i buy","i bought","books","clothes","toys","store","haven't","convenient"]},
+      {q:"Do you like to go to night markets?", sample:"Yes, I like night markets very much, because there are many yummy snacks. I love fried chicken and bubble tea, and the games are fun.", keys:["yes","no","i like","i love","night market","snacks","food","crowded","bubble tea","games","don't","street food"]},
+      {q:"Do you prefer cooking at home or eating out?", sample:"I like eating out, because I can try different kinds of food. But I also love my mom's cooking at home. It is the best.", keys:["i like","i prefer","eating out","eat out","cook","cooking","at home","restaurant","food","my mom","takeout","save time"]},
+      {q:"How many languages do you speak?", sample:"I can speak two languages: Chinese and English. I speak Chinese at home, and I learn English at school. I want to learn more.", keys:["i can speak","i speak","language","chinese","english","japanese","taiwanese","one","two","three","native"]},
+      {q:"What kind of movies do you like the most?", sample:"I like animation movies the most, because they are funny and exciting. I often watch them with my family on weekends.", keys:["i like","i love","movie","action","comedy","animation","cartoon","horror","romance","funny","exciting","because","sci-fi"]}
+    ]
+  },
+  { /* ---------------- 第四回（課本題目） ---------------- */
+    name:"第四回",
+    repeat:[
+      "Calm down.",
+      "Time's up. Let's take a break.",
+      "Where have you been?",
+      "Now take a deep breath.",
+      "Let me know if you have any questions."
+    ],
+    read:{
+      sentences:[
+        "You didn't listen to me, did you?",
+        "Can you keep an eye on my bag for a minute?",
+        "I can't wait to hang out with my friends tomorrow.",
+        "The meeting was put off until Monday.",
+        "It's time to call it a day and head back home."
+      ],
+      passage:"Next month, my school will organize a camping trip. We'll stay in tents and cook our own meals. During the day, we'll hike, explore the forest, and learn about nature. At night, we'll sit around a campfire, play games, and share stories. I'm excited to experience the beauty of the outdoors."
+    },
+    answer:[
+      {q:"What did you eat for dinner yesterday?", sample:"I ate rice with chicken and vegetables yesterday. My mom cooked it at home, and it was very yummy. I ate a lot.", keys:["i ate","i had","i cooked","rice","noodles","chicken","beef","pork","dumplings","soup","pasta","fish","hamburger","delicious","yummy","restaurant"]},
+      {q:"Are you a dog person or a cat person?", sample:"I am a dog person, because dogs are friendly and cute. I like to play with them in the park, and they make me happy.", keys:["dog person","cat person","i am","i'm","i like","dogs","cats","friendly","cute","loyal","pet","both","because"]},
+      {q:"What would you do if you had a week off?", sample:"I would go to the beach with my family, because I love swimming and playing in the sand. We would eat ice cream together.", keys:["i would","i will","travel","beach","stay at home","stay home","relax","i play","visit","sleep","trip","go to","watch"]},
+      {q:"How much time do you spend using your phone in a day?", sample:"I use my phone for about one hour a day. I watch videos and play games, but my mom says I should not use it too much.", keys:["hour","minute","i use","my phone","about","watch","videos","games","one","two","three","half","don't use"]},
+      {q:"Who do you usually talk to when you feel upset?", sample:"I usually talk to my mom when I feel upset, because she understands me and gives me good advice. I feel better after that.", keys:["i talk to","i usually talk","my mom","my dad","my mother","my father","my friend","sister","brother","teacher","grandma","because","listen"]},
+      {q:"Have you made any plans for the weekend?", sample:"Yes, I will go to the park with my family this weekend. We will ride bikes and have a picnic. I can't wait!", keys:["yes","no","i will","i'm going","i am going","plan","weekend","stay home","i play","visit","go to","watch","don't have","not yet"]},
+      {q:"Do you have any hobbies?", sample:"Yes, I do. I like drawing and playing basketball. Drawing makes me relax, and basketball is fun to play with my friends.", keys:["yes","no","i like","i love","hobby","hobbies","drawing","reading","music","basketball","games","singing","dancing","painting","swimming","guitar","piano"]}
+    ]
+  },
+  { /* ---------------- 第五回（課本題目） ---------------- */
+    name:"第五回",
+    repeat:[
+      "Come on! It's not a big deal.",
+      "We've never been here before.",
+      "I'd like to have a cheese burger.",
+      "Are you coming with us?",
+      "Can you give me a glass of water?"
+    ],
+    read:{
+      sentences:[
+        "Sophie didn't attend the meeting since she was sick.",
+        "I ran into an old friend while shopping yesterday.",
+        "Why don't we take a break and grab some coffee?",
+        "You can have either pizza or pasta.",
+        "Take your time and think carefully before you decide."
+      ],
+      passage:"Yesterday, it rained heavily all afternoon. I stayed home and made some hot chocolate. I read my favorite book and listened to calming music. Although I couldn't go outside, the warmth and comfort of being indoors made it a lovely and relaxing day. Rainy days can be enjoyable in their own way."
+    },
+    answer:[
+      {q:"What's your must-eat when you go to a night market?", sample:"My must-eat is fried chicken, because it is crispy and yummy. I also love bubble tea, because the pearls are chewy.", keys:["must-eat","must eat","i love","i like","fried chicken","bubble tea","stinky tofu","popcorn chicken","oyster","night market","because","crispy","yummy","sweet","snack"]},
+      {q:"What is your favorite season? Why?", sample:"My favorite season is summer, because I can go swimming with my family. We also eat ice cream and watch fireworks.", keys:["favorite season","spring","summer","autumn","fall","winter","because","hot","cold","cool","swimming","snow","vacation","i like"]},
+      {q:"Do you prefer waking up early or staying up late?", sample:"I prefer waking up early, because I feel good in the morning. I can eat breakfast slowly and walk to school happily.", keys:["i prefer","waking up early","wake up early","get up early","staying up late","stay up late","because","morning","night","sleep","early bird","night owl"]},
+      {q:"Who is the most important person in your life?", sample:"My mom is the most important person in my life, because she takes care of me every day. She cooks yummy food and helps me with my homework.", keys:["my mom","my dad","my mother","my father","grandma","grandpa","grandmother","grandfather","important person","because","takes care","helps me","love","family","teacher","friend","sister","brother"]},
+      {q:"Is there something new you want to learn?", sample:"I want to learn to swim, because it is fun and good for my body. I will practice with my dad every weekend.", keys:["i want to learn","learn to","learn how","because","swim","piano","guitar","draw","cook","dance","english","japanese","practice","new skill","yes"]},
+      {q:"What have you been busy with lately?", sample:"I have been busy with my homework and tests at school. I also practice English every day, because I want to do well.", keys:["i have been busy","busy with","i am busy","homework","test","exam","school","practice","study","english","piano","because","reading"]},
+      {q:"Do you have single eyelids or double eyelids?", sample:"I have double eyelids, and I think they make my eyes look big. I like my eyes, because they help me see many beautiful things.", keys:["single eyelid","double eyelid","i have","eyelids","my eyes","big","small","unique","i like","because","look"]}
+    ]
+  },
+  { /* ---------------- 第六回（課本題目） ---------------- */
+    name:"第六回",
+    repeat:[
+      "You can count on me anytime.",
+      "That's what friends are for.",
+      "Do you have a minute?",
+      "I'll catch you later.",
+      "It's never too late to learn."
+    ],
+    read:{
+      sentences:[
+        "I will meet you at the cafe at 3:30.",
+        "Have you ever seen him before?",
+        "We bumped into our teacher at the bookstore.",
+        "Please take good care of yourself.",
+        "I'm looking forward to hanging out with you tomorrow."
+      ],
+      passage:"Attention, all visitors. A young boy named Daniel, wearing a green jacket and black pants, is looking for his parents. He is waiting at the customer service desk on the first floor. If you are his parent or family, please go there right away. Thank you for your cooperation and assistance."
+    },
+    answer:[
+      {q:"Do you prefer hot days to cold days? Why or why not?", sample:"I prefer hot days, because I can go swimming and eat ice cream. I also like to play outside with my friends.", keys:["hot days","cold days","i prefer","i like","because","swimming","ice cream","snow","hot chocolate","warm clothes","sweat","summer","winter"]},
+      {q:"How many hours do you work or study each day?", sample:"I study about seven hours a day at school. After school, I do my homework for one more hour, because I want to learn well.", keys:["hours","hour","i study","i work","a day","school","homework","one","two","five","six","seven","eight","about"]},
+      {q:"Do you have any pets? What pets do you have?", sample:"Yes, I have a dog named Lucky. He is cute and playful, and I like to walk him in the park.", keys:["yes","no","i have","dog","cat","fish","rabbit","hamster","bird","pet","cute","don't have","i hope","adopt","named"]},
+      {q:"Can you briefly describe your looks?", sample:"I am not very tall, and I have short black hair. I wear glasses, and I have a big smile.", keys:["i am","i have","tall","short","hair","eyes","glasses","smile","black","brown","slim","cute","face","i wear"]},
+      {q:"Have you ever tried dieting? Did it work?", sample:"No, I haven't tried dieting. I eat healthy food like vegetables and fruit, and I play sports to stay strong.", keys:["yes","no","dieting","diet","i eat","healthy","vegetables","fruit","exercise","junk food","haven't","balanced","sports","strong"]},
+      {q:"Do you play any mobile games?", sample:"Yes, I play mobile games sometimes, because they are fun. But I only play for thirty minutes a day, because I need to rest my eyes.", keys:["yes","no","i play","mobile games","games","fun","minutes","hour","because","don't play","hardly","screen","phone"]},
+      {q:"What's your favorite way to relax?", sample:"My favorite way to relax is reading comic books, because they are funny. I also like to listen to music and draw pictures.", keys:["my favorite way","favorite way","relax","i like","i love","reading","listen to music","watch","sleep","draw","i play","because","walk","take a"]}
+    ]
+  },
+  { /* ---------------- 第七回（課本題目） ---------------- */
+    name:"第七回",
+    repeat:[
+      "Watch out! Don't get hurt.",
+      "Please repeat after me.",
+      "I'm fine with anything.",
+      "Thank you for your invitation.",
+      "Good night, and have sweet dreams!"
+    ],
+    read:{
+      sentences:[
+        "Would you like something to drink?",
+        "I stayed up late last night studying for my test.",
+        "Sorry! I didn't do it on purpose.",
+        "An apple a day keeps the doctor away.",
+        "It's time to call it a day and get some rest."
+      ],
+      passage:"Today was a busy day at school. We had math, science, and history. My friends and I talked about the upcoming sports day during lunch. After school, I stayed behind to work on a group project. Although I was tired, I felt excited because we finished most of the work."
+    },
+    answer:[
+      {q:"Are you interested in sports or arts?", sample:"I'm more interested in sports. I love playing basketball with my friends, because it is exciting and keeps me healthy.", keys:["sports","arts","i like","i love","interested","basketball","drawing","painting","football","tennis","because","both","exercise"]},
+      {q:"Do you prefer eating alone or with other people?", sample:"I like eating with my family, because we can talk and share food. Dinner time is fun and happy.", keys:["eating alone","with other","with my family","with my friends","i like","i prefer","because","talk","share","quiet","together","eat alone"]},
+      {q:"What's your best subject in school?", sample:"My best subject is English, because I like reading stories and singing English songs. It is fun for me.", keys:["best subject","math","english","science","chinese","history","art","music","pe","because","i like","good at"]},
+      {q:"If you had money, what would you like to do the most?", sample:"If I had money, I would travel with my family, because I want to see the world. I would also buy many books.", keys:["if i had","i would","buy","travel","save","give","help","money","because","toys","books","house","donate"]},
+      {q:"How many rooms are there in your house?", sample:"There are five rooms in my house: three bedrooms, a living room, and a kitchen. I like my room the best, because it is cozy.", keys:["rooms","there are","bedroom","living room","kitchen","bathroom","my house","my home","two","three","four","five","because","cozy"]},
+      {q:"Are you popular at school or work?", sample:"I think I am popular at school, because I am friendly and helpful. I like to play with my classmates, and we are happy together.", keys:["popular","i am","i'm","friendly","i have","friends","classmates","helpful","kind","because","not very","i try"]},
+      {q:"If you could choose, would you want to be a man or a woman?", sample:"I am happy to be who I am. If I could choose, I would stay the same, because I like myself.", keys:["man","woman","boy","girl","i would","stay the same","i am happy","i'm happy","i like","myself","choose","because"]}
+    ]
+  },
+  { /* ---------------- 第八回（課本題目） ---------------- */
+    name:"第八回",
+    repeat:[
+      "Let's get out of here right now.",
+      "What a wonderful world it is!",
+      "She goes to the gym twice a week.",
+      "Believe it or not!",
+      "Don't forget to wash your hands before you eat."
+    ],
+    read:{
+      sentences:[
+        "Do you mind if I open the window?",
+        "He neither studied nor did his homework.",
+        "They are working on the project, aren't they?",
+        "We are so excited that New Year is coming.",
+        "Listening to music makes me relaxed."
+      ],
+      passage:"Hi, I'm Kevin, a 20-year-old college student studying business. I love playing basketball, reading novels, and learning new skills like cooking. My favorite color is blue because it reminds me of the ocean. I enjoy meeting new people and exploring different cultures. My goal is to travel around the world someday. Nice to meet you!"
+    },
+    answer:[
+      {q:"Can you play any musical instruments, like the piano or the flute?", sample:"Yes, I can play the piano. I practice every day after school, because I want to play beautiful songs.", keys:["yes","no","i can play","piano","violin","guitar","drum","flute","ukulele","recorder","i don't play","i love listening","because","practice","music"]},
+      {q:"What do you usually do before you go to bed?", sample:"Before bed, I usually brush my teeth and read a story book. It helps me relax and sleep well.", keys:["before bed","i usually","brush my teeth","i read","listen to music","take a bath","i watch","sleep","relax","because","story","i check"]},
+      {q:"Is there anything you're afraid of? What is it?", sample:"I am afraid of cockroaches, because they look creepy. When I see one, I call my dad for help.", keys:["i am afraid","i'm afraid","afraid of","scared of","ghosts","spiders","snakes","cockroach","darkness","heights","thunder","because","creepy","nothing","dogs"]},
+      {q:"How often do you go to a fast-food restaurant?", sample:"I go to a fast-food restaurant about once a month. I like fried chicken and fries, but I don't eat too much, because it is not healthy.", keys:["once a week","once a month","twice","sometimes","i go","fast food","burger","fries","fried chicken","because","healthy","i like","every","don't eat","hardly"]},
+      {q:"Do you prefer mountains or the sea?", sample:"I prefer the sea, because I love swimming and playing in the sand. The waves are fun to watch.", keys:["i prefer","i like","mountains","the sea","because","swimming","hiking","beach","waves","fresh air","camping","sand","climbing"]},
+      {q:"What kind of movies or dramas do you like?", sample:"I like funny movies the most, because they make me laugh. I often watch them with my family on weekends.", keys:["i like","i love","i enjoy","movies","action","comedy","funny","cartoon","animation","horror","romance","because","exciting","touching","dramas"]},
+      {q:"If you could only bring one thing to an island, what would you bring?", sample:"I would bring a knife, because it is very useful. I can use it to make a shelter and find food.", keys:["i would bring","i would take","i'd bring","i'd take","knife","lighter","phone","tent","water","food","map","rope","because","useful","survive"]}
+    ]
+  },
+  { /* ---------------- 第九回（課本題目） ---------------- */
+    name:"第九回",
+    repeat:[
+      "The birds start singing early in the morning.",
+      "Could you please pass me the salt?",
+      "Did I say something wrong?",
+      "You look great in that color.",
+      "Do you want to go for a ride with me?"
+    ],
+    read:{
+      sentences:[
+        "What's wrong? You look so sad.",
+        "Have you decided what to eat for lunch yet?",
+        "Is this the person you are looking for?",
+        "Let's take a short break before we continue working.",
+        "Hold on a second. I'll be right back."
+      ],
+      passage:"I visited the zoo with my family last Saturday. We saw many animals, including lions, tigers, and giraffes. My favorite part was feeding the elephants. They were so gentle and friendly! We also watched a bird show, which was amazing. Afterward, we bought some souvenirs from the gift shop. It was a fun and educational day."
+    },
+    answer:[
+      {q:"How do you spend your free time when you're at home?", sample:"I usually read comic books and draw pictures at home, because they are fun. Sometimes I play games with my brother.", keys:["i usually","i like","i watch","i read","i play","i draw","free time","at home","games","tv","because","books","music","i listen"]},
+      {q:"Are you satisfied with your height? Why or why not?", sample:"Yes, I am happy with my height, because I can play sports well. I drink milk every day, because I want to grow taller.", keys:["yes","no","i am happy","i'm happy","satisfied","my height","tall","taller","short","because","grow","i wish","i can"]},
+      {q:"Have you ever seen the sunrise? Who did you watch it with?", sample:"Yes, I saw the sunrise with my family at the beach. The sky was golden and beautiful, and I felt very happy.", keys:["yes","no","sunrise","i saw","i watched","with my family","with my friends","beach","mountain","beautiful","haven't","i hope","golden","sky"]},
+      {q:"Which ride is your favorite when you go to an amusement park?", sample:"My favorite ride is the Ferris wheel, because I can see everything from the top. It is fun and not scary.", keys:["my favorite ride","favorite ride","ferris wheel","roller coaster","bumper cars","merry-go-round","carousel","i like","i love","because","fun","exciting","scary","fast"]},
+      {q:"Can you tell me three of your strengths?", sample:"I am friendly, helpful, and hardworking. I like to help my classmates, and I always finish my homework on time.", keys:["i am","i'm","friendly","helpful","hardworking","kind","honest","patient","creative","confident","strength","because","i like to help","responsible","brave"]},
+      {q:"What do you think about traveling around the island by motorcycle?", sample:"I think it is exciting, because you can see beautiful places. But riders must wear a helmet and be careful.", keys:["i think","exciting","great idea","good idea","because","beautiful","dangerous","careful","helmet","safety","fun","motorcycle","island","i want to try","scenery"]},
+      {q:"Do you wear glasses? Are there any inconveniences with them?", sample:"Yes, I wear glasses, because I am nearsighted. Sometimes they fog up when I eat hot noodles, but they help me see clearly.", keys:["yes","no","i wear glasses","i don't wear","nearsighted","because","see clearly","fog up","contact","my eyes","inconvenient","sometimes","glasses"]}
+    ]
+  },
+  { /* ---------------- 第十回（課本題目） ---------------- */
+    name:"第十回",
+    repeat:[
+      "Are you ready to get started?",
+      "I love trying new food when I travel.",
+      "We wish you a happy New Year!",
+      "She works out every morning before work.",
+      "You should be very careful when you drive."
+    ],
+    read:{
+      sentences:[
+        "After the heavy rain, the air smelled so fresh.",
+        "He missed the bus because he slept in this morning.",
+        "Don't worry about it. We'll figure it out together.",
+        "The turtle slowly made its way back to the ocean.",
+        "I need to pick up some food on my way home."
+      ],
+      passage:"Welcome aboard! Please stand behind the yellow line and wait for the train to arrive. Be careful about the gap between the platform and the train. Hold onto the handrails and be considerate of other passengers. If you need help, please approach the staff. Thank you for riding with us, and have a safe journey!"
+    },
+    answer:[
+      {q:"Do you have a job now? What is it?", sample:"No, I don't have a job. I am a student, and my job is to study hard and learn new things.", keys:["yes","no","i don't have","i am a student","i'm a student","job","study","i work","part-time","school","because","learn"]},
+      {q:"What gift would you like to receive the most?", sample:"I would like to receive a new bike, because I can ride it to the park with my friends.", keys:["i would like","i want","gift","present","receive","bike","phone","toy","books","game","watch","because","lego","robot"]},
+      {q:"Do you prefer meat or seafood when eating hot pot?", sample:"I prefer meat, because beef tastes yummy in hot pot. I also like to eat vegetables and noodles.", keys:["i prefer","i like","i love","meat","seafood","beef","pork","shrimp","fish","hot pot","because","yummy","vegetables","noodles","tofu"]},
+      {q:"How do you usually prepare for a big test or exam?", sample:"I review my notes and read my textbook, because I want to get a good grade. I go to bed early before the test.", keys:["i review","i read","i study","notes","textbook","practice","test","exam","because","early","i ask","my teacher","quiz","homework"]},
+      {q:"If you could get a pet, what would you like to have?", sample:"I would like to have a dog, because dogs are cute and friendly. I want to walk my dog in the park every day.", keys:["i would like","i want","pet","dog","cat","rabbit","hamster","fish","turtle","bird","parrot","because","cute","friendly","walk"]},
+      {q:"What did you do at home during the COVID-19 pandemic?", sample:"During the pandemic, I stayed at home and had online classes. I also played board games with my family, because we could not go out.", keys:["i stayed","stay at home","stayed home","online","classes","courses","i played","board games","i watched","i learned","pandemic","covid","because","mask","exercise","cook"]},
+      {q:"When you see a doctor, what do you say to him/her?", sample:"I tell the doctor that I have a headache and a sore throat. Then I ask the doctor for some medicine.", keys:["i tell","i say","i have","doctor","headache","fever","cough","sore throat","cold","stomachache","runny nose","medicine","i ask","i feel","sick"]}
+    ]
+  },
+  { /* ---------------- 第十一回（課本題目） ---------------- */
+    name:"第十一回",
+    repeat:[
+      "Do you feel better now?",
+      "There is an earthquake!",
+      "Let's take turns!",
+      "It's a piece of cake.",
+      "That idea sounds perfect!"
+    ],
+    read:{
+      sentences:[
+        "We will go to the zoo if the weather is good.",
+        "Have you made any plans for the weekend?",
+        "She has spent hours working on her new art project.",
+        "Are you ready to hit the gym this evening?",
+        "Cooking together makes the food taste better."
+      ],
+      passage:"Last Friday, I went to a concert with my friends. It was great! The band played amazing music, and the crowd was full of energy. Everyone sang along and danced to the songs. The lights and special effects made the show unforgettable. It was my first concert, and I'll always remember the excitement."
+    },
+    answer:[
+      {q:"When did you start learning English?", sample:"I started learning English in elementary school. At first it was hard, but now I like speaking English, because it is fun.", keys:["i started","i began","kindergarten","elementary school","junior high","when i was","english","because","cram school","at school","five","six","seven","grade"]},
+      {q:"What is the first thing you do after waking up?", sample:"The first thing I do is brush my teeth and wash my face. Then I drink some water, because it makes me feel awake.", keys:["first thing","i brush","i wash","i drink","teeth","face","water","get dressed","i check","because","breakfast","stretch"]},
+      {q:"Do you think you are a good friend?", sample:"Yes, I think I am a good friend, because I listen to my friends and help them. We share toys and secrets, and we play together happily.", keys:["yes","no","good friend","i listen","i help","i share","kind","because","friendship","my friends","honest","trust","supportive"]},
+      {q:"What is your best subject? Do you like it?", sample:"My best subject is English, and I like it very much, because learning new words is fun. I also like to sing English songs.", keys:["best subject","math","english","science","chinese","pe","music","art","history","i like","because","good at","fun"]},
+      {q:"How often do you clean your bedroom?", sample:"I clean my bedroom once a week. I make my bed and sweep the floor, because a clean room makes me feel comfortable.", keys:["once a week","once a month","every day","twice","i clean","my bedroom","my room","sweep","make my bed","tidy","because","comfortable","my mom","rarely"]},
+      {q:"What do you think your weaknesses are?", sample:"I am sometimes careless, so I make small mistakes on tests. I check my answers two times now, because I want to do better.", keys:["i am","i'm","careless","shy","lazy","forgetful","talkative","weakness","sometimes","because","i want to","improve","mistakes","nervous","impatient"]},
+      {q:"Today is your best friend's birthday. Say something to him/her.", sample:"Happy birthday, my best friend! I hope you have a wonderful day, and I wish you health and happiness. Let's eat cake together!", keys:["happy birthday","i hope","i wish","wonderful","happiness","health","best friend","cake","party","celebrate","together","special","have fun"]}
+    ]
+  },
+  { /* ---------------- 第十二回（課本題目） ---------------- */
+    name:"第十二回",
+    repeat:[
+      "Go straight and then turn right.",
+      "Tell me what happened.",
+      "That's what friends are for.",
+      "I will love you forever and ever.",
+      "Is there anything I should know?"
+    ],
+    read:{
+      sentences:[
+        "Our teacher gave us a pop quiz today.",
+        "I'm starving! Let's grab something to eat.",
+        "That new restaurant looks nice. Let's give it a try!",
+        "The sunset painted the sky with warm colors.",
+        "Taxis are expensive here, so we took the subway."
+      ],
+      passage:"Walking through the city at night feels different from the daytime. The streets are quieter, and the lights from buildings create a magical glow. Some restaurants and convenience stores stay open, serving late-night customers. I also see people jogging or walking their dogs. It's a great time to relax and enjoy a different side of urban life."
+    },
+    answer:[
+      {q:"Are you interested in pop music?", sample:"Yes, I like pop music, because the melodies are catchy. I often sing along with my favorite songs at home.", keys:["yes","no","pop music","i like","i love","k-pop","catchy","songs","singer","because","melody","i sing","music","not really"]},
+      {q:"Do you like having a day off during a typhoon?", sample:"Yes, I like typhoon days off, because I can stay home and play board games with my family. But I hope the wind is not too strong.", keys:["yes","no","typhoon","day off","i like","stay home","i can","board games","i watch","because","dangerous","rain","wind","power","movies"]},
+      {q:"Can you tell me today's date and the current time?", sample:"Today is July seventeenth, and it is three o'clock in the afternoon. I feel happy, because I am practicing English.", keys:["today is","it is","it's","o'clock","am","pm","morning","afternoon","evening","january","february","march","april","may","june","july","august","september","october","november","december","thirty"]},
+      {q:"If tomorrow were the end of the world, what would you do today?", sample:"I would spend the whole day with my family, because I love them the most. We would eat yummy food and hug each other.", keys:["i would","spend","my family","because","i love","travel","i eat","together","hug","tell them","i play","last day","friends"]},
+      {q:"Are you the oldest child in your family?", sample:"Yes, I am the oldest child in my family. I help my little brother with his homework, because I am the big one.", keys:["yes","no","oldest","youngest","only child","middle","big brother","big sister","little brother","little sister","i help","i am","because","take care","sibling"]},
+      {q:"What's your favorite space in your home? Why?", sample:"My favorite space is my bedroom, because it is quiet and comfortable. I can read books and listen to music there.", keys:["favorite space","favorite place","bedroom","living room","balcony","kitchen","my room","because","quiet","comfortable","cozy","i can","i read","i play","relax"]},
+      {q:"If you had a chance to meet your idol, what would you like to say to him/her?", sample:"I would say thank you to my idol, because his songs make me happy. I would also ask for a photo and an autograph.", keys:["i would say","i would tell","thank you","my idol","because","i like","i love","photo","autograph","nervous","excited","songs","i ask","great"]}
+    ]
+  }
+  /* ➤ 要新增更多回，把上面第十二回整個 { ... } 複製，
+     在上一回的 } 後面加逗號再貼上，改 name 和題目內容即可。 */
+];
+
+/* ================= 工具 ================= */
+const $ = s=>document.querySelector(s);
+const app = $('#app');
+const esc = s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const shuffle = a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick = a=>a[Math.floor(Math.random()*a.length)];
+const sleep = ms=>new Promise(r=>setTimeout(r,ms));
+const PRAISE = ['太棒了！','好厲害！','完全正確！','你真行！','繼續保持！'];
+let toastT;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1800)}
+
+const KEY='gept-elem-v1';
+let DB={history:[],wrong:{},drafts:{},ai:{}};
+try{Object.assign(DB,JSON.parse(localStorage.getItem(KEY))||{})}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}}
+function logHistory(mode,c,n){if(!n)return;DB.history.push({t:Date.now(),mode,c,n});if(DB.history.length>500)DB.history.shift();save()}
+
+const MODE = {
+  rewrite:{name:'句子改寫',color:'var(--pri)'}, combine:{name:'句子合併',color:'var(--blue)'},
+  reorder:{name:'句子重組',color:'var(--purple)'}, mix:{name:'綜合練習',color:'var(--teal)'},
+  wrong:{name:'錯題本',color:'var(--bad)'}, repeat:{name:'複誦',color:'var(--pink)'}, read:{name:'朗讀',color:'var(--amber)'},
+  ai:{name:'Claude 新題',color:'var(--ai)'}, para:{name:'段落寫作',color:'#f97316'}
+};
+const WRITE_MODES=['rewrite','combine','reorder','mix','wrong','ai'];
+const getQ=id=>BYID[id]||DB.ai[id];
+
+/* ================= Claude（在 claude.ai 上開啟才有） ================= */
+const IN_CLAUDE=!!window.claude;
+let AI=null;
+if(IN_CLAUDE&&window.claude.use){
+  window.claude.use('sample').then(s=>{
+    AI=s||null;document.body.classList.toggle('has-ai',!!AI);
+    if(AI&&AI.limits)AI.limits().then(l=>document.body.classList.toggle('has-img',!!(l&&l.images)),()=>{});
+  },()=>{});
+}
+const AI_CTX='學生是正在準備全民英檢（GEPT）初級的台灣學生。請用繁體中文，語氣親切、多鼓勵，說明要簡單易懂。';
+const S=v=>typeof v==='string'?v:'';
+function aiErrMsg(e){
+  const c=e&&e.code;
+  if(['not_granted','sampling_disabled','not_declared','capability_disabled','capability_removed'].includes(c)){
+    AI=null;document.body.classList.remove('has-ai');
+    return 'Claude 功能沒有開啟（跳出的視窗要按「允許」）。重新整理網頁可以再試一次。';
+  }
+  if(c==='rate_limited')return '一下子問太多次了，休息一下再試 😊';
+  if(c==='session_expired')return '登入過期了，請重新登入 claude.ai。';
+  if(c==='invalid_json')return 'Claude 的回覆格式怪怪的，請再按一次試試。';
+  if(c==='image_rejected')return '這張照片沒辦法讀，換一張清楚一點的試試（光線充足、字要拍清楚）。';
+  if(c==='images_unavailable'){document.body.classList.remove('has-img');return '這裡不能傳照片給 Claude，請自己對答案。'}
+  return '連線出了點問題，請再按一次試試。';
+}
+const thinkingHTML=msg=>`<div class="aibox"><div class="fbt thinking">🤖 ${msg||'Claude 思考中…'}</div></div>`;
+const fixesHTML=list=>(Array.isArray(list)?list:[]).filter(f=>f&&S(f.wrong)).map(f=>
+  `<div class="fix"><span class="from en">${esc(f.wrong)}</span> → <span class="to en">${esc(S(f.right))}</span><div class="small">${esc(S(f.why))}</div></div>`).join('');
+
+// 比對用：小寫、展開縮寫、數字統一、去標點
+const NUM={zero:'0',one:'1',two:'2',three:'3',four:'4',five:'5',six:'6',seven:'7',eight:'8',nine:'9',ten:'10',eleven:'11',twelve:'12',thirteen:'13',fourteen:'14',fifteen:'15',sixteen:'16',seventeen:'17',eighteen:'18',nineteen:'19',twenty:'20',thirty:'30',forty:'40',fifty:'50'};
+function norm(s){
+  s=' '+String(s).toLowerCase().replace(/[’‘`´]/g,"'")+' ';
+  s=s.replace(/\bcan't\b/g,'can not').replace(/\bcannot\b/g,'can not').replace(/\bwon't\b/g,'will not')
+     .replace(/n't\b/g,' not').replace(/\bi'm\b/g,'i am').replace(/'re\b/g,' are').replace(/'ll\b/g,' will')
+     .replace(/'ve\b/g,' have').replace(/\b(it|he|she|that|what|there|where|who|here|how)'s\b/g,'$1 is')
+     .replace(/\blet's\b/g,'let us');
+  s=s.replace(/'/g,'').replace(/[^a-z0-9 ]+/g,' ');
+  return s.split(/\s+/).filter(Boolean).map(w=>NUM[w]||w).join(' ');
+}
+function tokenize(s){return String(s).split(/\s+/).filter(Boolean).map(t=>({disp:t,parts:norm(t).split(' ').filter(Boolean)}))}
+function lcs(a,b){
+  const n=a.length,m=b.length,dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const ma=new Array(n).fill(false),mb=new Array(m).fill(false);let i=0,j=0;
+  while(i<n&&j<m){if(a[i]===b[j]){ma[i]=mb[j]=true;i++;j++}else if(dp[i+1][j]>=dp[i][j+1])i++;else j++}
+  return [ma,mb];
+}
+// 比較目標句與學生句子，回傳每個字有沒有對上
+function compare(target,said){
+  const A=tokenize(target),B=tokenize(said);
+  const flat=T=>{const f=[],ix=[];T.forEach((t,k)=>t.parts.forEach(p=>{f.push(p);ix.push(k)}));return [f,ix]};
+  const [fa,ia]=flat(A),[fb,ib]=flat(B);
+  const [ma,mb]=lcs(fa,fb);
+  const okA=A.map(()=>true),okB=B.map(()=>true);
+  ma.forEach((ok,x)=>{if(!ok)okA[ia[x]]=false});
+  mb.forEach((ok,x)=>{if(!ok)okB[ib[x]]=false});
+  const hit=ma.filter(Boolean).length;
+  return {A,okA,B,okB,hit,total:fa.length,score:fa.length?Math.round(hit/fa.length*100):0};
+}
+const wordsHTML=(T,ok,okCls,badCls)=>T.map((t,k)=>`<span class="${ok[k]?okCls:badCls}">${esc(t.disp)}</span>`).join(' ');
+
+/* ================= 語音（朗讀 / 錄音 / 辨識） ================= */
+let voices=[];
+function loadVoices(){voices=window.speechSynthesis?speechSynthesis.getVoices():[]}
+if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+function pickVoice(){
+  return voices.find(v=>/^en-US/i.test(v.lang)&&/Google|Aria|Jenny|Zira|Samantha/i.test(v.name))
+      || voices.find(v=>/^en-US/i.test(v.lang)) || voices.find(v=>/^en/i.test(v.lang));
+}
+function speak(text,rate=0.9){
+  return new Promise(res=>{
+    if(!window.speechSynthesis){toast('這個瀏覽器不支援語音朗讀');res();return}
+    speechSynthesis.cancel();
+    setTimeout(()=>{
+      const u=new SpeechSynthesisUtterance(text);const v=pickVoice();if(v)u.voice=v;
+      u.lang='en-US';u.rate=rate;u.onend=u.onerror=()=>res();speechSynthesis.speak(u);
+    },80);
+  });
+}
+function beep(){
+  try{const ac=new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();
+    o.frequency.value=880;o.connect(g);g.connect(ac.destination);g.gain.value=.15;o.start();o.stop(ac.currentTime+.25);
+    o.onended=()=>ac.close()}catch(e){}
+}
+const SRClass=window.SpeechRecognition||window.webkitSpeechRecognition;
+// 平板、手機上同時錄音和語音辨識常會搶麥克風而失敗：有語音辨識就只做辨識（不能重播）
+const MOBILE=/Android|iPhone|iPad/i.test(navigator.userAgent)||(navigator.maxTouchPoints>1&&/Macintosh/.test(navigator.userAgent));
+const REC_AUDIO=!(MOBILE&&SRClass);
+const Rec={
+  stream:null,mr:null,chunks:[],sr:null,on:false,committed:'',finalText:'',interim:'',srError:null,srEnded:true,_srResolve:null,
+  async start(onText){
+    this.mr=null;
+    if(REC_AUDIO){
+      if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.MediaRecorder)throw {name:'NoMedia'};
+      if(!this.stream||!this.stream.active)this.stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      this.chunks=[];this.mr=new MediaRecorder(this.stream);
+      this.mr.ondataavailable=e=>{if(e.data&&e.data.size)this.chunks.push(e.data)};
+      this.mr.start();
+    }
+    this.on=true;
+    this.committed='';this.finalText='';this.interim='';this.srError=null;this.sr=null;
+    if(SRClass){
+      try{
+        const r=new SRClass();r.lang='en-US';r.continuous=true;r.interimResults=true;
+        r.onresult=e=>{let f='',it='';for(let i=0;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)f+=t+' ';else it+=t}
+          this.finalText=f;this.interim=it;onText&&onText((this.committed+' '+f+' '+it).trim())};
+        r.onerror=e=>{if(e.error!=='no-speech'&&e.error!=='aborted')this.srError=e.error};
+        r.onend=()=>{
+          // Chrome 會因為停頓自動結束辨識，錄音還在進行就接著重新開始
+          if(this.on&&!this.srError){this.committed+=' '+this.finalText+' '+this.interim;this.finalText='';this.interim='';try{r.start();return}catch(e){}}
+          this.srEnded=true;if(this._srResolve)this._srResolve();
+        };
+        this.srEnded=false;r.start();this.sr=r;
+      }catch(e){this.sr=null;this.srEnded=true}
+    }
+  },
+  async stop(){
+    this.on=false;
+    const mrP=new Promise(r=>{
+      if(!this.mr||this.mr.state==='inactive'){r(null);return}
+      this.mr.onstop=()=>r(URL.createObjectURL(new Blob(this.chunks,{type:this.mr.mimeType||'audio/webm'})));
+      this.mr.stop();
+    });
+    const srP=new Promise(r=>{
+      if(!this.sr||this.srEnded){r();return}
+      this._srResolve=r;try{this.sr.stop()}catch(e){r()}setTimeout(r,2500);
+    });
+    const [url]=await Promise.all([mrP,srP]);
+    this._srResolve=null;this.sr=null;
+    const text=(this.committed+' '+this.finalText+' '+this.interim).replace(/\s+/g,' ').trim();
+    return {url,text,err:this.srError};
+  },
+  abort(){if(this.on){this.stop()}}
+};
+function micErr(e){
+  const n=e&&e.name;
+  let m='無法開始錄音。';
+  if(n==='NotAllowedError'||n==='SecurityError')m='麥克風被封鎖了 🙈：請點網址列左邊的圖示，把「麥克風」改成「允許」，再重新整理網頁。';
+  else if(n==='NotFoundError')m='找不到麥克風，請確認耳機或麥克風有接好。';
+  else if(n==='NoMedia')m='這個瀏覽器不支援錄音，請用電腦版 Chrome 開啟。';
+  return `<div class="fb bad">${m}</div>`;
+}
+function noTextMsg(err){
+  if(!SRClass)return '這個瀏覽器不支援語音辨識（請用 Chrome）。你還是可以重播錄音，自己聽聽看。';
+  if(err==='network')return '語音辨識需要連上網路喔！先重播錄音自己聽聽看。';
+  if(err==='not-allowed'||err==='service-not-allowed')return '語音辨識沒有權限。請允許麥克風；如果還是不行，可以重播錄音自己檢查。';
+  return '沒有聽清楚你說的英文 🤔 靠近麥克風、說大聲一點再試一次！';
+}
+function stars(s){return s>=90?'⭐⭐⭐':s>=70?'⭐⭐':s>=40?'⭐':'💪'}
+
+/* ================= 路由 ================= */
+let R=null;            // 寫作回合
+let ansTimer=null;
+function go(view,arg){
+  flushRound();
+  if(window.speechSynthesis)speechSynthesis.cancel();
+  Rec.abort();
+  clearInterval(ansTimer);
+  window.scrollTo(0,0);
+  ({home:viewHome,round:()=>startRound(arg),wrongRound:()=>startRound(arg,true),wrongbook:viewWrong,
+    topics:viewTopics,para:()=>viewPara(arg),gen:viewGen,repeat:viewRepeat,read:viewRead,answer:viewAnswer,stats:viewStats}[view]||viewHome)();
+}
+function examDays(){
+  const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  let d=new Date(now.getFullYear(),2,20);if(d<today)d=new Date(now.getFullYear()+1,2,20);
+  return Math.round((d-today)/864e5);
+}
+function renderCountdown(){const n=examDays();$('#countdown').textContent=n===0?'📅 今天考試，加油！':`📅 距離 3/20 考試還有 ${n} 天`}
+
+/* ================= 首頁 ================= */
+function tile(emo,name,sub,color,onclick,cls=''){return `<button class="tile ${cls}" style="background:${color}" onclick="${onclick}"><span class="emo">${emo}</span>${name}<small>${sub}</small></button>`}
+function viewHome(){
+  const wrongN=Object.keys(DB.wrong).length;
+  const today=new Date().toDateString();
+  const th=DB.history.filter(h=>new Date(h.t).toDateString()===today&&WRITE_MODES.includes(h.mode));
+  const tc=th.reduce((s,h)=>s+h.c,0),tn=th.reduce((s,h)=>s+h.n,0);
+  app.innerHTML=`
+  <div class="card" style="background:linear-gradient(135deg,#fff,#fff3e0)">
+    <div style="font-size:26px;font-weight:800">嗨！今天也來練習一下吧 😊</div>
+    <div class="muted">${tn?`今天已經寫了 <b>${tn}</b> 題，答對 <b>${tc}</b> 題（${Math.round(tc/tn*100)}%）`:'今天還沒練習喔，先從「句子改寫」開始吧！'}</div>
+  </div>
+  <h2>✏️ 寫作練習</h2>
+  <div class="pick" style="align-items:center;margin-bottom:14px"><span>作答方式：</span>
+    <button class="btn sec ${paperMode()?'active':''}" onclick="setPaper(true);viewHome()">📄 寫在紙上，再對答案</button>
+    <button class="btn sec ${paperMode()?'':'active'}" onclick="setPaper(false);viewHome()">⌨️ 直接在電腦上打字</button></div>
+  <div class="grid">
+    ${tile('🔁','句子改寫','肯定・否定・疑問・時態','var(--pri)',"go('round','rewrite')")}
+    ${tile('🔗','句子合併','and / but / so / because','var(--blue)',"go('round','combine')")}
+    ${tile('🧩','句子重組','把單字排成句子','var(--purple)',"go('round','reorder')")}
+    ${tile('🎲','綜合練習','三種題型混在一起','var(--teal)',"go('round','mix')")}
+    ${tile('📝','段落寫作','5W1H 想內容，約 50 字','#f97316',"go('topics')")}
+    ${tile('🤖','Claude 出新題','選文法重點，每次都不一樣','var(--ai)',"go('gen')",'ai-only')}
+  </div>
+  <h2 style="margin-top:28px">🎤 口說練習</h2>
+  <div class="grid">
+    ${tile('👂','複誦','聽一句，跟著說','var(--pink)',"go('repeat')")}
+    ${tile('📖','朗讀','念句子和短文，錄音重播','var(--amber)',"go('read')")}
+    ${tile('💬','回答問題','聽問題，15 秒內回答','#0ea5e9',"go('answer')")}
+  </div>
+  <h2 style="margin-top:28px">📚 其他</h2>
+  <div class="grid">
+    ${tile('📕','錯題本',wrongN?`有 ${wrongN} 題等你複習`:'目前沒有錯題 🎉','var(--bad)',"go('wrongbook')")}
+    ${tile('📊','練習紀錄','看看自己的進步','#64748b',"go('stats')")}
+  </div>`;
+}
+
+/* ================= 單句寫作回合 ================= */
+function startRound(type,wrongMode,given){
+  let pool;
+  if(given){
+    pool=given;
+  }else if(wrongMode){
+    pool=Object.keys(DB.wrong).map(getQ).filter(Boolean);
+    if(type&&type!=='all')pool=pool.filter(q=>q.type===type);
+    pool=shuffle(pool).slice(0,15);
+    if(!pool.length){toast('錯題本是空的 🎉');viewWrong();return}
+  }else{
+    pool=type==='mix'?shuffle([...REWRITE,...COMBINE,...REORDER]).slice(0,10):shuffle(BANK[type].slice()).slice(0,10);
+  }
+  R={type,mode:wrongMode?'wrong':type,wrongMode:!!wrongMode,items:pool,i:0,correct:0,count:0,done:false,wrongIds:[]};
+  paperMode()?renderSheet():renderQ();
+}
+const paperMode=()=>DB.paper!==false;
+function setPaper(v){DB.paper=v;save()}
+const answersOf=q=>q.type==='reorder'?[q.s,...(q.alt||[])]:q.a;
+function scramble(q){
+  const keep=new Set(['I',...(q.keep||[])]);
+  const toks=q.s.replace(/[.?!]$/,'').split(' ').map((w,i)=>i===0&&!keep.has(w)?w[0].toLowerCase()+w.slice(1):w);
+  let order;do{order=shuffle(toks.map((_,i)=>i))}while(toks.length>2&&order.every((v,i)=>v===i));
+  return {tokens:order.map(i=>toks[i]),punct:q.s.slice(-1)};
+}
+
+/* ================= 紙筆模式：看題目寫在紙上，再對答案 ================= */
+function sheetQ(q,i){
+  if(q.type==='rewrite'){
+    let sent=esc(q.q);if(q.u)sent=sent.replace(esc(q.u),`<u>${esc(q.u)}</u>`);
+    return `<div class="sq-inst">${esc(q.k)}${q.h?`（${esc(q.h)}）`:''}</div><div class="sq en">${sent}</div>`;
+  }
+  if(q.type==='combine')return `<div class="sq-inst">用 <span class="conj en">${esc(q.c)}</span> 合成一句</div><div class="sq en">① ${esc(q.s1)}<br>② ${esc(q.s2)}</div>`;
+  const sc=R.scr[i];
+  return `<div class="sq-inst">重組成句子：${esc(q.zh)}</div><div class="sq en">${sc.tokens.map(t=>`<span class="tok">${esc(t)}</span>`).join(' ')} <span class="muted">（ ${esc(sc.punct)} ）</span></div>`;
+}
+function roundBadge(){const info=MODE[R.mode];return `<span class="badge" style="background:${info.color}">${info.name}</span>`}
+function renderSheet(){
+  R.phase='write';R.scr=R.items.map(q=>q.type==='reorder'?scramble(q):null);R.marks=R.items.map(()=>null);R.notes=[];
+  app.innerHTML=`<div class="card">
+    <div class="qhead">${roundBadge()}<span>📄 紙筆練習・共 ${R.items.length} 題</span></div>
+    <div class="paper-tip">✏️ 拿出紙筆，寫上題號和<b>完整的句子</b>（開頭大寫、句尾標點）。全部寫完再按最下面的「對答案」。</div>
+    <ol class="sheet">${R.items.map((q,i)=>`<li>${sheetQ(q,i)}</li>`).join('')}</ol>
+    <div class="row"><button class="btn green" onclick="showKey()">✅ 寫好了，對答案</button>
+      <button class="btn sec" onclick="setPaper(false);renderQ()">⌨️ 改用電腦打字作答</button></div></div>`;
+}
+function keyItem(q,i){
+  const ans=answersOf(q),m=R.marks[i];
+  return `${sheetQ(q,i)}
+    <div class="key"><span class="muted small">正確答案：</span><span class="right en">${esc(ans[0])}</span> <button class="mini" onclick="speak(answersOf(R.items[${i}])[0])">🔊</button>
+    ${ans.length>1?`<div class="muted small">也可以寫：<span class="en">${ans.slice(1).map(esc).join('　/　')}</span></div>`:''}
+    ${q.e?`<div class="exp">💡 ${esc(q.e)}</div>`:''}
+    ${R.notes[i]||''}
+    <div class="row"><button class="btn ${m===true?'green':'sec'}" onclick="mark(${i},true)">✅ 我寫對了</button>
+      <button class="btn ${m===false?'red':'sec'}" onclick="mark(${i},false)">❌ 我寫錯了</button></div>
+    ${m===false?`<div class="ai-only"><div class="row"><input class="ans en" id="w${i}" style="flex:1;min-width:0;font-size:22px" autocomplete="off" spellcheck="false" placeholder="把你寫的句子打進來">
+      <button class="btn ai" id="wb${i}" onclick="aiWhyPaper(${i})">🤖 為什麼錯？</button></div><div id="wo${i}"></div></div>`:''}
+    </div>`;
+}
+function showKey(){
+  R.phase='check';window.scrollTo(0,0);
+  app.innerHTML=`<div class="card">
+    <div class="qhead">${roundBadge()}<span>✅ 對答案</span></div>
+    <div class="paper-tip">對照你紙上寫的，每一題按 ✅ 或 ❌。<b>大小寫、拼字、句尾標點</b>也要一起檢查喔！</div>
+    <div class="aibox img-only"><b>📷 讓 Claude 幫你對</b>：把寫好的紙拍照上傳，Claude 會看你的字並先幫你打勾（你還是可以自己改）。
+      <div class="row"><label class="btn ai">📷 拍照 / 選照片<input type="file" accept="image/*" id="photo" hidden onchange="aiPhotoCheck(this.files[0])"></label></div>
+      <div id="photoOut"></div></div>
+    <ol class="sheet">${R.items.map((q,i)=>`<li id="k${i}">${keyItem(q,i)}</li>`).join('')}</ol>
+    <div class="row"><button class="btn green" id="doneBtn" onclick="finishPaper()">🏆 看成績</button><span class="muted" id="leftMsg"></span></div></div>`;
+  updLeft();
+}
+function mark(i,v){R.marks[i]=v;$('#k'+i).innerHTML=keyItem(R.items[i],i);updLeft()}
+function updLeft(){
+  const n=R.marks.filter(m=>m===null).length;
+  $('#leftMsg').textContent=n?`還有 ${n} 題沒按 ✅ 或 ❌`:'';
+}
+function finishPaper(){
+  if(R.marks.some(m=>m===null)){toast('每一題都要按 ✅ 或 ❌ 喔');return}
+  R.items.forEach((q,i)=>{
+    if(R.marks[i]){R.correct++;if(R.wrongMode)delete DB.wrong[q.id]}
+    else{const w=DB.wrong[q.id]||{n:0};w.n++;w.t=Date.now();DB.wrong[q.id]=w;R.wrongIds.push(q.id)}
+  });
+  R.count=R.items.length;save();window.scrollTo(0,0);finishRound();
+}
+function flushRound(){if(R&&!R.done&&R.count>0)logHistory(R.mode,R.correct,R.count);R=null}
+function renderQ(){
+  const q=R.items[R.i];R.answered=false;
+  const info=MODE[q.type];
+  let body='';
+  if(q.type==='rewrite'){
+    let sent=esc(q.q);if(q.u)sent=sent.replace(esc(q.u),`<u>${esc(q.u)}</u>`);
+    body=`<div class="inst">✏️ ${esc(q.k)}${q.h?` <span class="hint">（${esc(q.h)}）</span>`:''}</div>
+      <div class="big-en en">${sent} <button class="mini" onclick="speak(R.items[R.i].q)">🔊</button></div>
+      <input class="ans en" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="在這裡寫出新的句子">`;
+  }else if(q.type==='combine'){
+    body=`<div class="inst">🔗 用 <span class="conj en">${esc(q.c)}</span> 把兩句合成一句</div>
+      <div class="big-en en">① ${esc(q.s1)}<br>② ${esc(q.s2)} <button class="mini" onclick="speak(R.items[R.i].s1+' '+R.items[R.i].s2)">🔊</button></div>
+      <input class="ans en" id="ans" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="在這裡寫出合併後的句子">`;
+  }else{
+    const sc=scramble(q);
+    R.tokens=sc.tokens;R.sel=[];R.punct=sc.punct;
+    body=`<div class="inst">🧩 點單字，排成正確的句子</div>
+      <div class="muted">中文意思：${esc(q.zh)}</div>
+      <div class="muted small">（點上面排好的字，可以把它拿回來）</div>
+      <div class="slots en" id="slots"></div>
+      <div class="bank" id="bank"></div>
+      <div class="row"><button class="btn sec" id="undoBtn" onclick="undoWord()">↩️ 退一個</button><button class="btn sec" id="clrBtn" onclick="clearWords()">🔄 清除重來</button></div>`;
+  }
+  app.innerHTML=`<div class="card">
+    <div class="qhead"><span class="badge" style="background:${info.color}">${R.wrongMode?'📕 錯題複習・':''}${info.name}</span>
+      <span>第 ${R.i+1} / ${R.items.length} 題</span><span>✅ 答對 ${R.correct}</span></div>
+    <div class="bar"><div style="width:${R.i/R.items.length*100}%"></div></div>
+    ${body}
+    <div class="row" id="actRow"><button class="btn" id="checkBtn" onclick="checkAns()">✔️ 檢查答案</button>
+      <button class="btn sec" id="skipBtn" onclick="checkAns(true)">🙋 不會，看答案</button>
+      ${R.i===0&&!R.count?`<button class="btn sec" onclick="setPaper(true);renderSheet()">📄 改用紙筆寫</button>`:''}</div>
+    <div id="fb"></div></div>`;
+  if(q.type==='reorder')drawReorder();
+  else{const inp=$('#ans');inp.focus();inp.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();R.answered?nextQ():checkAns()}}}
+}
+function drawReorder(){
+  const cap=w=>w[0].toUpperCase()+w.slice(1);
+  $('#slots').innerHTML=R.sel.map((ti,k)=>`<button class="chip on" ${R.answered?'disabled':''} onclick="unpickWord(${k})">${esc(k===0?cap(R.tokens[ti]):R.tokens[ti])}</button>`).join('')
+    +(R.sel.length?`<span class="punct">${esc(R.punct)}</span>`:'<span class="muted small">👇 從下面點單字</span>');
+  $('#bank').innerHTML=R.tokens.map((t,i)=>`<button class="chip ${R.sel.includes(i)?'used':''}" ${R.answered?'disabled':''} onclick="pickWord(${i})">${esc(t)}</button>`).join('');
+}
+function pickWord(i){if(R.answered||R.sel.includes(i))return;R.sel.push(i);drawReorder()}
+function unpickWord(k){if(R.answered)return;R.sel.splice(k,1);drawReorder()}
+function undoWord(){if(R.answered)return;R.sel.pop();drawReorder()}
+function clearWords(){if(R.answered)return;R.sel=[];drawReorder()}
+function checkAns(skip){
+  if(!R||R.answered)return;
+  const q=R.items[R.i];let user;
+  if(q.type==='reorder'){
+    if(!skip&&R.sel.length<R.tokens.length){toast('還有單字沒用到喔！');return}
+    user=R.sel.map(i=>R.tokens[i]).join(' ');
+  }else{
+    user=$('#ans').value.trim();
+    if(!skip&&!user){toast('先寫答案再檢查喔！');return}
+  }
+  const answers=q.type==='reorder'?[q.s,...(q.alt||[])]:q.a;
+  const ok=!skip&&answers.some(a=>norm(a)===norm(user));
+  R.answered=true;R.count++;
+  if(ok){R.correct++;if(R.wrongMode)delete DB.wrong[q.id]}
+  else{const w=DB.wrong[q.id]||{n:0};w.n++;w.t=Date.now();DB.wrong[q.id]=w;R.wrongIds.push(q.id)}
+  save();
+  // 和學生答案最接近的正確答案拿來比對
+  let right=answers[0];
+  if(user){let best=-1;answers.forEach(a=>{const c=compare(a,user);if(c.hit>best){best=c.hit;right=a}})}
+  R.lastRight=right;R.lastUser=user;
+  let h=ok?`<div class="fb ok"><div class="fbt">🎉 答對了！${pick(PRAISE)}</div>`
+          :`<div class="fb bad"><div class="fbt">💪 ${skip?'沒關係，一起看正確答案':'差一點點！'}</div>`;
+  if(!ok&&user){
+    const c=compare(right,user);
+    h+=`<div class="muted small">你寫的（<span class="w-bad">紅色</span>是不對或多出來的字）：</div><div class="said en">${wordsHTML(c.B,c.okB,'',`w-bad`)}</div>
+        <div class="muted small" style="margin-top:8px">正確答案（<span class="w-need">綠色底線</span>是你少寫或寫錯的地方）：</div>
+        <div class="right en">${wordsHTML(c.A,c.okA,'','w-need')} <button class="mini" onclick="speak(R.lastRight)">🔊</button></div>`;
+  }else{
+    h+=`<div class="muted small">${ok?'正確答案':'正確答案：'}</div><div class="right en">${esc(right)} <button class="mini" onclick="speak(R.lastRight)">🔊</button></div>`;
+  }
+  const others=answers.filter(a=>a!==right);
+  if(others.length&&q.type!=='reorder')h+=`<div class="muted small">也可以寫：<span class="en">${others.map(esc).join('　/　')}</span></div>`;
+  if(q.e)h+=`<div class="exp">💡 ${esc(q.e)}</div>`;
+  if(!ok&&user)h+=`<div class="row ai-only"><button class="btn ai" id="whyBtn" onclick="aiWhy()">🤖 為什麼錯？問 Claude</button></div><div id="whyOut"></div>`;
+  h+='</div>';
+  $('#fb').innerHTML=h;
+  $('#actRow').innerHTML=`<button class="btn green" id="nextBtn" onclick="nextQ()">${R.i+1<R.items.length?'下一題 ➡️':'看成績 🏆'}</button>`;
+  if(q.type==='reorder')drawReorder();else $('#ans').readOnly=true;
+  $('#nextBtn').focus();
+}
+function nextQ(){R.i++;if(R.i>=R.items.length)finishRound();else renderQ()}
+function finishRound(){
+  R.done=true;logHistory(R.mode,R.correct,R.count);
+  const p=Math.round(R.correct/R.count*100);
+  const emo=p===100?'🏆':p>=80?'🎉':p>=60?'👍':'💪';
+  const msg=p===100?'全對！你是寫作小高手！':p>=80?'很厲害，再多練幾次就全對了！':p>=60?'不錯喔，把錯題本複習一下會更好！':'別灰心，多練習就會進步！';
+  const type=R.type,wm=R.wrongMode,wrongCnt=R.wrongIds.length;
+  app.innerHTML=`<div class="card" style="text-align:center">
+    <div style="font-size:80px">${emo}</div>
+    <div class="score">${R.correct} / ${R.count}　（${p}%）</div>
+    <div style="font-size:24px;margin:8px 0">${msg}</div>
+    ${wrongCnt?`<div class="muted">這回合答錯的 ${wrongCnt} 題已經放進「錯題本」了</div>`:''}
+    ${wm&&R.correct?`<div class="muted">答對的 ${R.correct} 題已經從錯題本移除 ✨</div>`:''}
+    <div class="row" style="justify-content:center">
+      ${type==='ai'?`<button class="btn ai" onclick="go('gen')">🤖 再出 10 題</button>`
+        :`<button class="btn" onclick="go('${wm?'wrongRound':'round'}','${type}')">🔁 再練一回</button>`}
+      ${Object.keys(DB.wrong).length?`<button class="btn red" onclick="go('wrongbook')">📕 去錯題本</button>`:''}
+      <button class="btn sec" onclick="go('home')">🏠 回首頁</button>
+    </div></div>`;
+  R=null;
+}
+
+/* ================= Claude：為什麼錯 ================= */
+function qPrompt(q){
+  if(q.type==='rewrite')return `${q.k}${q.h?`（${q.h}）`:''}${q.u?`（劃線部分：${q.u}）`:''}：${q.q}`;
+  if(q.type==='combine')return `用 ${q.c} 把兩句合成一句：① ${q.s1} ② ${q.s2}`;
+  return `把打亂的單字排成正確的句子，中文意思：${q.zh}`;
+}
+function whyCore(q,user){
+  const prompt=`${AI_CTX}
+學生在做全民英檢初級的「${MODE[q.type].name}」單句寫作題。
+題目：${qPrompt(q)}
+標準答案：${answersOf(q).join(' / ')}
+學生的答案：${user.slice(0,300)}
+
+請先判斷：學生的答案是不是其實也完全正確（文法、拼字都對，而且照題目要求做到了，只是寫法和標準答案不同）？
+然後用 2～3 句話說明：錯在哪裡、為什麼、怎麼記比較好（例如「過去式要用 went」）。如果其實也正確，就說明為什麼也對。
+只回覆一個 JSON 物件：{"acceptable": true 或 false, "explain": "你的說明"}`;
+  return AI.json(prompt,{modelTier:'quick'});
+}
+async function aiWhyPaper(i){
+  const user=$('#w'+i).value.trim();
+  if(!user){toast('先把你寫的句子打進來');return}
+  if(!AI)return;
+  const myR=R,btn=$('#wb'+i);
+  btn.disabled=true;$('#wo'+i).innerHTML=thinkingHTML();
+  try{
+    const r=await whyCore(R.items[i],user);
+    if(R!==myR)return;
+    let h=`<div class="aibox"><div class="fbt">🤖 Claude 老師說</div><div>${esc(S(r&&r.explain))}</div>`;
+    if(r&&r.acceptable===true)h+=`<div class="row"><button class="btn green" onclick="mark(${i},true)">✅ 這樣寫也對，改成答對</button></div>`;
+    $('#wo'+i).innerHTML=h+'</div>';
+  }catch(e){if(R===myR){$('#wo'+i).innerHTML=`<div class="aibox">${esc(aiErrMsg(e))}</div>`;btn.disabled=false}}
+}
+async function aiPhotoCheck(file){
+  if(!file||!AI||!R)return;
+  const myR=R,out=$('#photoOut');
+  out.innerHTML=thinkingHTML('Claude 正在看你的答案…（大約 20～60 秒）');
+  const list=R.items.map((q,i)=>`${i+1}. 題目：${qPrompt(q)}\n   標準答案：${answersOf(q).join(' / ')}`).join('\n');
+  const prompt=`${AI_CTX}
+照片是學生手寫在紙上的答案（全民英檢初級單句寫作），題號對應下面的題目：
+${list}
+
+請辨認每一題學生寫了什麼，再判斷對不對：文法、拼字、大小寫、句尾標點都要對，而且要照題目要求。寫法和標準答案不同但也完全正確的，算對。看不清楚或沒寫的題目，ok 填 null。
+只回覆一個 JSON 陣列，每題一個物件：[{"n": 題號, "read": "你看到學生寫的句子", "ok": true 或 false 或 null, "why": "錯的話用一句中文說明錯在哪，對的話填空字串"}]`;
+  try{
+    const arr=await AI.json(prompt,{images:[file],cache:false});
+    if(R!==myR)return;
+    let got=0;
+    (Array.isArray(arr)?arr:[]).forEach(x=>{
+      const i=Math.round(Number(x&&x.n))-1;if(!(i>=0&&i<R.items.length))return;
+      const unsure=x.ok!==true&&x.ok!==false;
+      R.notes[i]=`<div class="aibox"><div class="small">📷 Claude 看到你寫：<b class="en">${esc(S(x.read))||'（看不清楚）'}</b></div>
+        ${S(x.why)?`<div class="small">🤖 ${esc(x.why)}</div>`:''}${unsure?'<div class="small">這題請自己對答案。</div>':''}</div>`;
+      if(!unsure){R.marks[i]=x.ok;got++}
+      $('#k'+i).innerHTML=keyItem(R.items[i],i);
+    });
+    updLeft();
+    out.innerHTML=`<div style="margin-top:8px">✅ Claude 幫你對了 ${got} 題。請再看一次，覺得不對可以自己改。</div>`;
+  }catch(e){if(R===myR)out.innerHTML=`<div style="margin-top:8px">${esc(aiErrMsg(e))}</div>`}
+  const p=$('#photo');if(p)p.value='';
+}
+async function aiWhy(){
+  if(!AI||!R)return;
+  const myR=R,myI=R.i,q=R.items[R.i],btn=$('#whyBtn');
+  btn.disabled=true;$('#whyOut').innerHTML=thinkingHTML();
+  try{
+    const r=await whyCore(q,myR.lastUser);
+    if(R!==myR||R.i!==myI)return;
+    let h=`<div class="aibox"><div class="fbt">🤖 Claude 老師說</div><div>${esc(S(r&&r.explain))}</div>`;
+    if(r&&r.acceptable===true)h+=`<div class="row"><button class="btn green" id="acceptBtn" onclick="aiAccept()">✅ 我這樣寫也對，算我答對</button></div>`;
+    $('#whyOut').innerHTML=h+'</div>';
+  }catch(e){
+    if(R!==myR||R.i!==myI)return;
+    $('#whyOut').innerHTML=`<div class="aibox">${esc(aiErrMsg(e))}</div>`;btn.disabled=false;
+  }
+}
+function aiAccept(){
+  const q=R.items[R.i];
+  R.correct++;delete DB.wrong[q.id];R.wrongIds=R.wrongIds.filter(x=>x!==q.id);save();
+  $('#acceptBtn').disabled=true;$('#acceptBtn').textContent='✅ 已經算你答對了';toast('改成答對了 🎉');
+}
+
+/* ================= Claude：出新題 ================= */
+let GEN={type:'rewrite',focus:'過去式'};
+const FOCUS=['現在式','過去式','進行式','未來式','疑問句','否定句','五大基本句型','連接詞','綜合'];
+function viewGen(){
+  if(!AI){app.innerHTML=`<div class="card">這個功能要在 claude.ai 上開啟網頁才能使用。<div class="row"><button class="btn" onclick="go('home')">🏠 回首頁</button></div></div>`;return}
+  app.innerHTML=`<h2>🤖 請 Claude 出新題</h2>
+  <div class="card">
+    <div class="inst">1️⃣ 選題型</div>
+    <div class="pick">${['rewrite','combine','reorder'].map(t=>`<button class="btn sec ${GEN.type===t?'active':''}" onclick="GEN.type='${t}';viewGen()">${MODE[t].name}</button>`).join('')}</div>
+    <div class="inst" style="margin-top:18px">2️⃣ 想加強哪個文法？</div>
+    <div class="pick">${FOCUS.map(f=>`<button class="btn sec ${GEN.focus===f?'active':''}" onclick="GEN.focus='${f}';viewGen()">${f}</button>`).join('')}</div>
+    <div class="row"><button class="btn ai" id="genBtn" onclick="aiGen()">✨ 出 10 題開始練習</button></div>
+    <div id="genOut"></div>
+    <div class="muted small" style="margin-top:12px">Claude 出的題目答錯也會放進錯題本。題目是 AI 出的，偶爾可能有小錯，覺得怪怪的可以問爸媽或老師。</div>
+  </div>`;
+}
+const stripQ=q=>{const o={...q};delete o.id;delete o.type;return o};
+function cleanGen(type,x){
+  if(!x||typeof x!=='object')return null;
+  const str=v=>typeof v==='string'&&v.trim()?v.trim():null;
+  const arr=v=>Array.isArray(v)?v.map(str).filter(Boolean):[];
+  const e=str(x.e)||'';
+  if(type==='rewrite'){
+    const k=str(x.k),q=str(x.q),a=arr(x.a);if(!k||!q||!a.length)return null;
+    const o={k,q,a,e};if(str(x.h))o.h=str(x.h);if(str(x.u)&&q.includes(str(x.u)))o.u=str(x.u);return o;
+  }
+  if(type==='combine'){
+    const s1=str(x.s1),s2=str(x.s2),c=(str(x.c)||'').toLowerCase(),a=arr(x.a);
+    if(!s1||!s2||!a.length||!['and','but','so','because'].includes(c))return null;
+    return {s1,s2,c,a,e};
+  }
+  const s=str(x.s);
+  if(!s||!/^[A-Za-z][A-Za-z' ]*[A-Za-z][.?!]$/.test(s))return null;
+  const n=s.split(' ').length;if(n<3||n>13)return null;
+  const key=t=>norm(t).split(' ').sort().join(' ');
+  return {s,zh:str(x.zh)||'',e,alt:arr(x.alt).filter(t=>key(t)===key(s)),keep:arr(x.keep)};
+}
+async function aiGen(){
+  if(!AI)return;
+  const type=GEN.type,focus=GEN.focus;
+  $('#genBtn').disabled=true;$('#genOut').innerHTML=thinkingHTML('Claude 正在出題…（大約 20～60 秒）');
+  const fmt={
+    rewrite:`每題是一個物件：{"k":"中文指示，例如 改成否定句／改成疑問句／改成過去式／用 Where 問劃線的部分","h":"補充提示（可省略）","q":"原句","u":"劃線部分（只有用疑問詞發問的題目才需要，必須是原句裡的一段文字）","a":["正確答案","其他也正確的寫法"],"e":"一句中文說明"}
+範例：${JSON.stringify(stripQ(REWRITE[2]))}`,
+    combine:`每題是一個物件：{"s1":"第一句","s2":"第二句","c":"and、but、so、because 其中一個","a":["合併後的正確答案","其他也正確的寫法"],"e":"一句中文說明"}
+範例：${JSON.stringify(stripQ(COMBINE[2]))}`,
+    reorder:`每題是一個物件：{"s":"完整的正確句子，3～12 個字，句子中間不能有逗號或任何標點，只有句尾用 . 或 ?","alt":["其他也正確的排列（可省略）"],"zh":"中文意思","e":"一句中文說明","keep":["句首如果是人名、地名等專有名詞就列在這裡（可省略）"]}
+範例：${JSON.stringify(stripQ(REORDER[2]))}`
+  }[type];
+  const prompt=`你是全民英檢（GEPT）初級的出題老師。請出 10 題「${MODE[type].name}」單句寫作題，文法重點：${focus}。
+規定：
+- 只用 GEPT 初級字表範圍的簡單單字。
+- 主題貼近台灣學生的日常生活（學校、家庭、朋友、假日、食物、天氣、運動）。
+- 10 題內容都不同。答案必須完全正確；a 裡要列出所有常見的正確寫法（縮寫 don't / do not 會自動視為相同，不用重複列）。
+- 中文說明要短，像「過去式要用 went」這樣。
+${fmt}
+只回覆一個 JSON 陣列，裡面放 10 個題目物件，不要其他文字。`;
+  try{
+    const arr=await AI.json(prompt,{cache:false});
+    if(!$('#genOut'))return;
+    const items=(Array.isArray(arr)?arr:[]).map(x=>cleanGen(type,x)).filter(Boolean);
+    if(items.length<3)throw {code:'invalid_json'};
+    const stamp=Date.now().toString(36);
+    items.forEach((q,i)=>{q.id='ai'+stamp+i;q.type=type;DB.ai[q.id]=q});
+    // 只保留這次的題目和錯題本裡的 AI 題，避免越存越多
+    const keep=new Set(items.map(q=>q.id));
+    Object.keys(DB.ai).forEach(id=>{if(!keep.has(id)&&!DB.wrong[id])delete DB.ai[id]});
+    save();
+    window.scrollTo(0,0);
+    startRound('ai',false,items);
+  }catch(e){
+    if(!$('#genOut'))return;
+    $('#genOut').innerHTML=`<div class="aibox">${esc(aiErrMsg(e))}</div>`;$('#genBtn').disabled=false;
+  }
+}
+
+/* ================= 錯題本 ================= */
+function qSummary(q){
+  if(q.type==='rewrite')return `${q.k}：${q.q}`;
+  if(q.type==='combine')return `${q.s1} + ${q.s2}（${q.c}）`;
+  return q.s;
+}
+function viewWrong(){
+  const items=Object.keys(DB.wrong).map(id=>({q:getQ(id),w:DB.wrong[id]})).filter(x=>x.q).sort((a,b)=>b.w.n-a.w.n);
+  const cnt=t=>items.filter(x=>x.q.type===t).length;
+  if(!items.length){app.innerHTML=`<div class="card" style="text-align:center"><div style="font-size:70px">🎉</div><h2>錯題本是空的！</h2><div class="muted">答錯的題目會自動放進來，答對後就會移除。</div><div class="row" style="justify-content:center"><button class="btn" onclick="go('home')">🏠 回首頁</button></div></div>`;return}
+  app.innerHTML=`<h2>📕 錯題本（${items.length} 題）</h2>
+  <div class="card"><div>選一種開始複習，<b>答對就會從錯題本移除</b>：</div>
+    <div class="row"><button class="btn red" onclick="go('wrongRound','all')">全部複習</button>
+    ${['rewrite','combine','reorder'].filter(t=>cnt(t)).map(t=>`<button class="btn" style="background:${MODE[t].color}" onclick="go('wrongRound','${t}')">${MODE[t].name}（${cnt(t)}）</button>`).join('')}</div></div>
+  <div class="card">${items.map(x=>`<div class="wl-item"><span class="badge" style="background:${MODE[x.q.type].color}">${MODE[x.q.type].name}</span>
+    <span class="en">${esc(qSummary(x.q))}</span><span class="muted small">錯 ${x.w.n} 次</span>
+    <button class="mini" title="移除" onclick="delete DB.wrong['${x.q.id}'];save();viewWrong()">🗑️</button></div>`).join('')}</div>`;
+}
+
+/* ================= 段落寫作 ================= */
+function viewTopics(){
+  app.innerHTML=`<h2>📝 段落寫作：選一個題目</h2>
+  <div class="grid">${TOPICS.map((t,i)=>tile(['🌞','👫','🎂','🍉','🏖️','☔'][i],t.title,`${t.en}${DB.drafts[t.id]?'　✍️ 有草稿':''}`,['#f97316','#ec4899','#8b5cf6','#14b8a6','#3b82f6','#64748b'][i],`go('para',${i})`)).join('')}</div>
+  <div class="card" style="margin-top:20px"><b>📌 段落寫作小提醒</b>
+    <ul style="margin:6px 0"><li>寫 <b>50 字左右</b>，大約 5～7 個句子。</li><li>先用右邊的 <b>5W1H</b> 想好要寫什麼，再開始寫。</li>
+    <li>注意<b>時態</b>：昨天的事用過去式、習慣用現在式、計畫用未來式。</li><li>每句開頭大寫，句尾要有標點。</li></ul></div>`;
+}
+function countWords(s){return (s.match(/[A-Za-z0-9]+(?:['’][A-Za-z]+)?/g)||[]).length}
+function viewPara(i){
+  const t=TOPICS[i];
+  app.innerHTML=`<h2>📝 ${esc(t.title)}　<span class="en muted" style="font-size:24px">${esc(t.en)}</span></h2>
+  <div class="split">
+    <div>
+      <div class="card"><div class="inst">${esc(t.prompt)}</div>
+        <div class="muted small">⏰ 時態提示：${esc(t.tense)}</div>
+        <div class="muted small">🧰 好用的字：<span class="en">${t.words.map(esc).join('、')}</span></div>
+        <div class="paper-tip">✏️ 先用右邊的 5W1H 想內容，再<b>寫在紙上</b>（50 字左右）。寫完用下面的按鈕檢查。</div>
+        <div class="row">
+          <button class="btn teal" onclick="paraList(${i})">☑️ 自我檢查清單</button>
+          <label class="btn ai img-only">📷 拍照給 Claude 批改<input type="file" accept="image/*" hidden onchange="aiGrade(${i},this.files[0]);this.value=''"></label>
+          <button class="btn sec" onclick="paraSample(${i})">👀 看範文</button>
+        </div>
+        <div id="paraOut"></div>
+        <details id="typeBox" style="margin-top:18px"><summary style="cursor:pointer;font-weight:700">⌨️ 想用打字的？點這裡</summary>
+          <textarea id="para" class="en" spellcheck="false" placeholder="Start writing here..."></textarea>
+          <div class="row" style="justify-content:space-between"><span class="wc" id="wc">0 字</span><span class="muted small" id="wcmsg"></span></div>
+          <div class="bar"><div id="wcbar" style="width:0"></div></div>
+          <div class="row">
+            <button class="btn ai ai-only" id="gradeBtn" onclick="aiGrade(${i})">🤖 請 Claude 批改</button>
+            <button class="btn teal" onclick="paraCheck()">🔍 格式小檢查</button>
+            <button class="btn blue no-ai" onclick="paraCopy(${i})">📋 複製給 AI 批改</button>
+          </div>
+          <div id="typeOut"></div>
+        </details>
+      </div>
+    </div>
+    <div class="card" style="padding:16px"><div style="font-weight:800;font-size:22px;margin-bottom:8px">💭 5W1H 想一想</div>
+      ${Object.entries(t.w).map(([k,v])=>`<div class="wh"><b class="en">${k}</b><br>${esc(v)}</div>`).join('')}</div>
+  </div>`;
+  const ta=$('#para');ta.value=DB.drafts[t.id]||'';
+  const upd=()=>{
+    const n=countWords(ta.value);$('#wc').textContent=`${n} 字`;
+    $('#wcbar').style.width=Math.min(100,n/50*100)+'%';
+    $('#wcmsg').textContent=n===0?'目標：50 字左右':n<35?`再寫 ${50-n} 字左右`:n<=70?'👍 字數剛剛好！':'字數夠了，檢查看看有沒有錯字';
+    DB.drafts[t.id]=ta.value;save();
+  };
+  ta.oninput=upd;upd();
+  if(ta.value||!paperMode())$('#typeBox').open=true;
+}
+function paraList(i){
+  const t=TOPICS[i];
+  const items=['寫了 5～7 句，大約 50 個字','5W1H 至少回答了 4 個（誰、做什麼、什麼時候、在哪裡、為什麼、感覺如何）',
+    `時態正確（這題用${t.tense}）`,'每一句的主詞和動詞都有寫（例如 I went、She is）','每句開頭大寫，「我」寫成大寫的 I',
+    '每句結尾有 . 或 ? 或 !','拼字都檢查過了','內容有照題目寫，沒有離題'];
+  $('#paraOut').innerHTML=`<div class="fb ok"><div class="fbt">☑️ 對照你紙上寫的，一項一項打勾</div>
+    <div class="checklist">${items.map((x,k)=>`<label><input type="checkbox" id="ck${k}" onchange="paraListCount()"><span>${esc(x)}</span></label>`).join('')}</div>
+    <div id="ckMsg" class="small muted"></div></div>`;
+}
+function paraListCount(){
+  const all=[...document.querySelectorAll('.checklist input')],n=all.filter(c=>c.checked).length;
+  $('#ckMsg').textContent=n===all.length?'🎉 全部都做到了，很棒！可以看範文比較一下。':`做到 ${n} / ${all.length} 項，沒打勾的地方回去紙上改一改。`;
+}
+function paraCheck(){
+  const s=$('#para').value.trim(),tips=[];
+  if(!s){toast('先寫一些內容喔！');return}
+  const n=countWords(s);
+  const sents=s.split(/(?<=[.!?])\s+/).filter(x=>x.trim());
+  if(n<35)tips.push(`字數只有 ${n} 字，用 5W1H 再多加一兩句。`);
+  if(!/[.!?]["”]?$/.test(s))tips.push('最後一句要加上句號 . 或驚嘆號 !');
+  const low=sents.filter(x=>/^[a-z]/.test(x.trim()));
+  if(low.length)tips.push(`這些句子開頭要大寫：<span class="en">${low.map(x=>esc(x.trim().split(' ').slice(0,3).join(' '))+'…').join('、')}</span>`);
+  if(/(^|[\s,.])i([\s,.']|$)/.test(s))tips.push('「我」要寫大寫的 <b class="en">I</b>，不是小寫 i。');
+  if(/[，。？！、]/.test(s))tips.push('有中文標點符號，要改成英文的 , . ? !');
+  if(/ ,|,(?=\S)/.test(s))tips.push('逗號後面要空一格，前面不要空格。');
+  const longS=sents.filter(x=>countWords(x)>25);
+  if(longS.length)tips.push('有句子太長了，可以拆成兩句或用 and / but / so 好好連接。');
+  if(sents.length<4)tips.push(`目前只有 ${sents.length} 句，試著寫到 5～7 句。`);
+  $('#typeOut').innerHTML=tips.length
+    ?`<div class="fb bad"><div class="fbt">🔍 可以再改進的地方</div><ul style="margin:0">${tips.map(x=>`<li>${x}</li>`).join('')}</ul><div class="muted small" style="margin-top:6px">（小檢查只看格式，文法要請 AI 或老師幫忙看）</div></div>`
+    :`<div class="fb ok"><div class="fbt">✨ 格式看起來很好！</div>記得再檢查一次時態和拼字，也可以請 AI 批改。</div>`;
+}
+// file：拍照上傳的手寫稿；沒有 file 就批改打字框裡的文章
+async function aiGrade(i,file){
+  const t=TOPICS[i],s=file?'':$('#para').value.trim();
+  if(!file&&!s){toast('先寫一些內容喔！');return}
+  if(!AI)return;
+  const out=$(file?'#paraOut':'#typeOut'),btn=$('#gradeBtn');
+  btn.disabled=true;out.innerHTML=thinkingHTML(file?'Claude 正在看你的手寫稿…（大約 20～60 秒）':'Claude 正在批改…（大約 10～40 秒）');
+  const essay=file
+    ?`學生的文章是手寫在紙上的，在附上的照片裡。請先仔細辨認照片中的英文（看不清楚的字用 [?] 表示，不要自己猜著補上）。`
+    :`學生的文章：\n"""\n${s.slice(0,4000)}\n"""`;
+  const prompt=`${AI_CTX}
+請當英文老師，批改這篇全民英檢初級的「段落寫作」。
+題目：${t.title}（${t.en}）— ${t.prompt}
+建議時態：${t.tense}
+評分（GEPT 初級段落寫作 0～5 級分）：5 內容切題完整、組織好、文法幾乎沒錯；4 切題、只有少數錯誤；3 大致切題，有些錯誤但不影響理解；2 內容不足，或錯誤多到影響理解；1 只寫了少量相關內容；0 沒作答或完全離題。
+${essay}
+只回覆一個 JSON 物件：
+{${file?'"read": "你從照片辨認出的整篇文章（照原樣，錯字也照抄）", ':''}"score": 0 到 5 的整數, "summary": "一兩句總評和鼓勵", "good": ["寫得好的地方，最多 3 點"], "fixes": [{"wrong": "原文裡寫錯的片段", "right": "改正後", "why": "簡短中文說明"}], "revised": "修改後的完整英文文章（保留學生的意思，用初級程度的字）", "tip": "下次最該加強的一件事"}
+fixes 最多 8 個，挑最重要的錯誤。`;
+  try{
+    const r=await AI.json(prompt,file?{images:[file],cache:false}:{});
+    const sc=Math.max(0,Math.min(5,Math.round(Number(r&&r.score)||0)));
+    logHistory('para',sc,5);
+    const good=Array.isArray(r.good)?r.good.map(S).filter(Boolean):[];
+    const fx=fixesHTML(r.fixes);
+    out.innerHTML=`<div class="aibox"><div class="fbt">🤖 Claude 批改：${sc} / 5 級分 ${'⭐'.repeat(sc)}</div>
+      ${S(r.read)?`<div class="small muted">📷 Claude 看到你寫的（如果認錯字，就不是你的錯喔）：</div><div class="en" style="font-size:20px;background:#fff;border-radius:12px;padding:8px 12px;margin-bottom:8px">${esc(r.read)}</div>`:''}
+      <div>${esc(S(r.summary))}</div>
+      ${good.length?`<div style="margin-top:10px"><b>👍 寫得好的地方</b><ul>${good.map(g=>`<li>${esc(g)}</li>`).join('')}</ul></div>`:''}
+      ${fx?`<div style="margin-top:10px"><b>✏️ 要修改的地方</b>${fx}</div>`:''}
+      ${S(r.revised)?`<div style="margin-top:10px"><b>📄 修改後的版本</b> <button class="mini" onclick="speak(document.getElementById('revised').textContent,.85)">🔊</button></div>
+        <div id="revised" class="en" style="font-size:21px;background:#fff;border-radius:12px;padding:10px 14px">${esc(r.revised)}</div>`:''}
+      ${S(r.tip)?`<div style="margin-top:10px">🎯 <b>下次加強：</b>${esc(r.tip)}</div>`:''}
+      <div class="muted small" style="margin-top:8px">在紙上改完，可以再給 Claude 看一次，看看分數有沒有進步！</div></div>`;
+  }catch(e){out.innerHTML=`<div class="aibox">${esc(aiErrMsg(e))}</div>`}
+  btn.disabled=false;
+}
+function paraCopy(i){
+  const t=TOPICS[i],s=$('#para').value.trim();
+  if(!s){toast('先寫一些內容喔！');return}
+  const prompt=`請你當英文老師，用繁體中文幫我批改這篇「全民英檢初級」段落寫作。\n題目：${t.title}（${t.en}）— ${t.prompt}\n請：1. 用 GEPT 初級標準給分（0～5 分）2. 列出文法、拼字錯誤並說明 3. 給我修改後的版本（用初級程度的字）。\n\n我的文章：\n${s}`;
+  const done=()=>{toast('已複製！貼到 ChatGPT 或 Gemini 就可以了');$('#typeOut').innerHTML=`<div class="fb ok">📋 已經複製好了！打開 ChatGPT 或 Gemini，按 Ctrl + V 貼上送出就可以。</div>`};
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=prompt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');done()}catch(e){toast('複製失敗，請手動複製')}ta.remove()};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(prompt).then(done,fallback);else fallback();
+}
+function paraSample(i){
+  const t=TOPICS[i];
+  $('#paraOut').innerHTML=`<div class="fb ok"><div class="fbt">👀 範文（${countWords(t.sample)} 字）<button class="mini" onclick="speak(TOPICS[${i}].sample,.85)">🔊</button></div>
+    <div class="en" style="font-size:22px">${esc(t.sample)}</div><div class="muted small" style="margin-top:6px">先自己寫完再看，會進步比較快喔！</div></div>`;
+}
+
+/* ================= 錄音元件（複誦、朗讀共用） ================= */
+let recTarget=null,recMode=null;
+function recHTML(){return `<div class="row"><button class="btn red" id="recBtn" onclick="toggleRec()">🎙️ 開始錄音</button><span id="recState" class="muted"></span></div><div class="live en" id="live"></div><div id="recOut"></div>`}
+async function toggleRec(){
+  const btn=$('#recBtn');
+  if(!Rec.on){
+    if(window.speechSynthesis)speechSynthesis.cancel();
+    $('#recOut').innerHTML='';$('#live').textContent='';
+    try{await Rec.start(t=>{const l=$('#live');if(l)l.textContent='🗣️ '+t})}catch(e){$('#recOut').innerHTML=micErr(e);return}
+    btn.textContent='⏹️ 停止錄音';btn.classList.add('pulse');$('#recState').textContent='錄音中…說完按「停止」';
+  }else{
+    btn.disabled=true;$('#recState').textContent='處理中…';
+    const res=await Rec.stop();
+    if(!$('#recBtn'))return;
+    btn.disabled=false;btn.textContent='🎙️ 再錄一次';btn.classList.remove('pulse');$('#recState').textContent='';$('#live').textContent='';
+    let h=res.url?`<div style="margin-top:10px"><b>▶️ 聽聽自己的聲音：</b><br><audio controls src="${res.url}"></audio></div>`
+      :REC_AUDIO?'':`<div class="muted small" style="margin-top:10px">（平板上只做語音辨識，沒有錄音可以重播）</div>`;
+    if(res.text){
+      const c=compare(recTarget,res.text);
+      logHistory(recMode,c.hit,c.total);
+      h+=`<div class="fb ${c.score>=70?'ok':'bad'}"><div class="fbt">${stars(c.score)} 正確率 ${c.score}%</div>
+        <div class="muted small">原句（<span class="w-miss">紅色</span>是沒念到或念得不清楚的字）：</div>
+        <div class="diffline en">${wordsHTML(c.A,c.okA,'w-ok','w-miss')}</div>
+        <div class="muted small" style="margin-top:8px">電腦聽到你說（<span class="w-extra">黃色</span>是跟原句不一樣的字）：</div>
+        <div class="diffline en">${wordsHTML(c.B,c.okB,'','w-extra')}</div>
+        <div class="muted small" style="margin-top:6px">${c.score>=90?'發音很清楚！':'紅色的字可以按 🔊 再聽一次，跟著念幾遍。'}</div></div>`;
+    }else h+=`<div class="fb bad">${noTextMsg(res.err)}</div>`;
+    $('#recOut').innerHTML=h;
+  }
+}
+const srNote=()=>IN_CLAUDE?`<div class="fb bad small">⚠️ 在 claude.ai 上只能聽、不能錄音。要錄音、看發音正確率，請打開電腦裡的 gept.html 檔案。</div>`
+  :SRClass?'':`<div class="fb bad small">⚠️ 這個瀏覽器不支援語音辨識，請用電腦版 Chrome。錄音和重播仍可使用。</div>`;
+
+/* ================= 口說題庫選擇（課本各回 / 網頁內建） ================= */
+let SRC=DB.src||'0';
+const repList=()=>SRC==='mine'?REPEAT:ROUNDS[+SRC].repeat;
+const readSent=()=>SRC==='mine'?READ_SENT:ROUNDS[+SRC].read.sentences;
+const readPass=()=>SRC==='mine'?READ_PASS:[ROUNDS[+SRC].read.passage];
+const askList=()=>SRC==='mine'?QUESTIONS:ROUNDS[+SRC].answer.map(x=>({q:x.q,a:x.sample}));
+const curQ=()=>askList()[AQ.order[AQ.i]];
+function setSrc(v,view){SRC=v;DB.src=v;save();REP.i=0;RD.i=0;AQ.i=0;AQ.order=null;go(view)}
+function srcPicker(view){
+  return `<div class="row" style="margin:0 0 14px"><label for="srcSel"><b>📚 題庫：</b></label>
+    <select id="srcSel" class="sel" onchange="setSrc(this.value,'${view}')">
+      ${ROUNDS.map((r,i)=>`<option value="${i}" ${SRC===String(i)?'selected':''}>課本 ${esc(r.name)}</option>`).join('')}
+      <option value="mine" ${SRC==='mine'?'selected':''}>綜合練習題（網頁內建）</option></select></div>`;
+}
+
+/* ================= 複誦 ================= */
+let REP={i:0,show:false};
+function viewRepeat(){
+  const list=repList();if(REP.i>=list.length)REP.i=0;
+  const t=list[REP.i];recTarget=t;recMode='repeat';
+  app.innerHTML=`<h2>👂 複誦　<span class="muted" style="font-size:20px">第 ${REP.i+1} / ${list.length} 句</span></h2>
+  ${srcPicker('repeat')}${srNote()}
+  <div class="card">
+    <div class="inst">1️⃣ 先聽句子（考試時看不到句子，要用聽的！）</div>
+    <div class="row"><button class="btn blue" onclick="speak(recTarget,.9)">🔊 正常速度</button><button class="btn teal" onclick="speak(recTarget,.6)">🐢 慢慢念</button>
+      <button class="btn sec" onclick="REP.show=!REP.show;viewRepeat()">${REP.show?'🙈 藏起句子':'👀 偷看句子'}</button></div>
+    <div style="margin-top:14px">${REP.show?`<div class="big-en en">${esc(t)}</div>`:`<div class="hidebox">句子藏起來了，先試著用聽的 👂</div>`}</div>
+    <div class="inst" style="margin-top:20px">2️⃣ 按下錄音，跟著說一次</div>
+    ${recHTML()}
+    <div class="row" style="justify-content:space-between;margin-top:22px">
+      <button class="btn sec" ${REP.i===0?'disabled':''} onclick="REP.i--;REP.show=false;go('repeat')">⬅️ 上一句</button>
+      <button class="btn" onclick="REP.i=(REP.i+1)%${list.length};REP.show=false;go('repeat')">下一句 ➡️</button></div>
+  </div>`;
+  setTimeout(()=>speak(t,.9),300);
+}
+
+/* ================= 朗讀 ================= */
+let RD={kind:'sent',i:0};
+function viewRead(){
+  const list=RD.kind==='sent'?readSent():readPass();if(RD.i>=list.length)RD.i=0;
+  const t=list[RD.i];recTarget=t;recMode='read';
+  app.innerHTML=`<h2>📖 朗讀</h2>${srcPicker('read')}${srNote()}
+  <div class="tabs"><button class="btn sec ${RD.kind==='sent'?'active':''}" onclick="RD={kind:'sent',i:0};go('read')">句子</button>
+    <button class="btn sec ${RD.kind==='pass'?'active':''}" onclick="RD={kind:'pass',i:0};go('read')">短文</button></div>
+  <div class="card">
+    <div class="muted">第 ${RD.i+1} / ${list.length} ${RD.kind==='sent'?'句':'篇'}　・　先自己念念看，不會的再聽示範</div>
+    <div class="big-en en" style="${RD.kind==='pass'?'font-size:27px;font-weight:600;line-height:1.7':''}">${esc(t)}</div>
+    <div class="row"><button class="btn blue" onclick="speak(recTarget,.9)">🔊 聽示範</button><button class="btn teal" onclick="speak(recTarget,.65)">🐢 慢速示範</button></div>
+    <div class="inst" style="margin-top:20px">🎙️ 錄下你的朗讀</div>
+    ${recHTML()}
+    <div class="row" style="justify-content:space-between;margin-top:22px">
+      <button class="btn sec" ${RD.i===0?'disabled':''} onclick="RD.i--;go('read')">⬅️ 上一個</button>
+      <button class="btn" onclick="RD.i=(RD.i+1)%${list.length};go('read')">下一個 ➡️</button></div>
+  </div>`;
+}
+
+/* ================= 回答問題 ================= */
+let AQ={i:0,show:false,order:null};
+function viewAnswer(){
+  if(!AQ.order){const ix=askList().map((_,i)=>i);AQ.order=SRC==="mine"?shuffle(ix):ix}
+  const q=curQ();
+  app.innerHTML=`<h2>💬 回答問題　<span class="muted" style="font-size:20px">第 ${AQ.i+1} / ${askList().length} 題</span></h2>${srcPicker('answer')}${srNote()}
+  <div class="card">
+    <div class="muted">按「開始」後會念題目，嗶一聲之後有 <b>15 秒</b>可以回答。盡量說<b>完整的句子</b>，最好說兩句！</div>
+    <div style="margin-top:12px">${AQ.show?`<div class="big-en en">${esc(q.q)}</div>`:`<div class="hidebox">題目藏起來了，要用聽的 👂</div>`}</div>
+    <div class="timer" id="timer">15</div>
+    <div style="text-align:center" class="muted" id="ansState">準備好了嗎？</div>
+    <div class="row" style="justify-content:center" id="ansBtns">
+      <button class="btn green" id="ansGo" onclick="ansStart()">▶️ 開始</button>
+      <button class="btn blue" onclick="speak(curQ().q,.85)">🔁 再聽一次題目</button>
+      <button class="btn sec" onclick="AQ.show=!AQ.show;go('answer')">${AQ.show?'🙈 藏起題目':'👀 看題目'}</button>
+    </div>
+    <div class="live en" id="live" style="text-align:center"></div>
+    <div id="recOut"></div>
+    <div class="row" style="justify-content:space-between;margin-top:22px">
+      <button class="btn sec" ${AQ.i===0?'disabled':''} onclick="AQ.i--;AQ.show=false;go('answer')">⬅️ 上一題</button>
+      <button class="btn" onclick="AQ.i=(AQ.i+1)%${askList().length};AQ.show=false;go('answer')">下一題 ➡️</button></div>
+  </div>`;
+}
+async function ansStart(){
+  const q=curQ();const myI=AQ.i;
+  $('#ansBtns').innerHTML=`<button class="btn red pulse" id="ansStop" style="visibility:hidden" onclick="ansStop()">⏹️ 我說完了</button>`;
+  $('#recOut').innerHTML='';$('#ansState').textContent='👂 仔細聽題目…';
+  await speak(q.q,.85);await sleep(400);
+  if(AQ.i!==myI||!$('#timer'))return;
+  beep();
+  // 不能錄音時（例如在 claude.ai 上）還是照樣倒數，讓學生大聲說，之後再打字
+  let noMic=false;
+  try{await Rec.start(t=>{const l=$('#live');if(l)l.textContent='🗣️ '+t})}
+  catch(e){noMic=true;$('#recOut').innerHTML=IN_CLAUDE
+    ?`<div class="fb ok small">🗣️ 這裡不能錄音，但一樣可以練習：現在就<b>大聲說出你的答案</b>，時間到再把說的話打下來給 Claude 看。</div>`
+    :micErr(e)}
+  AQ.running=true;
+  $('#ansStop').style.visibility='visible';$('#ansState').textContent=noMic?'🗣️ 開始大聲回答！':'🎙️ 開始回答！';
+  let left=15;const tm=$('#timer');tm.textContent=left;
+  clearInterval(ansTimer);
+  ansTimer=setInterval(()=>{left--;tm.textContent=left;if(left<=5)tm.classList.add('hot');if(left<=0)ansStop()},1000);
+}
+async function ansStop(){
+  clearInterval(ansTimer);
+  if(!AQ.running)return;
+  AQ.running=false;
+  $('#ansState').textContent='處理中…';$('#ansBtns').innerHTML='';
+  const res=Rec.on?await Rec.stop():{url:null,text:'',noMic:true};
+  if(!$('#timer'))return;
+  const q=curQ();
+  $('#ansState').textContent='⏰ 時間到！';$('#live').textContent='';
+  const n=res.text?countWords(res.text):0;
+  let h=res.url?`<div style="margin-top:10px"><b>▶️ 聽聽自己的回答：</b><br><audio controls src="${res.url}"></audio></div>`:'';
+  if(res.text)h+=`<div class="fb ${n>=8?'ok':'bad'}"><div class="fbt">${n>=12?'⭐⭐⭐ 說得很完整！':n>=8?'⭐⭐ 不錯喔！':'💪 可以再多說一點'}</div>
+     <div class="muted small">電腦聽到你說（${n} 個字）：</div><div class="diffline en">${esc(res.text)}</div>
+     ${n<8?'<div class="small">試著用完整句子回答，再加一句原因或細節（because…、I also…）。</div>':''}</div>`;
+  else if(!res.noMic)h+=`<div class="fb bad">${noTextMsg(res.err)}</div>`;
+  h+=`<div class="aibox ai-only"><div class="fbt">🤖 讓 Claude 看看你的回答</div>
+     <div class="muted small">${res.text?'電腦聽到的字如果不對，可以先改成你真正說的話。':'把你剛剛說的英文打在下面（說了什麼就打什麼）。'}</div>
+     <textarea id="ansText" class="en" style="min-height:110px" spellcheck="false" placeholder="I usually...">${esc(res.text)}</textarea>
+     <div class="row"><button class="btn ai" id="ansAiBtn" onclick="aiAnswer()">🤖 請 Claude 給評語</button></div><div id="ansAiOut"></div></div>`;
+  h+=`<div class="fb ok"><div class="muted small">題目：</div><div class="en" style="font-size:24px;font-weight:700">${esc(q.q)}</div>
+     <div class="muted small" style="margin-top:6px">參考回答：<button class="mini" onclick="speak(curQ().a,.85)">🔊</button></div><div class="en right" style="font-size:24px">${esc(q.a)}</div></div>`;
+  $('#recOut').innerHTML=h;
+  $('#ansBtns').innerHTML=`<button class="btn green" onclick="go('answer')">🔄 這題再答一次</button>`;
+}
+async function aiAnswer(){
+  const said=$('#ansText').value.trim();
+  if(!said){toast('先把你說的話打上去喔！');return}
+  if(!AI)return;
+  const q=curQ(),myI=AQ.i,btn=$('#ansAiBtn'),out=$('#ansAiOut');
+  btn.disabled=true;out.innerHTML=thinkingHTML();
+  const prompt=`${AI_CTX}
+學生在練習全民英檢初級口說的「回答問題」：聽到問題後，15 秒內用英文回答。
+問題：${q.q}
+學生的回答（語音辨識轉成的文字或學生自己打的，可能有辨識錯字；看不出是辨識錯還是學生說錯時，不要算學生錯）：
+"""
+${said.slice(0,1000)}
+"""
+請評估：有沒有回答到問題、句子是否完整、文法和用字是否正確、內容是否夠（最好有 2 句，或加上原因、細節）。
+只回覆一個 JSON 物件：
+{"stars": 1 到 3 的整數（3 = 切題完整又正確，2 = 切題但有小錯或太短，1 = 沒答到問題或錯很多）, "comment": "一兩句中文評語和鼓勵", "fixes": [{"wrong": "說錯的片段", "right": "正確說法", "why": "簡短中文說明"}], "better": "更好的回答範例（英文 2 句，用初級程度的字，盡量保留學生的意思）"}
+fixes 最多 4 個，沒有錯就給空陣列。`;
+  try{
+    const r=await AI.json(prompt,{modelTier:'quick'});
+    if(AQ.i!==myI||!document.body.contains(out))return;
+    const st=Math.max(1,Math.min(3,Math.round(Number(r&&r.stars)||1)));
+    const fx=fixesHTML(r.fixes);
+    out.innerHTML=`<div style="margin-top:12px"><div class="fbt">${'⭐'.repeat(st)} Claude 老師說</div>
+      <div>${esc(S(r.comment))}</div>
+      ${fx?`<div style="margin-top:8px"><b>✏️ 可以這樣改</b>${fx}</div>`:''}
+      ${S(r.better)?`<div style="margin-top:8px"><b>💡 更好的說法</b> <button class="mini" onclick="speak(document.getElementById('better').textContent,.85)">🔊</button></div>
+        <div id="better" class="en" style="font-size:22px;background:#fff;border-radius:12px;padding:8px 12px">${esc(r.better)}</div>`:''}
+      <div class="muted small" style="margin-top:6px">按 🔊 聽一次，再跟著說幾遍！</div></div>`;
+  }catch(e){if(document.body.contains(out))out.innerHTML=`<div style="margin-top:10px">${esc(aiErrMsg(e))}</div>`}
+  btn.disabled=false;
+}
+
+/* ================= 紀錄 ================= */
+function viewStats(){
+  const H=DB.history;
+  const fmt=t=>{const d=new Date(t);return `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+  const sum=m=>{const x=H.filter(h=>h.mode===m);const c=x.reduce((s,h)=>s+h.c,0),n=x.reduce((s,h)=>s+h.n,0);return {times:x.length,p:n?Math.round(c/n*100):null}};
+  const recent=H.filter(h=>WRITE_MODES.includes(h.mode)).slice(-12);
+  app.innerHTML=`<h2>📊 練習紀錄</h2>
+  ${H.length?'':'<div class="card">還沒有紀錄，先去練習吧！</div>'}
+  <div class="grid">${Object.keys(MODE).map(m=>{const s=sum(m);return `<div class="card" style="margin:0;border-top:8px solid ${MODE[m].color}">
+     <div style="font-weight:800">${MODE[m].name}</div><div class="score" style="font-size:34px">${s.p===null?'—':s.p+'%'}</div>
+     <div class="muted small">${m==='repeat'||m==='read'?'平均發音正確率':'平均答對率'}・練習 ${s.times} 次</div></div>`}).join('')}</div>
+  ${recent.length?`<div class="card" style="margin-top:18px"><b>✏️ 最近 ${recent.length} 次寫作答對率</b>
+     <div class="bars" style="margin-top:30px">${recent.map(h=>{const p=Math.round(h.c/h.n*100);return `<div style="height:${Math.max(p,3)}%" title="${MODE[h.mode].name}"><span>${p}%</span></div>`}).join('')}</div></div>`:''}
+  ${H.length?`<div class="card"><b>🕒 最近的練習</b><table><tr><th>時間</th><th>項目</th><th>結果</th><th>答對率</th></tr>
+     ${H.slice(-30).reverse().map(h=>`<tr><td>${fmt(h.t)}</td><td>${MODE[h.mode]?MODE[h.mode].name:h.mode}</td>
+       <td>${h.mode==='repeat'||h.mode==='read'?`念對 ${h.c} / ${h.n} 字`:h.mode==='para'?`${h.c} / 5 級分`:`${h.c} / ${h.n} 題`}</td><td><b>${Math.round(h.c/h.n*100)}%</b></td></tr>`).join('')}</table>
+     <div class="row"><button class="btn sec" id="clrHist" onclick="clearHistory()">🧹 清除紀錄</button><span class="muted small">（錯題本不會被清除）</span></div></div>`:''}`;
+}
+function clearHistory(){
+  const b=$('#clrHist');
+  if(!b.dataset.sure){b.dataset.sure='1';b.textContent='⚠️ 確定要清除？再按一次';b.classList.add('red');return}
+  DB.history=[];save();viewStats();toast('紀錄已清除');
+}
+
+renderCountdown();
+viewHome();
+</script>
+
+</body>
+</html>
