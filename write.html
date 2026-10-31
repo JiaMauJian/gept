@@ -208,11 +208,222 @@ const REORDER = [
   {s:'Kevin and I went swimming yesterday.', zh:'Kevin 和我昨天去游泳。', alt:['Yesterday Kevin and I went swimming.'], e:'go swimming 是「去游泳」，過去式是 went swimming。', keep:['Kevin']},
   {s:'My dog is smaller than your cat.', zh:'我的狗比你的貓小。', e:'比較級：形容詞 + er + than，small → smaller。'},
 ];
+/* ---------- 進階題：接近英檢初級正式考題（完成式、被動、比較、子句、關係代名詞…） ---------- */
+const REWRITE2 = [
+  {k:'改成現在完成式', h:'把 yesterday 換成 three times', q:'I visited Tainan yesterday.', a:['I have visited Tainan three times.'], e:'現在完成式 = have / has + 過去分詞，表示「到現在為止」的經驗。'},
+  {k:'改成疑問句，並加上 ever', q:'You have been to Japan.', a:['Have you ever been to Japan?'], e:'完成式的疑問句把 have 移到句首；ever 放在主詞後面、過去分詞前面。'},
+  {k:'改成否定句', q:'She has finished her homework.', a:['She has not finished her homework.','She has not finished her homework yet.'], e:'完成式的否定在 has 後面加 not（hasn\'t），可以在句尾加 yet。'},
+  {k:'用 How long 問劃線的部分', q:'I have lived here for five years.', u:'for five years', a:['How long have you lived here?'], e:'問「多久了」用 How long + have + 主詞 + 過去分詞；I 要換成 you。'},
+  {k:'改成被動語態', q:'Tom broke the window.', a:['The window was broken by Tom.'], e:'被動 = be 動詞 + 過去分詞；過去式用 was，break → broken，做動作的人放在 by 後面。'},
+  {k:'改成被動語態', q:'My father washes the car every Sunday.', a:['The car is washed by my father every Sunday.','Every Sunday the car is washed by my father.'], e:'現在式被動用 is / are + 過去分詞：is washed。'},
+  {k:'改成被動語態', h:'不用寫 by', q:'People speak English in many countries.', a:['English is spoken in many countries.','In many countries English is spoken.'], e:'做動作的是一般人（people）時，被動句可以省略 by people。speak → spoken。'},
+  {k:'加上附加問句', q:'Amy is your sister.', a:['Amy is your sister, isn\'t she?'], e:'肯定句配否定的附加問句：is → isn\'t，Amy 換成代名詞 she。'},
+  {k:'加上附加問句', q:'You went to the zoo last Sunday.', a:['You went to the zoo last Sunday, didn\'t you?'], e:'一般動詞過去式的附加問句用 didn\'t + 主詞。'},
+  {k:'加上附加問句', q:'Ben can\'t swim.', a:['Ben can\'t swim, can he?'], e:'否定句配肯定的附加問句：can\'t → can he?'},
+  {k:'用 Do you know 開頭改寫', q:'Where does Mary live?', a:['Do you know where Mary lives?'], e:'間接問句的語順是「疑問詞 + 主詞 + 動詞」，does 拿掉，live 要加 s 變 lives。'},
+  {k:'用 Can you tell me 開頭改寫', q:'What time is it?', a:['Can you tell me what time it is?'], e:'間接問句不倒裝：what time + it + is。'},
+  {k:'用 too…to 改寫', q:'The box is so heavy that I can\'t carry it.', a:['The box is too heavy for me to carry.','The box is too heavy to carry.'], e:'so…that + 否定 = too…to，「太…而不能…」；to 後面不用再寫 it。'},
+  {k:'用 so…that 改寫', q:'The boy is too young to go to school.', a:['The boy is so young that he can\'t go to school.'], e:'too…to 改成 so…that 時，that 後面要寫完整句子，而且是否定的 can\'t。'},
+  {k:'用 enough…to 合成一句', q:'She is old. She can drive a car.', a:['She is old enough to drive a car.'], e:'enough 放在形容詞「後面」：old enough to…，「夠大可以…」。'},
+  {k:'用 than 改寫（意思不變）', q:'Tom is shorter than Ben.', a:['Ben is taller than Tom.'], e:'Tom 比 Ben 矮 = Ben 比 Tom 高；short 的相反是 tall → taller。'},
+  {k:'改成最高級', h:'用 in my class', q:'Kevin is taller than all the other students in my class.', a:['Kevin is the tallest student in my class.','Kevin is the tallest in my class.','Kevin is the tallest boy in my class.'], e:'最高級 = the + 形容詞 est：the tallest，「全班最高」。'},
+  {k:'用 not as…as 改寫（意思不變）', q:'My bag is heavier than your bag.', a:['Your bag is not as heavy as my bag.','Your bag is not as heavy as mine.','Your bag is not so heavy as mine.'], e:'A 比 B 重 = B 沒有 A 那麼重；as 和 as 中間放形容詞原級 heavy。'},
+  {k:'用 It takes 改寫', q:'I spend thirty minutes walking to school.', a:['It takes me thirty minutes to walk to school.'], e:'It takes + 人 + 時間 + to + 原形動詞，「某人花多少時間做某事」。'},
+  {k:'用 Swimming 當主詞改寫', q:'It is fun to swim in the sea.', a:['Swimming in the sea is fun.'], e:'動名詞（V-ing）可以當主詞，當主詞時動詞用單數 is。'},
+  {k:'改成 What 開頭的感嘆句', q:'This is a very beautiful flower.', a:['What a beautiful flower this is!','What a beautiful flower!'], e:'What + a + 形容詞 + 名詞 + 主詞 + 動詞！拿掉 very。'},
+  {k:'改成 How 開頭的感嘆句', q:'The weather is very nice today.', a:['How nice the weather is today!','How nice the weather is!'], e:'How + 形容詞 + 主詞 + 動詞！nice 後面沒有名詞，所以用 How。'},
+  {k:'用 How often 問劃線的部分', q:'Lily goes swimming twice a week.', u:'twice a week', a:['How often does Lily go swimming?'], e:'問「多常」用 How often；goes 要改回原形 go。'},
+  {k:'用 Whose 問劃線的部分', q:'This is Peter\'s umbrella.', u:'Peter\'s', a:['Whose umbrella is this?','Whose is this umbrella?'], e:'問「誰的」用 Whose，後面通常直接接名詞：Whose umbrella。'},
+];
+const COMBINE2 = [
+  {s1:'I was taking a shower.', s2:'The phone rang.', c:'when', a:['I was taking a shower when the phone rang.','When the phone rang, I was taking a shower.','When I was taking a shower, the phone rang.','The phone rang when I was taking a shower.'], e:'when 表示「當…的時候」；正在做的事用過去進行式，突然發生的事用過去式。'},
+  {s1:'It will rain tomorrow.', s2:'We will stay home.', c:'if', a:['If it rains tomorrow, we will stay home.','We will stay home if it rains tomorrow.'], e:'陷阱！if 子句要用「現在式」代替未來式：if it rains，不是 if it will rain。'},
+  {s1:'Please wait here.', s2:'I will come back.', c:'until', a:['Please wait here until I come back.','Wait here until I come back, please.'], e:'until「直到」也是時間子句，用現在式 come 代替 will come。'},
+  {s1:'I will call you.', s2:'I will get home.', c:'as soon as', a:['I will call you as soon as I get home.','As soon as I get home, I will call you.'], e:'as soon as「一…就…」，後面的子句用現在式 get 代替 will get。'},
+  {s1:'Jenny finished her homework.', s2:'She went out to play.', c:'after', a:['After Jenny finished her homework, she went out to play.','Jenny went out to play after she finished her homework.','After finishing her homework, Jenny went out to play.','Jenny went out to play after finishing her homework.'], e:'先寫完功課、再出去玩：after 後面接「先發生」的事。'},
+  {s1:'Wash your hands.', s2:'Eat dinner.', c:'before', a:['Wash your hands before you eat dinner.','Wash your hands before eating dinner.','Before you eat dinner, wash your hands.','Before eating dinner, wash your hands.','Wash your hands before dinner.'], e:'before 後面接「後發生」的事；可以寫 before you eat 或 before eating。'},
+  {s1:'My mother was cooking.', s2:'My father was reading the newspaper.', c:'while', a:['My mother was cooking while my father was reading the newspaper.','While my mother was cooking, my father was reading the newspaper.','My father was reading the newspaper while my mother was cooking.','While my father was reading the newspaper, my mother was cooking.'], e:'while 表示兩件事「同時」在進行，兩邊都用過去進行式。'},
+  {s1:'He is very tired.', s2:'He still goes to work.', c:'although', a:['Although he is very tired, he still goes to work.','He still goes to work although he is very tired.'], e:'although「雖然」不能和 but 一起用！中文說「雖然…但是…」，英文只能選一個。'},
+  {s1:'The girl is my cousin.', s2:'She is singing on the stage.', c:'who', a:['The girl who is singing on the stage is my cousin.','The girl that is singing on the stage is my cousin.','The girl singing on the stage is my cousin.'], e:'who 代替「人」（She），放在 the girl 後面修飾她，She 要拿掉。'},
+  {s1:'Mr. Lin is a teacher.', s2:'He teaches us math.', c:'who', a:['Mr. Lin is a teacher who teaches us math.','Mr. Lin is a teacher that teaches us math.'], e:'who 代替 He，後面的動詞跟著 a teacher 用單數 teaches。'},
+  {s1:'I lost the watch.', s2:'My uncle gave it to me.', c:'which', a:['I lost the watch which my uncle gave to me.','I lost the watch which my uncle gave me.','I lost the watch that my uncle gave to me.','I lost the watch that my uncle gave me.','I lost the watch my uncle gave me.','I lost the watch my uncle gave to me.'], e:'which 代替「東西」（it），it 要拿掉，不能寫 which my uncle gave it to me。'},
+  {s1:'This is the book.', s2:'I bought it yesterday.', c:'that', a:['This is the book that I bought yesterday.','This is the book which I bought yesterday.','This is the book I bought yesterday.'], e:'that 代替 it（the book），所以後面的 it 要拿掉。'},
+  {s1:'Hurry up.', s2:'You will be late for school.', c:'or', a:['Hurry up, or you will be late for school.'], e:'祈使句 + or「否則」：快一點，不然你會遲到。'},
+  {s1:'You can have tea.', s2:'You can have coffee.', c:'or', a:['You can have tea or coffee.','You can have tea, or you can have coffee.','You can have tea or you can have coffee.'], e:'or 表示「或」，二選一；相同的部分可以省略。'},
+  {s1:'Tom likes baseball.', s2:'Jerry likes baseball too.', c:'both … and', a:['Both Tom and Jerry like baseball.'], e:'Both A and B 當主詞是「複數」，動詞 like 不加 s。'},
+  {s1:'Ann didn\'t go to the party.', s2:'Mary didn\'t go to the party.', c:'neither … nor', a:['Neither Ann nor Mary went to the party.'], e:'neither…nor 本身就是否定，動詞要用肯定的 went，不能再寫 didn\'t。'},
+  {s1:'The coffee was very hot.', s2:'I couldn\'t drink it.', c:'so … that', a:['The coffee was so hot that I couldn\'t drink it.'], e:'so + 形容詞 + that + 結果：「太燙所以不能喝」，very 要拿掉。'},
+];
+const REORDER2 = [
+  {s:'Have you ever eaten stinky tofu before?', zh:'你以前吃過臭豆腐嗎？', e:'現在完成式問經驗：Have + 主詞 + ever + 過去分詞（eaten）。'},
+  {s:'He has already finished his homework.', zh:'他已經寫完功課了。', alt:['He has finished his homework already.'], e:'already 通常放在 has 和過去分詞中間。'},
+  {s:'I have known Amy since I was six.', zh:'我從六歲就認識 Amy 了。', alt:['Since I was six I have known Amy.'], e:'since + 過去的時間點，主要句子用現在完成式 have known。', keep:['Amy']},
+  {s:'How long have you lived in Taipei?', zh:'你住在台北多久了？', e:'How long + have + 主詞 + 過去分詞。', keep:['Taipei']},
+  {s:'This bridge was built ten years ago.', zh:'這座橋是十年前蓋的。', alt:['Ten years ago this bridge was built.'], e:'被動語態：was + 過去分詞 built。'},
+  {s:'English is spoken in many countries.', zh:'很多國家都說英文。', alt:['In many countries English is spoken.'], e:'被動語態：is + spoken，主詞是 English。', keep:['English']},
+  {s:'Do you know where the post office is?', zh:'你知道郵局在哪裡嗎？', e:'間接問句不倒裝：where + the post office + is。'},
+  {s:'Could you tell me how to get to the station?', zh:'你可以告訴我怎麼去車站嗎？', e:'how to + 原形動詞 = 「如何做…」。'},
+  {s:'It took me two hours to finish the report.', zh:'我花了兩個小時完成報告。', e:'It took + 人 + 時間 + to + 原形動詞。'},
+  {s:'She is the most beautiful girl in our school.', zh:'她是我們學校最漂亮的女生。', alt:['In our school she is the most beautiful girl.'], e:'長的形容詞最高級用 the most + 形容詞。'},
+  {s:'My room is not as big as yours.', zh:'我的房間沒有你的大。', e:'not as + 形容詞原級 + as，「沒有…那麼…」。'},
+  {s:'He was too tired to finish his dinner.', zh:'他太累了，吃不完晚餐。', e:'too + 形容詞 + to + 原形動詞，「太…而不能…」。'},
+  {s:'The movie was so boring that I fell asleep.', zh:'那部電影太無聊了，我都睡著了。', e:'so + 形容詞 + that + 結果。'},
+  {s:'We will go camping if it is sunny tomorrow.', zh:'如果明天天氣晴朗，我們就去露營。', alt:['If it is sunny tomorrow we will go camping.'], e:'if 子句用現在式 is 代替未來式。'},
+  {s:'The boy who is talking to the teacher is my brother.', zh:'正在跟老師說話的那個男生是我弟弟。', e:'who is talking to the teacher 修飾 the boy，整句的主要動詞是後面的 is。'},
+  {s:'The book that you lent me is very interesting.', zh:'你借我的那本書很有趣。', e:'that you lent me 修飾 the book。'},
+  {s:'Reading comic books is my favorite hobby.', zh:'看漫畫是我最喜歡的嗜好。', alt:['My favorite hobby is reading comic books.'], e:'動名詞 Reading 當主詞，動詞用單數 is。'},
+  {s:'Mom asked me to clean my room.', zh:'媽媽叫我打掃房間。', e:'ask + 人 + to + 原形動詞，「要求某人做某事」。', keep:['Mom']},
+  {s:'Would you like something to drink?', zh:'你想喝點什麼嗎？', e:'something to drink「可以喝的東西」，to + 原形動詞放在 something 後面。'},
+  {s:'You don\'t have to wear a uniform today.', zh:'你今天不用穿制服。', alt:['Today you don\'t have to wear a uniform.'], e:'don\'t have to = 「不必」，和 mustn\'t（不可以）意思不同。'},
+  {s:'What a lovely day it is today!', zh:'今天天氣真好啊！', e:'感嘆句：What + a + 形容詞 + 名詞 + 主詞 + 動詞！'},
+];
 REWRITE.forEach((q,i)=>{q.id='rw'+(i+1);q.type='rewrite'});
 COMBINE.forEach((q,i)=>{q.id='cb'+(i+1);q.type='combine'});
 REORDER.forEach((q,i)=>{q.id='ro'+(i+1);q.type='reorder'});
-const BANK = {rewrite:REWRITE, combine:COMBINE, reorder:REORDER};
-const BYID = {}; [...REWRITE,...COMBINE,...REORDER].forEach(q=>BYID[q.id]=q);
+REWRITE2.forEach((q,i)=>{q.id='rwx'+(i+1);q.type='rewrite';q.lv=2});
+COMBINE2.forEach((q,i)=>{q.id='cbx'+(i+1);q.type='combine';q.lv=2});
+REORDER2.forEach((q,i)=>{q.id='rox'+(i+1);q.type='reorder';q.lv=2});
+const BANK = {rewrite:[...REWRITE,...REWRITE2], combine:[...COMBINE,...COMBINE2], reorder:[...REORDER,...REORDER2]};
+const BYID = {}; Object.values(BANK).flat().forEach(q=>BYID[q.id]=q);
+/* 難度：basic 只出基礎題、adv 只出進階題、all 兩種混合 */
+const LEVELS={basic:'🌱 基礎',adv:'🔥 進階（接近考題）',all:'🎲 混合'};
+const level=()=>LEVELS[DB.level]?DB.level:'adv';
+const bankFor=type=>{const lv=level(),all=type==='mix'?[...BANK.rewrite,...BANK.combine,...BANK.reorder]:BANK[type];
+  return lv==='all'?all:all.filter(q=>(q.lv===2)===(lv==='adv'))};
+/* ================= 攻略特訓：依照課本「作答攻略分享」的每個失分點出題 ================= */
+const RW=(k,q,a,e,x)=>Object.assign({k,q,a,e},x||{});
+const CB=(s1,s2,c,a,e)=>({s1,s2,c,a,e});
+const STRAT = [
+  {id:'instr', emo:'👀', name:'看清楚指令', sub:'同一句，指令不同答案就不同', color:'#0ea5e9',
+   tip:'先看清楚題目指令再動筆：是改成否定句、疑問句，還是用疑問詞問劃線的部分？同一個句子，指令不一樣，答案就完全不一樣。',
+   items:[
+    RW('改成否定句','Ken played tennis after school.',['Ken did not play tennis after school.'],'過去式否定：did not + 原形 play。'),
+    RW('改成疑問句','Ken played tennis after school.',['Did Ken play tennis after school?'],'過去式疑問句：Did 放句首，played 改回 play。'),
+    RW('用 What 問劃線的部分','Ken played tennis after school.',['What did Ken play after school?'],'問「什麼」用 What；劃線的 tennis 要拿掉，換成 What 放句首。',{u:'tennis'}),
+    RW('用 When 問劃線的部分','Ken played tennis after school.',['When did Ken play tennis?'],'問「什麼時候」用 When；after school 要拿掉。',{u:'after school'}),
+    RW('改成現在進行式','Ken played tennis after school.',['Ken is playing tennis now.','Now Ken is playing tennis.'],'現在進行式 = is + V-ing；after school 換成 now。',{h:'把 after school 換成 now'}),
+    RW('改成否定句','My sisters are watching TV in the living room.',['My sisters are not watching TV in the living room.'],'有 be 動詞 are，直接在 are 後面加 not。'),
+    RW('改成疑問句','My sisters are watching TV in the living room.',['Are my sisters watching TV in the living room?','Are your sisters watching TV in the living room?'],'把 Are 移到句首就是疑問句，不用加 do。'),
+    RW('用 Where 問劃線的部分','My sisters are watching TV in the living room.',['Where are my sisters watching TV?','Where are your sisters watching TV?'],'問「地點」用 Where，後面接 are + 主詞 + V-ing。',{u:'in the living room'}),
+    RW('用 Who 問劃線的部分','My sisters are watching TV in the living room.',['Who is watching TV in the living room?','Who are watching TV in the living room?'],'問「誰」時 Who 直接當主詞，不用再寫 my sisters；通常用單數 is。',{u:'My sisters'}),
+    RW('改成疑問句','Amy has two cats.',['Does Amy have two cats?'],'一般動詞疑問句：Does 放句首，has 改回原形 have。'),
+    RW('用 How many 問劃線的部分','Amy has two cats.',['How many cats does Amy have?'],'問「幾個」用 How many + 複數名詞 cats，再接 does + 主詞 + have。',{u:'two cats'}),
+    RW('改成否定句','Amy has two cats.',['Amy does not have two cats.'],'doesn\'t 後面動詞要用原形 have，不能寫 doesn\'t has。'),
+   ]},
+  {id:'tense', emo:'⏰', name:'時態變化', sub:'最常見的失分點之一', color:'#f97316',
+   tip:'改寫時最容易疏忽的是時態變化：過去式句子改成否定句、疑問句，動詞要變回原形；題目換了時間詞，動詞也要跟著換時態。',
+   items:[
+    RW('改成否定句','She bought a new dress.',['She did not buy a new dress.'],'有了 did，bought 就要改回原形 buy，不能寫 didn\'t bought。'),
+    RW('改成疑問句','They went to the beach last Sunday.',['Did they go to the beach last Sunday?'],'Did 放句首後，went 改回原形 go。'),
+    RW('用 What 問劃線的部分','Tom wrote a letter to his grandma.',['What did Tom write to his grandma?'],'wrote 是過去式，問句用 did，動詞改回原形 write。',{u:'a letter'}),
+    RW('改成否定句','He caught the bus this morning.',['He did not catch the bus this morning.'],'caught 的原形是 catch。'),
+    RW('改成疑問句','Lucy took many pictures in Japan.',['Did Lucy take many pictures in Japan?'],'took 的原形是 take。'),
+    RW('改成肯定句','Mary didn\'t eat breakfast this morning.',['Mary ate breakfast this morning.'],'拿掉 didn\'t 之後，過去式要表現在動詞上：eat → ate。'),
+    RW('改成過去式','My father drives to work every day.',['My father drove to work yesterday.','Yesterday my father drove to work.'],'drive 的過去式是 drove（不規則）。',{h:'把 every day 換成 yesterday'}),
+    RW('改成過去式','Ben and I swim in the pool every weekend.',['Ben and I swam in the pool last weekend.','Last weekend Ben and I swam in the pool.'],'swim 的過去式是 swam。',{h:'把 every weekend 換成 last weekend'}),
+    RW('改成過去式','It will be sunny tomorrow.',['It was sunny yesterday.','Yesterday it was sunny.'],'will be 改過去式，主詞 it 用 was。',{h:'把 tomorrow 換成 yesterday'}),
+    RW('改成未來式','We had a math test yesterday.',['We will have a math test tomorrow.','Tomorrow we will have a math test.'],'will 後面接原形動詞，had 要改回 have。',{h:'用 will，把 yesterday 換成 tomorrow'}),
+    RW('改成現在式','My brother was a student last year.',['My brother is a student now.','Now my brother is a student.'],'was 改現在式，主詞 my brother 是單數，用 is。',{h:'把 last year 換成 now'}),
+    RW('改寫時間','The children are sleeping now.',['The children were sleeping at ten last night.','At ten last night the children were sleeping.'],'過去某個時間「正在」做 → 過去進行式；children 是複數，用 were。',{h:'把 now 換成 at ten last night'}),
+   ]},
+  {id:'agree', emo:'⚖️', name:'主詞動詞單複數', sub:'加不加 s？is 還是 are？', color:'#8b5cf6',
+   tip:'主詞動詞單複數一致是最常見的失分點：主詞是單數還是複數，決定動詞要不要加 s、用 is / are、was / were、do / does。換了主詞，後面的動詞和代名詞也要一起換。',
+   items:[
+    RW('把主詞換成 My sister','I like to read comic books.',['My sister likes to read comic books.'],'My sister 是第三人稱單數，like 要加 s。'),
+    RW('把主詞換成 They','He watches TV after dinner.',['They watch TV after dinner.'],'They 是複數，watches 要改回 watch。'),
+    RW('把主詞換成 We','I am a student.',['We are students.'],'We 用 are，而且 a student 也要變成複數 students。'),
+    RW('把主詞換成 Tom and Amy','Tom is late for school.',['Tom and Amy are late for school.'],'A and B 是兩個人，用 are。'),
+    RW('把主詞換成 Everyone','All the students have a book.',['Everyone has a book.'],'Everyone 雖然是「大家」，但文法上是單數，用 has。'),
+    RW('把主詞換成 Each student','All students need a pencil.',['Each student needs a pencil.'],'Each + 單數名詞，動詞用單數 needs。'),
+    RW('把主詞換成 She','I don\'t like carrots.',['She doesn\'t like carrots.'],'She 的否定用 doesn\'t，不是 don\'t。'),
+    RW('把主詞換成 The children','The child was very happy.',['The children were very happy.'],'children 是 child 的複數，was 要改成 were。'),
+    RW('把主詞換成 I','She was tired last night.',['I was tired last night.'],'I 的過去式用 was，不是 were。'),
+    RW('把主詞換成 He','I have a lot of homework.',['He has a lot of homework.'],'He 要用 has。'),
+    RW('把主詞換成 My friend and I','He goes to the library on Saturdays.',['My friend and I go to the library on Saturdays.'],'My friend and I 是兩個人，goes 要改回 go。'),
+    RW('把 a dog 換成 two dogs','There is a dog in the yard.',['There are two dogs in the yard.'],'There is / are 看後面的名詞：two dogs 是複數，用 are。'),
+    RW('改成疑問句','Your brother plays the piano.',['Does your brother play the piano?'],'主詞是單數，用 Does；plays 改回 play。'),
+    RW('用 Who 問劃線的部分','My parents cook dinner every day.',['Who cooks dinner every day?'],'Who 當主詞時，動詞用單數：cooks。',{u:'My parents'}),
+   ]},
+  {id:'keep', emo:'🧷', name:'合併：資訊不能漏', sub:'時間、地點、形容詞都要留', color:'#14b8a6',
+   tip:'合併句子時，兩個原句的核心資訊（人、時間、地點、形容詞、副詞…）都要完整保留，不能漏掉，也不要自己加。寫完對照原句，一個字一個字檢查。',
+   items:[
+    CB('Last Sunday, I went to the night market.','I ate stinky tofu there.','and',['Last Sunday, I went to the night market and ate stinky tofu there.','Last Sunday, I went to the night market, and I ate stinky tofu there.'],'Last Sunday 和 there 都不能漏；主詞相同時第二個 I 可以省略。'),
+    CB('My little brother cried loudly.','He lost his new red ball.','because',['My little brother cried loudly because he lost his new red ball.','Because he lost his new red ball, my little brother cried loudly.'],'little、loudly、new、red 都是原句的資訊，一個都不能少。'),
+    CB('It was very cold this morning.','I wore my thick coat.','so',['It was very cold this morning, so I wore my thick coat.'],'very、this morning、thick 都要保留。'),
+    CB('Mary wanted to buy the pink skirt.','It was too expensive.','but',['Mary wanted to buy the pink skirt, but it was too expensive.'],'pink 和 too 不能漏；It 在句中改小寫 it。'),
+    CB('Kevin plays basketball every Saturday.','Kevin plays baseball every Saturday.','and',['Kevin plays basketball and baseball every Saturday.','Every Saturday Kevin plays basketball and baseball.'],'重複的部分只寫一次，但 every Saturday 不能漏。'),
+    CB('The movie was long.','The movie was very interesting.','but',['The movie was long, but it was very interesting.','The movie was long but very interesting.'],'very 不能漏；第二個 The movie 可以換成 it。'),
+    CB('Linda got up late this morning.','She missed the school bus.','so',['Linda got up late this morning, so she missed the school bus.'],'late、this morning、school 都要保留。'),
+    CB('My uncle lives in Kaohsiung.','He is a doctor.','who',['My uncle, who lives in Kaohsiung, is a doctor.','My uncle, who is a doctor, lives in Kaohsiung.'],'who 代替 He；住在高雄、是醫生，兩個資訊都要有。'),
+    CB('I was doing my homework at eight last night.','My friend called me.','when',['I was doing my homework at eight last night when my friend called me.','At eight last night, I was doing my homework when my friend called me.','When my friend called me at eight last night, I was doing my homework.','When my friend called me, I was doing my homework at eight last night.'],'at eight last night 很容易漏掉！'),
+    CB('We will have a picnic in the park.','It will be sunny tomorrow.','if',['We will have a picnic in the park if it is sunny tomorrow.','If it is sunny tomorrow, we will have a picnic in the park.'],'in the park、tomorrow 都要保留；if 子句用現在式 is。'),
+    CB('My grandma is seventy years old.','She still goes jogging every morning.','although',['Although my grandma is seventy years old, she still goes jogging every morning.','My grandma still goes jogging every morning although she is seventy years old.'],'still 和 every morning 不能漏；although 不能再加 but。'),
+   ]},
+  {id:'when', emo:'📅', name:'看時間決定時態', sub:'段落寫作下筆前先想清楚', color:'#ec4899',
+   tip:'下筆前務必確認時態：事情發生在什麼時間點，決定了該用哪種時態，這是寫作最容易失分的關鍵。先找時間詞，再決定動詞要怎麼變。',
+   items:[
+    RW('看時間詞，用正確的時態改寫','I go to the zoo with my family.',['I went to the zoo with my family last Sunday.','Last Sunday I went to the zoo with my family.'],'last Sunday 是過去 → 過去式 went。',{h:'加上 last Sunday'}),
+    RW('看時間詞，用正確的時態改寫','My mom made breakfast for us.',['My mom makes breakfast for us every morning.','Every morning my mom makes breakfast for us.'],'every morning 是習慣 → 現在式，主詞單數加 s：makes。',{h:'加上 every morning'}),
+    RW('看時間詞，用正確的時態改寫','We visited our grandparents.',['We are going to visit our grandparents next weekend.','Next weekend we are going to visit our grandparents.'],'next weekend 是未來的計畫 → be going to + 原形。',{h:'加上 next weekend（用 be going to）'}),
+    RW('看時間詞，用正確的時態改寫','The baby slept in her bed.',['The baby is sleeping in her bed right now.','Right now the baby is sleeping in her bed.'],'right now 是「現在正在」→ 現在進行式。',{h:'加上 right now'}),
+    RW('看時間詞，用正確的時態改寫','Peter has a bad cold.',['Peter had a bad cold two days ago.','Two days ago Peter had a bad cold.'],'two days ago 是過去 → has 改成 had。',{h:'加上 two days ago'}),
+    RW('看時間詞，用正確的時態改寫','I am busy.',['I will be busy tomorrow.','Tomorrow I will be busy.'],'will 後面的 be 動詞用原形 be，不能寫 will am。',{h:'加上 tomorrow（用 will）'}),
+    RW('看時間詞，用正確的時態改寫','Jack walked to school.',['Jack usually walks to school.'],'usually 表示習慣 → 現在式；usually 放在動詞前面。',{h:'加上 usually'}),
+    RW('看時間詞，用正確的時態改寫','They are playing soccer.',['They were playing soccer at this time yesterday.','At this time yesterday they were playing soccer.'],'昨天這個時候「正在」→ 過去進行式 were playing。',{h:'加上 at this time yesterday'}),
+    RW('看時間詞，用正確的時態改寫','My family and I travel to Hualien.',['My family and I traveled to Hualien last summer vacation.','Last summer vacation my family and I traveled to Hualien.','My family and I travelled to Hualien last summer vacation.'],'last summer vacation 是過去 → traveled。',{h:'加上 last summer vacation'}),
+    RW('看時間詞，用正確的時態改寫','We live in Taichung.',['We have lived in Taichung since 2020.','Since 2020 we have lived in Taichung.'],'since + 過去的時間點，表示「從那時到現在」→ 現在完成式 have lived。',{h:'加上 since 2020'}),
+   ]},
+];
+STRAT.forEach(c=>c.items.forEach((q,i)=>{q.id='st'+c.id+(i+1);q.type=q.s1?'combine':'rewrite';q.cat=c.id;BYID[q.id]=q}));
+
+/* 口說攻略特訓題庫（在口說頁的題庫選單選「攻略特訓」） */
+const STRAT_SPEAK = {
+  repeat:[
+    'My brother has already finished his science homework.',
+    'We were watching a movie when the lights went out.',
+    'She usually takes the MRT to school, but today she walked.',
+    'I am going to visit my grandparents in Tainan next weekend.',
+    'The boy who lives next door plays the violin every evening.',
+    'Did you remember to bring your swimsuit and towel?',
+    'If it rains tomorrow, we will stay at home and play board games.',
+    'My mother bought three apples and a bottle of milk at the store.',
+    'He doesn\'t like coffee because it tastes too bitter.',
+    'They have lived in this small town for more than ten years.',
+  ],
+  sentences:[
+    'The train leaves at 7:45 in the morning.',
+    'My birthday is on March 21st.',
+    'This T-shirt costs 350 dollars.',
+    'The concert starts at 6:30 p.m. on Saturday, May 10th.',
+    'Tickets are 120 dollars for adults and 60 dollars for children.',
+    'My sister watches TV and does her homework after dinner.',
+    'Yesterday I met my friend, and we ate noodles together.',
+    'Tom caught a cold, so he stayed in bed and slept all day.',
+    'He thought the test was easy, but he only got 75 points.',
+    'There are 365 days in a year.',
+  ],
+  passages:[
+    'Welcome to Happy Water Park! We are open from 9:00 a.m. to 5:30 p.m. every day except Monday. Tickets are 450 dollars for adults and 250 dollars for children. Last summer, more than 20,000 people visited the park. Come and have fun with us!',
+    'Last Friday was May 3rd. Jenny got up at 6:15 and caught the early bus. She bought a sandwich for 45 dollars and ate it on the way. At school, she took a math test and got 92 points. Her teacher said she did a great job.',
+  ],
+  answer:[
+    {q:'Where did you go last weekend?', a:'I went to the beach with my family last weekend. We swam and played in the sand. It was a lot of fun.'},
+    {q:'When do you usually do your homework?', a:'I usually do my homework after dinner. It takes me about one hour. Then I take a shower.'},
+    {q:'What do you usually do on Sunday mornings?', a:'I usually sleep late on Sunday mornings. Then I eat breakfast with my family. Sometimes we go to the park.'},
+    {q:'What did you do yesterday evening?', a:'I did my homework yesterday evening. After that, I watched TV with my brother. I went to bed at ten.'},
+    {q:'Have you ever been to another country?', a:'Yes, I have. I went to Japan with my parents last year. I liked the food there very much.'},
+    {q:'What are you going to do this summer vacation?', a:'I am going to learn to swim this summer vacation. I will also read some books. I think it will be fun.'},
+    {q:'Why do you like your best friend?', a:'I like my best friend because she is kind and funny. She always helps me with math. We often play together after school.'},
+    {q:'How often do you exercise?', a:'I exercise three times a week. I usually play basketball with my classmates. It makes me healthy.'},
+    {q:'Who do you usually eat dinner with?', a:'I usually eat dinner with my parents and my sister. We talk about our day. My mother is a great cook.'},
+    {q:'Which do you like better, summer or winter?', a:'I like summer better. I can go swimming and eat ice cream. I don\'t like cold weather.'},
+  ],
+};
+const SPEAK_TIP={
+  repeat:'🎯 攻略：要「完整重複」，不可省略任何字。注意動詞的時態不能說錯，句子越長越要把句尾清楚說完。平常可以用跟讀（shadowing）練習。',
+  read:'🎯 攻略：數字（時間、日期、金額）最容易卡住，先在心裡想好怎麼念。注意第三人稱單數的 s 和過去式不規則變化。速度放慢、清楚優先，不確定的字不要停太久。',
+  answer:'🎯 攻略：先聽清楚第一個字（Where / What / When…）決定答題方向。時態跟著題目走：問習慣用現在式，問過去用過去式。用完整句子回答，每題 2～3 句，加上理由或細節。',
+};
 
 const TOPICS = [
   {id:'p1', title:'我的週末', en:'My Weekend', prompt:'寫一寫你上個週末做了什麼事。', tense:'過去式（went, played, ate…）',
@@ -653,9 +864,9 @@ const MODE = {
   rewrite:{name:'句子改寫',color:'var(--pri)'}, combine:{name:'句子合併',color:'var(--blue)'},
   reorder:{name:'句子重組',color:'var(--purple)'}, mix:{name:'綜合練習',color:'var(--teal)'},
   wrong:{name:'錯題本',color:'var(--bad)'}, repeat:{name:'複誦',color:'var(--pink)'}, read:{name:'朗讀',color:'var(--amber)'},
-  ai:{name:'Claude 新題',color:'var(--ai)'}, para:{name:'段落寫作',color:'#f97316'}
+  ai:{name:'Claude 新題',color:'var(--ai)'}, para:{name:'段落寫作',color:'#f97316'}, strat:{name:'攻略特訓',color:'#e11d48'}
 };
-const WRITE_MODES=['rewrite','combine','reorder','mix','wrong','ai'];
+const WRITE_MODES=['rewrite','combine','reorder','mix','wrong','ai','strat'];
 const getQ=id=>BYID[id]||DB.ai[id];
 
 /* ================= Claude（在 claude.ai 上開啟才有） ================= */
@@ -818,7 +1029,7 @@ function go(view,arg){
   clearInterval(ansTimer);
   window.scrollTo(0,0);
   ({home:viewHome,round:()=>startRound(arg),wrongRound:()=>startRound(arg,true),wrongbook:viewWrong,
-    topics:viewTopics,para:()=>viewPara(arg),gen:viewGen,repeat:viewRepeat,read:viewRead,answer:viewAnswer,stats:viewStats}[view]||viewHome)();
+    topics:viewTopics,strat:viewStrat,stratRound:()=>startStrat(arg),para:()=>viewPara(arg),gen:viewGen,repeat:viewRepeat,read:viewRead,answer:viewAnswer,stats:viewStats}[view]||viewHome)();
 }
 function examDays(){
   const now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
@@ -843,11 +1054,14 @@ function viewHome(){
   <div class="pick" style="align-items:center;margin-bottom:14px"><span>作答方式：</span>
     <button class="btn sec ${paperMode()?'active':''}" onclick="setPaper(true);viewHome()">📄 寫在紙上，再對答案</button>
     <button class="btn sec ${paperMode()?'':'active'}" onclick="setPaper(false);viewHome()">⌨️ 直接在電腦上打字</button></div>
+  <div class="pick" style="align-items:center;margin-bottom:14px"><span>難度：</span>
+    ${Object.entries(LEVELS).map(([k,v])=>`<button class="btn sec ${level()===k?'active':''}" onclick="DB.level='${k}';save();viewHome()">${v}</button>`).join('')}</div>
   <div class="grid">
-    ${tile('🔁','句子改寫','肯定・否定・疑問・時態','var(--pri)',"go('round','rewrite')")}
-    ${tile('🔗','句子合併','and / but / so / because','var(--blue)',"go('round','combine')")}
-    ${tile('🧩','句子重組','把單字排成句子','var(--purple)',"go('round','reorder')")}
+    ${tile('🔁','句子改寫',level()==='basic'?'肯定・否定・疑問・時態':'完成式・被動・比較・附加問句','var(--pri)',"go('round','rewrite')")}
+    ${tile('🔗','句子合併',level()==='basic'?'and / but / so / because':'when / if / who / which / although','var(--blue)',"go('round','combine')")}
+    ${tile('🧩','句子重組',level()==='basic'?'把單字排成句子':'長句、子句、間接問句','var(--purple)',"go('round','reorder')")}
     ${tile('🎲','綜合練習','三種題型混在一起','var(--teal)',"go('round','mix')")}
+    ${tile('🎯','攻略特訓','針對課本作答攻略的失分點','#e11d48',"go('strat')")}
     ${tile('📝','段落寫作','5W1H 想內容，約 50 字','#f97316',"go('topics')")}
     ${tile('🤖','Claude 出新題','選文法重點，每次都不一樣','var(--ai)',"go('gen')",'ai-only')}
   </div>
@@ -875,7 +1089,7 @@ function startRound(type,wrongMode,given){
     pool=shuffle(pool).slice(0,15);
     if(!pool.length){toast('錯題本是空的 🎉');viewWrong();return}
   }else{
-    pool=type==='mix'?shuffle([...REWRITE,...COMBINE,...REORDER]).slice(0,10):shuffle(BANK[type].slice()).slice(0,10);
+    pool=shuffle(bankFor(type).slice()).slice(0,10);
   }
   R={type,mode:wrongMode?'wrong':type,wrongMode:!!wrongMode,items:pool,i:0,correct:0,count:0,done:false,wrongIds:[]};
   paperMode()?renderSheet():renderQ();
@@ -905,6 +1119,7 @@ function renderSheet(){
   R.phase='write';R.scr=R.items.map(q=>q.type==='reorder'?scramble(q):null);R.marks=R.items.map(()=>null);R.notes=[];
   app.innerHTML=`<div class="card">
     <div class="qhead">${roundBadge()}<span>📄 紙筆練習・共 ${R.items.length} 題</span></div>
+    ${R.tip?`<div class="paper-tip">🎯 ${esc(R.tip)}</div>`:''}
     <div class="paper-tip">✏️ 拿出紙筆，寫上題號和<b>完整的句子</b>（開頭大寫、句尾標點）。全部寫完再按最下面的「對答案」。</div>
     <ol class="sheet">${R.items.map((q,i)=>`<li>${sheetQ(q,i)}</li>`).join('')}</ol>
     <div class="row"><button class="btn green" onclick="showKey()">✅ 寫好了，對答案</button>
@@ -976,6 +1191,7 @@ function renderQ(){
     <div class="qhead"><span class="badge" style="background:${info.color}">${R.wrongMode?'📕 錯題複習・':''}${info.name}</span>
       <span>第 ${R.i+1} / ${R.items.length} 題</span><span>✅ 答對 ${R.correct}</span></div>
     <div class="bar"><div style="width:${R.i/R.items.length*100}%"></div></div>
+    ${R.tip?`<div class="paper-tip">🎯 ${esc(R.tip)}</div>`:''}
     ${body}
     <div class="row" id="actRow"><button class="btn" id="checkBtn" onclick="checkAns()">✔️ 檢查答案</button>
       <button class="btn sec" id="skipBtn" onclick="checkAns(true)">🙋 不會，看答案</button>
@@ -1048,7 +1264,8 @@ function finishRound(){
     ${wrongCnt?`<div class="muted">這回合答錯的 ${wrongCnt} 題已經放進「錯題本」了</div>`:''}
     ${wm&&R.correct?`<div class="muted">答對的 ${R.correct} 題已經從錯題本移除 ✨</div>`:''}
     <div class="row" style="justify-content:center">
-      ${type==='ai'?`<button class="btn ai" onclick="go('gen')">🤖 再出 10 題</button>`
+      ${type==='strat'?`<button class="btn" onclick="go('stratRound','${LAST_CAT}')">🔁 再練一回</button><button class="btn sec" onclick="go('strat')">🎯 選別的攻略</button>`
+        :type==='ai'?`<button class="btn ai" onclick="go('gen')">🤖 再出 10 題</button>`
         :`<button class="btn" onclick="go('${wm?'wrongRound':'round'}','${type}')">🔁 再練一回</button>`}
       ${Object.keys(DB.wrong).length?`<button class="btn red" onclick="go('wrongbook')">📕 去錯題本</button>`:''}
       <button class="btn sec" onclick="go('home')">🏠 回首頁</button>
@@ -1139,7 +1356,8 @@ function aiAccept(){
 
 /* ================= Claude：出新題 ================= */
 let GEN={type:'rewrite',focus:'過去式'};
-const FOCUS=['現在式','過去式','進行式','未來式','疑問句','否定句','五大基本句型','連接詞','綜合'];
+const FOCUS=['現在式','過去式','進行式','未來式','疑問句','否定句','五大基本句型','連接詞','現在完成式','被動語態','比較級／最高級','附加問句','間接問句','關係代名詞 who / which / that','時間／條件子句（when, if, before, until）','too…to／so…that／enough','動名詞與不定詞','綜合'];
+const CONJ=['and','but','so','because','or','when','if','before','after','until','while','although','as soon as','who','which','that','both … and','either … or','neither … nor','so … that'];
 function viewGen(){
   if(!AI){app.innerHTML=`<div class="card">這個功能要在 claude.ai 上開啟網頁才能使用。<div class="row"><button class="btn" onclick="go('home')">🏠 回首頁</button></div></div>`;return}
   app.innerHTML=`<h2>🤖 請 Claude 出新題</h2>
@@ -1164,8 +1382,8 @@ function cleanGen(type,x){
     const o={k,q,a,e};if(str(x.h))o.h=str(x.h);if(str(x.u)&&q.includes(str(x.u)))o.u=str(x.u);return o;
   }
   if(type==='combine'){
-    const s1=str(x.s1),s2=str(x.s2),c=(str(x.c)||'').toLowerCase(),a=arr(x.a);
-    if(!s1||!s2||!a.length||!['and','but','so','because'].includes(c))return null;
+    const s1=str(x.s1),s2=str(x.s2),c=(str(x.c)||'').toLowerCase().replace(/\s*(\.\.\.|…)\s*/g,' … '),a=arr(x.a);
+    if(!s1||!s2||!a.length||!CONJ.includes(c))return null;
     return {s1,s2,c,a,e};
   }
   const s=str(x.s);
@@ -1181,14 +1399,16 @@ async function aiGen(){
   const fmt={
     rewrite:`每題是一個物件：{"k":"中文指示，例如 改成否定句／改成疑問句／改成過去式／用 Where 問劃線的部分","h":"補充提示（可省略）","q":"原句","u":"劃線部分（只有用疑問詞發問的題目才需要，必須是原句裡的一段文字）","a":["正確答案","其他也正確的寫法"],"e":"一句中文說明"}
 範例：${JSON.stringify(stripQ(REWRITE[2]))}`,
-    combine:`每題是一個物件：{"s1":"第一句","s2":"第二句","c":"and、but、so、because 其中一個","a":["合併後的正確答案","其他也正確的寫法"],"e":"一句中文說明"}
-範例：${JSON.stringify(stripQ(COMBINE[2]))}`,
+    combine:`每題是一個物件：{"s1":"第一句","s2":"第二句","c":"${CONJ.join('、')} 其中一個（成對的寫成 both … and）","a":["合併後的正確答案","其他也正確的寫法"],"e":"一句中文說明"}
+範例：${JSON.stringify(stripQ(COMBINE[2]))}
+範例：${JSON.stringify(stripQ(COMBINE2[8]))}`,
     reorder:`每題是一個物件：{"s":"完整的正確句子，3～12 個字，句子中間不能有逗號或任何標點，只有句尾用 . 或 ?","alt":["其他也正確的排列（可省略）"],"zh":"中文意思","e":"一句中文說明","keep":["句首如果是人名、地名等專有名詞就列在這裡（可省略）"]}
 範例：${JSON.stringify(stripQ(REORDER[2]))}`
   }[type];
   const prompt=`你是全民英檢（GEPT）初級的出題老師。請出 10 題「${MODE[type].name}」單句寫作題，文法重點：${focus}。
 規定：
-- 只用 GEPT 初級字表範圍的簡單單字。
+- 難度：${level()==='basic'?'基礎，句子短、文法單純':'接近英檢初級正式考題，句子可以長一點，多考容易出錯的地方（例如 if 子句用現在式、關係代名詞後面不能再重複 it、although 不能和 but 一起用）'}。
+- 只用 GEPT 初級字表範圍的單字。
 - 主題貼近台灣學生的日常生活（學校、家庭、朋友、假日、食物、天氣、運動）。
 - 10 題內容都不同。答案必須完全正確；a 裡要列出所有常見的正確寫法（縮寫 don't / do not 會自動視為相同，不用重複列）。
 - 中文說明要短，像「過去式要用 went」這樣。
@@ -1211,6 +1431,25 @@ ${fmt}
     if(!$('#genOut'))return;
     $('#genOut').innerHTML=`<div class="aibox">${esc(aiErrMsg(e))}</div>`;$('#genBtn').disabled=false;
   }
+}
+
+/* ================= 攻略特訓 ================= */
+let LAST_CAT='instr';
+function viewStrat(){
+  app.innerHTML=`<h2>🎯 攻略特訓：選一個失分點來練</h2>
+  <div class="muted" style="margin-bottom:12px">依照課本「作答攻略分享」的提醒出題，每一組專門練一個最常失分的地方。</div>
+  <div class="grid">${STRAT.map(c=>tile(c.emo,c.name,`${c.sub}・${c.items.length} 題`,c.color,`go('stratRound','${c.id}')`)).join('')}</div>
+  <div class="card" style="margin-top:20px"><b>📌 段落寫作攻略</b>
+    <ul style="margin:6px 0"><li>先想清楚整體要寫什麼再動筆，不要想到哪寫到哪。</li>
+    <li>下筆前先確認<b>時態</b>（可以練上面的「看時間決定時態」）。</li>
+    <li>句子完整、意思清楚，比用難的句型更重要。用你有把握的字和句型。</li></ul>
+    <div class="row"><button class="btn" style="background:#f97316" onclick="go('topics')">📝 去練段落寫作</button></div></div>
+  <div class="card"><b>🎤 口說攻略</b><div class="muted small">到「複誦」「朗讀」「回答問題」，在題庫選單選「🎯 攻略特訓」：有數字、時態、長句的專門練習。</div></div>`;
+}
+function startStrat(id){
+  const c=STRAT.find(c=>c.id===id)||STRAT[0];LAST_CAT=c.id;
+  startRound('strat',false,shuffle(c.items.slice()));
+  R.tip=c.tip;paperMode()?renderSheet():renderQ();
 }
 
 /* ================= 錯題本 ================= */
@@ -1400,17 +1639,19 @@ const srNote=()=>IN_CLAUDE?`<div class="fb bad small">⚠️ 在 claude.ai 上�
 
 /* ================= 口說題庫選擇（課本各回 / 網頁內建） ================= */
 let SRC=DB.src||'0';
-const repList=()=>SRC==='mine'?REPEAT:ROUNDS[+SRC].repeat;
-const readSent=()=>SRC==='mine'?READ_SENT:ROUNDS[+SRC].read.sentences;
-const readPass=()=>SRC==='mine'?READ_PASS:[ROUNDS[+SRC].read.passage];
-const askList=()=>SRC==='mine'?QUESTIONS:ROUNDS[+SRC].answer.map(x=>({q:x.q,a:x.sample}));
+const repList=()=>SRC==='strat'?STRAT_SPEAK.repeat:SRC==='mine'?REPEAT:ROUNDS[+SRC].repeat;
+const readSent=()=>SRC==='strat'?STRAT_SPEAK.sentences:SRC==='mine'?READ_SENT:ROUNDS[+SRC].read.sentences;
+const readPass=()=>SRC==='strat'?STRAT_SPEAK.passages:SRC==='mine'?READ_PASS:[ROUNDS[+SRC].read.passage];
+const askList=()=>SRC==='strat'?STRAT_SPEAK.answer:SRC==='mine'?QUESTIONS:ROUNDS[+SRC].answer.map(x=>({q:x.q,a:x.sample}));
 const curQ=()=>askList()[AQ.order[AQ.i]];
 function setSrc(v,view){SRC=v;DB.src=v;save();REP.i=0;RD.i=0;AQ.i=0;AQ.order=null;go(view)}
 function srcPicker(view){
   return `<div class="row" style="margin:0 0 14px"><label for="srcSel"><b>📚 題庫：</b></label>
     <select id="srcSel" class="sel" onchange="setSrc(this.value,'${view}')">
       ${ROUNDS.map((r,i)=>`<option value="${i}" ${SRC===String(i)?'selected':''}>課本 ${esc(r.name)}</option>`).join('')}
-      <option value="mine" ${SRC==='mine'?'selected':''}>綜合練習題（網頁內建）</option></select></div>`;
+      <option value="mine" ${SRC==='mine'?'selected':''}>綜合練習題（網頁內建）</option>
+      <option value="strat" ${SRC==='strat'?'selected':''}>🎯 攻略特訓（數字・時態・長句）</option></select></div>
+    ${SRC==='strat'&&SPEAK_TIP[view]?`<div class="paper-tip">${SPEAK_TIP[view]}</div>`:''}`;
 }
 
 /* ================= 複誦 ================= */
